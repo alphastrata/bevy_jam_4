@@ -23,7 +23,18 @@ Deforest the plant for Maximum Profit.
 
 - Weather events similarly have a countdown that can be forecast by having a **Weather radar tower**. Weather events allow you to predict where the new forests will spawn making them no longer random to you.
 - Visualisation for the above could be quite cool and tie into the theme by showing 10s of thousands of tree seeds moving with the wind.
+- Trees have stages of growth; the earlier in a trees growth cycle the easier it is to destroy.
 
+#### Towers and abilities
+
+- Fire Tower
+- Chainsaw Tower
+- Weather Tower - Forecast weather events
+- "Tesla" Tower - Zaps smaller trees into oblivion but can't handle larger trees
+- Nutrient depleter tower? (stops them from growing)
+
+**One-off abilities:**  
+- Bee sterlisation
 
 ## Art
 
