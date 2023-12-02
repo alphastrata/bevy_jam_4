@@ -1,10 +1,14 @@
 //! Shows how to render simple primitive shapes with a single color.
 
 use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
+use camera::{GameCamera, GameCameraPlugin};
+
+mod camera;
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
+        .add_plugins(GameCameraPlugin)
         .add_systems(Startup, setup)
         .run();
 }
@@ -14,7 +18,7 @@ fn setup(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
-    commands.spawn(Camera2dBundle::default());
+    commands.spawn((Camera2dBundle::default(), GameCamera::default()));
 
     // Circle
     commands.spawn(MaterialMesh2dBundle {
