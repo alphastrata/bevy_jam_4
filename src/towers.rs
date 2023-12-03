@@ -68,6 +68,7 @@ pub fn spawn_fire_tower(mut commands: Commands, pos: Vec2) {
         HIGHLIGHT_TINT,            // Override the global highlighting settings for this mesh
     ));
 }
+
 const HIGHLIGHT_TINT: Highlight<StandardMaterial> = Highlight {
     hovered: Some(HighlightKind::new_dynamic(|matl| StandardMaterial {
         base_color: matl.base_color + vec4(-0.2, -0.2, 0.4, 0.0),

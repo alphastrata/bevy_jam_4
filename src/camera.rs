@@ -1,4 +1,4 @@
-use bevy::{prelude::*, window::PrimaryWindow};
+use bevy::{log, prelude::*, window::PrimaryWindow};
 
 use crate::AppState;
 
@@ -46,7 +46,7 @@ fn pan_camera(
         .try_normalize();
 
     if let Some(direction) = camera_move_vector {
-        eprintln!("Camera move {direction}");
+        log::info!("Camera move {direction}");
         debug_assert!(direction.z == 0.0);
 
         transform.translation += PAN_SPEED * direction;
