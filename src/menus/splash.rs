@@ -59,7 +59,10 @@ fn show_splash(mut commands: Commands, asset_server: Res<AssetServer>) {
             });
         });
 
-    commands.insert_resource(SplashTimer(Timer::from_seconds(SPLASH_DURATION, TimerMode::Once)));
+    commands.insert_resource(SplashTimer(Timer::from_seconds(
+        SPLASH_DURATION,
+        TimerMode::Once,
+    )));
     commands.insert_resource(ClearColor(Color::rgb(0.9, 0.9, 0.9)));
 }
 
@@ -68,4 +71,6 @@ fn exit_splash(nodes: Query<Entity, With<OnSplashScreen>>, mut commands: Command
     for ent in &nodes {
         commands.entity(ent).despawn_recursive();
     }
+
+    commands.remove_resource::<SplashTimer>();
 }
