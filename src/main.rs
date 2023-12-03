@@ -1,19 +1,10 @@
 //! Shows how to render simple primitive shapes with a single color.
 use bevy::prelude::*;
 use bevy_tweening::TweeningPlugin;
-use camera::GameCamera;
-use game::GamePlugin;
-use menus::{mainmenu::MainMenuPlugin, splash::SplashPlugin};
-
-/// Top-level states that the game can be in
-#[derive(States, Debug, Clone, Eq, PartialEq, Hash, Default)]
-pub enum AppState {
-    #[default]
-    Splash,
-    MainMenu,
-    Playing,
-    Paused,
-}
+use bgj::game::GamePlugin;
+use bgj::menus::mainmenu::MainMenuPlugin;
+use bgj::menus::splash::SplashPlugin;
+use bgj::{camera::GameCamera, AppState};
 
 /// Holding the current selection
 #[derive(States, Debug, Clone, Eq, PartialEq, Hash, Default)]
