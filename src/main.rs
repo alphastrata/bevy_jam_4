@@ -4,9 +4,11 @@ use bevy::prelude::*;
 use camera::GameCamera;
 use game::GamePlugin;
 use menus::{mainmenu::MainMenuPlugin, splash::SplashPlugin};
+use crate::gpu_entities::{GpuInstancingPlugin, setup_instances};
 
 mod camera;
 mod game;
+mod gpu_entities;
 mod menus;
 mod placement;
 mod towers;
@@ -26,7 +28,7 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_state::<AppState>() // Default state = Splash
         // add top-level plugins
-        .add_plugins((SplashPlugin, MainMenuPlugin, GamePlugin))
+        .add_plugins((SplashPlugin, MainMenuPlugin, GamePlugin, GpuInstancingPlugin))
         .add_systems(Startup, setup)
         .run();
 }
