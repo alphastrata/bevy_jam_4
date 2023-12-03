@@ -14,8 +14,8 @@ mod towers;
 /// Top-level states that the game can be in
 #[derive(States, Debug, Clone, Eq, PartialEq, Hash, Default)]
 pub enum AppState {
-    Splash, // TODO
     #[default]
+    Splash,
     MainMenu,
     Playing,
     Paused,
