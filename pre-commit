@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Run cargo fmt to check the formatting
+echo "Running cargo fmt..."
+cargo fmt --all -- --check
+
+# Check if cargo fmt succeeded
+if [ $? -ne 0 ]; then
+  echo "cargo fmt failed. Please fix the formatting issues before committing."
+  exit 1
+fi
+echo "cargo fmt check passed."
+
+
+# Run cargo clippy to check how shit you are.
+echo "Running cargo fmt..."
+cargo clippy
+
+# Check if clippy succeeded
+if [ $? -ne 0 ]; then
+  echo "clippy failed, run cargo clippy --fix --allow-dirty, or you maybe need to be less shit"
+  exit 1
+fi
+
+
