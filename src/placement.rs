@@ -1,6 +1,7 @@
+use crate::power::AddBuilding;
 use crate::{camera::GameCamera, towers::spawn_fire_tower, AppState};
-use bevy::{math::vec4, prelude::*};
-use bevy::{prelude::*, window::PrimaryWindow};
+use bevy::prelude::*;
+use bevy::window::PrimaryWindow;
 use bevy_mod_picking::prelude::*;
 
 /// Spawn towers when clicked
@@ -21,6 +22,7 @@ fn spawn_at_click_pos(
     q_window: Query<&Window, With<PrimaryWindow>>,
     q_camera: Query<(&Camera, &GlobalTransform), With<GameCamera>>,
     mouse_btns: Res<Input<MouseButton>>,
+    mut add_building: EventWriter<AddBuilding>,
 ) {
     if mouse_btns.just_pressed(MouseButton::Right) {
         let window = q_window.single();
@@ -31,7 +33,8 @@ fn spawn_at_click_pos(
             .cursor_position()
             .and_then(|cursor| camera.viewport_to_world_2d(camera_transform, cursor))
         {
-            spawn_fire_tower(commands, world_pos);
+            _ = spawn_fire_tower(commands, world_pos);
+            add_building.send(AddBuilding);
         }
     }
 }

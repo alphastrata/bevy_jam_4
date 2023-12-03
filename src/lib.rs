@@ -4,6 +4,7 @@ pub mod camera;
 pub mod game;
 pub mod menus;
 pub mod placement;
+pub mod power;
 pub mod towers;
 
 /// Top-level states that the game can be in

@@ -22,5 +22,5 @@ fn main() {
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn((Camera2dBundle::default(), GameCamera));
+    commands.spawn((Camera2dBundle::default(), GameCamera::default()));
 }
