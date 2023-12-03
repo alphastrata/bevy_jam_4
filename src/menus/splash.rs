@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use bevy::{input::keyboard::KeyboardInput, prelude::*};
 use bevy_tweening::{
-    lens::SpriteColorLens, Animator, Delay, EaseFunction, RepeatCount, RepeatStrategy, Tween,
+    lens::SpriteColorLens, Animator, Delay, EaseFunction, Tween,
 };
 
 use crate::AppState;

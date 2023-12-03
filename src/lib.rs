@@ -1,3 +1,5 @@
+#![allow(clippy::type_complexity)]
+#![allow(unused_imports, dead_code)]
 use bevy::ecs::schedule::States;
 
 pub mod camera;
