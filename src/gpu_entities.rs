@@ -2,8 +2,8 @@ mod instancing;
 mod pipeline;
 mod plugin;
 
-use bevy::core_pipeline::core_2d::Transparent2d;
 pub use crate::gpu_entities::plugin::GpuInstancingPlugin;
+use bevy::core_pipeline::core_2d::Transparent2d;
 
 use crate::gpu_entities::instancing::{GpuInstanceData, GpuInstanceSet};
 use crate::gpu_entities::pipeline::GpuInstancePipeline;
@@ -15,8 +15,8 @@ use bevy::render::extract_component::ExtractComponent;
 use bevy::render::mesh::GpuBufferInfo;
 use bevy::render::render_asset::RenderAssets;
 use bevy::render::render_phase::{
-    DrawFunctions, PhaseItem, RenderCommand, RenderCommandResult, RenderPhase,
-    SetItemPipeline, TrackedRenderPass,
+    DrawFunctions, PhaseItem, RenderCommand, RenderCommandResult, RenderPhase, SetItemPipeline,
+    TrackedRenderPass,
 };
 use bevy::render::render_resource::{
     Buffer, BufferInitDescriptor, BufferUsages, PipelineCache, SpecializedMeshPipelines,
@@ -28,7 +28,7 @@ use bevy::utils::FloatOrd;
 pub fn setup_instances(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>) {
     println!("Running setup_instance");
     commands.spawn((
-        meshes.add(Mesh::from(shape::Cube { size: 0.5 })),
+        meshes.add(Mesh::from(shape::Quad::default())),
         SpatialBundle::INHERITED_IDENTITY,
         GpuInstanceSet(
             (1..=10)
@@ -74,7 +74,6 @@ fn queue_custom(
 
     for (view, mut transparent_phase) in &mut views {
         let view_key = msaa_key | MeshPipelineKey::from_hdr(view.hdr);
-        let rangefinder = view.rangefinder3d();
         for entity in &instance_set {
             let Some(mesh_instance) = render_mesh_instances.get(&entity) else {
                 continue;
