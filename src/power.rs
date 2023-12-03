@@ -35,7 +35,7 @@ impl Plugin for PowerPlugin {
         app.add_event::<AddBuilding>();
         app.add_systems(Startup, setup_imaginary_core);
         app.add_systems(
-            Update,
+            PostUpdate,
             (update_powered_unpowered).run_if(in_state(AppState::Playing)),
         )
         .add_systems(
