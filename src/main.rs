@@ -4,6 +4,7 @@ use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
 use camera::{GameCamera, GameCameraPlugin};
 
 mod camera;
+mod towers;
 
 fn main() {
     App::new()
