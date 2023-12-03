@@ -11,6 +11,7 @@ mod game;
 mod menus;
 mod placement;
 mod towers;
+mod resources;
 
 /// Top-level states that the game can be in
 #[derive(States, Debug, Clone, Eq, PartialEq, Hash, Default)]
