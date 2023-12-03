@@ -1,9 +1,7 @@
 use std::time::Duration;
 
 use bevy::{input::keyboard::KeyboardInput, prelude::*};
-use bevy_tweening::{
-    lens::SpriteColorLens, Animator, Delay, EaseFunction, Tween,
-};
+use bevy_tweening::{lens::SpriteColorLens, Animator, Delay, EaseFunction, Tween};
 
 use crate::AppState;
 
@@ -28,6 +26,7 @@ struct SplashTimer(Timer);
 struct OnSplashScreen;
 
 fn keyboard_events(mut ev: EventReader<KeyboardInput>, mut app_state: ResMut<NextState<AppState>>) {
+    #[allow(clippy::never_loop)] //TODO .read().next()
     for _ in ev.read() {
         app_state.set(AppState::MainMenu);
         break;
