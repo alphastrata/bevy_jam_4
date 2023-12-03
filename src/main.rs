@@ -1,6 +1,7 @@
 //! Shows how to render simple primitive shapes with a single color.
 use bevy::prelude::*;
 use bevy_tweening::TweeningPlugin;
+
 use bgj::game::GamePlugin;
 use bgj::menus::mainmenu::MainMenuPlugin;
 use bgj::menus::splash::SplashPlugin;

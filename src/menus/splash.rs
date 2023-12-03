@@ -1,11 +1,13 @@
 use std::time::Duration;
 
 use bevy::prelude::*;
-use bevy_tweening::{lens::SpriteColorLens, Animator, Delay, EaseFunction, Tween};
+use bevy_tweening::{
+    lens::SpriteColorLens, Animator, Delay, EaseFunction, RepeatCount, RepeatStrategy, Tween,
+};
 
 use crate::AppState;
 
-const SPLASH_DURATION: f32 = 4.0;
+const SPLASH_DURATION: f32 = 7.0;
 const ZERO_ALPHA: Color = Color::rgba(1., 1., 1., 0.);
 const MAX_ALPHA: Color = Color::rgba(1., 1., 1., 1.);
 
@@ -49,30 +51,42 @@ fn show_splash(mut commands: Commands, asset_server: Res<AssetServer>) {
                 style: Style {
                     align_items: AlignItems::Center,
                     justify_content: JustifyContent::Center,
-                    width: Val::Percent(100.0),
-                    height: Val::Percent(100.0),
+                    width: Val::Vw(100.0),
+                    height: Val::Vh(100.0),
                     ..default()
                 },
                 ..default()
             },
             OnSplashScreen,
         ))
-        .with_children(|parent| {
-            parent.spawn(ImageBundle {
-                style: Style {
-                    width: Val::Vw(100.),
-                    ..default()
-                },
-                image: UiImage::new(splash_handle),
+
+    commands.spawn((
+        SpriteBundle {
+            sprite: Sprite {
+                custom_size: Some(Vec2::splat(512.0)),
                 ..default()
-            });
-        });
+            },
+            texture: splash_handle,
+            ..default()
+        },
+        OnSplashScreen,
+    ));
+
+    let duration = 2000;
 
     for (image, offset, delay_ms) in [
-        (bubble_3_handle, 300.0, 0),
-        (bubble_2_handle, 400.0, 1000),
-        (bubble_1_handle, 550.0, 2000),
+        (bubble_3_handle, Vec3::new(-225.0, 70.0, 0.0), 0),
+        (bubble_2_handle, Vec3::new(-285.0, 100.0, 0.0), duration / 2),
+        (bubble_1_handle, Vec3::new(-360.0, 150.0, 0.0), duration),
     ] {
+        let untween = Tween::new(
+            EaseFunction::QuadraticInOut,
+            Duration::from_secs(1),
+            SpriteColorLens {
+                start: MAX_ALPHA,
+                end: ZERO_ALPHA,
+            },
+        );
         let tween = Tween::new(
             EaseFunction::QuadraticInOut,
             Duration::from_secs(1),
@@ -81,26 +95,32 @@ fn show_splash(mut commands: Commands, asset_server: Res<AssetServer>) {
                 end: MAX_ALPHA,
             },
         );
-        // FIXME: Get this to work without panicking. It should fade back to transparent
-        // from opaque.
-        // .with_repeat_count(RepeatCount::Finite(2))
-        // .with_repeat_strategy(RepeatStrategy::MirroredRepeat);
 
+        // repeat_strategy crash caused by this https://github.com/djeedai/bevy_tweening/issues/79
         let animator = if delay_ms > 0 {
-            let delay = Delay::new(Duration::from_millis(delay_ms));
-            Animator::new(delay.then(tween))
+            Animator::new(
+                Delay::new(Duration::from_millis(delay_ms))
+                    .then(tween)
+                    .then(Delay::new(Duration::from_millis(duration)))
+                    .then(untween),
+            )
         } else {
-            Animator::new(tween)
+            Animator::new(
+                tween
+                    .then(Delay::new(Duration::from_millis(duration)))
+                    .then(untween),
+            )
         };
 
         commands.spawn((
             SpriteBundle {
                 sprite: Sprite {
                     color: Color::rgba(1.0, 1.0, 1.0, 0.0),
+                    custom_size: Some(Vec2::splat(100.0)),
                     ..default()
                 },
                 texture: image,
-                transform: Transform::from_translation(Vec3::new(-offset, offset, 0.0)),
+                transform: Transform::from_translation(offset),
                 ..default()
             },
             animator,
