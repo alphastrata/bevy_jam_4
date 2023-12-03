@@ -2,6 +2,8 @@
 use bevy::{math::vec4, prelude::*};
 use bevy_mod_picking::prelude::*;
 
+use crate::power::{AddBuilding, RequiresPower};
+
 /// Representing the types of tower we have
 #[derive(Clone, Hash, Component, Debug, PartialEq, Eq)]
 pub enum TowerType {
@@ -47,26 +49,29 @@ pub trait TowerDefinition {
     // fn spawn_tower()
 }
 
-pub fn spawn_fire_tower(mut commands: Commands, pos: Vec2) {
-    commands.spawn((
-        TowerBundle {
-            marker: TowerType::Distribution,
-            health: Health(100),
-            exp: Experience(0),
-            sprite: SpriteBundle {
-                // TODO: replace with a tower image asset
-                sprite: Sprite {
-                    color: Color::rgb(0.9, 0.1, 0.1),
-                    custom_size: Some(Vec2::new(60.0, 60.0)),
+pub fn spawn_fire_tower(mut commands: Commands, pos: Vec2) -> Entity {
+    commands
+        .spawn((
+            TowerBundle {
+                marker: TowerType::Distribution,
+                health: Health(100),
+                exp: Experience(0),
+                sprite: SpriteBundle {
+                    // TODO: replace with a tower image asset
+                    sprite: Sprite {
+                        color: Color::rgb(0.9, 0.1, 0.1),
+                        custom_size: Some(Vec2::new(60.0, 60.0)),
+                        ..default()
+                    },
+                    transform: Transform::from_translation(Vec3::new(pos.x, pos.y, 0.0)),
                     ..default()
                 },
-                transform: Transform::from_translation(Vec3::new(pos.x, pos.y, 0.0)),
-                ..default()
             },
-        },
-        PickableBundle::default(), // <- Makes the mesh pickable.
-        HIGHLIGHT_TINT,            // Override the global highlighting settings for this mesh
-    ));
+            PickableBundle::default(), // <- Makes the mesh pickable.
+            HIGHLIGHT_TINT,            // Override the global highlighting settings for this mesh
+            RequiresPower,
+        ))
+        .id()
 }
 
 const HIGHLIGHT_TINT: Highlight<StandardMaterial> = Highlight {

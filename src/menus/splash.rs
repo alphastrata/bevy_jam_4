@@ -30,7 +30,8 @@ fn tick_timer(
     mut app_state: ResMut<NextState<AppState>>,
 ) {
     if timer.0.tick(time.delta()).just_finished() {
-        println!("Splash timer elapsed. Proceed to MainMenu");
+        info!("Splash timer elapsed. Proceed to MainMenu");
+
         app_state.set(AppState::MainMenu);
     }
 }

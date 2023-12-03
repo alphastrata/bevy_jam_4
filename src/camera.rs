@@ -6,8 +6,23 @@ use crate::AppState;
 const PAN_SPEED: f32 = 8.0;
 
 /// Component that adds our gameplay camera controls
-#[derive(Component, Default)]
-pub struct GameCamera;
+#[derive(Component)]
+pub struct GameCamera {
+    min_x: f32,
+    max_x: f32,
+    min_y: f32,
+    max_y: f32,
+}
+impl Default for GameCamera {
+    fn default() -> Self {
+        GameCamera {
+            min_x: -2000.0,
+            max_x: 2000.0,
+            min_y: -2000.0,
+            max_y: 2000.0,
+        }
+    }
+}
 
 pub struct GameCameraPlugin;
 impl Plugin for GameCameraPlugin {
