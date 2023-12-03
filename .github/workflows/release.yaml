@@ -3,15 +3,17 @@ name: Release
 on:
   push:
     tags:
-      - "*"
+      - '*'
 
 env:
   # update with the name of the main binary
-  binary: bgj
+  binary: cats_always_land_on_their_feet
   add_binaries_to_github_release: true
-  itch_target: alphastrata/flora-cause
+  itch_target: mywrongshoe/cats-always-land-on-their-feet
+
 
 jobs:
+
   # Build for wasm
   release-wasm:
     runs-on: ubuntu-latest
