@@ -1,6 +1,8 @@
 //! Different tower types and their functionality
 use bevy::prelude::*;
 
+use bevy_mod_picking::prelude::*;
+
 /// Representing the types of tower we have
 #[derive(Component, Debug, PartialEq, Eq)]
 pub enum TowerType {
@@ -16,7 +18,8 @@ pub enum TowerType {
     Distribution,
 }
 
-/// Marker component for towers
+/// Component:
+/// Housing everything and anything that a Tower will USE in game..
 #[derive(Component, Debug, PartialEq, Eq)]
 pub struct Tower {
     tower_type: TowerType,
@@ -50,7 +53,7 @@ pub trait TowerDefinition {
 }
 
 pub fn spawn_fire_tower(mut commands: Commands, pos: Vec2) {
-    commands.spawn(TowerBundle {
+    commands.spawn((TowerBundle {
         marker: Tower { ..default() },
         health: Health(100),
         exp: Experience(0),
@@ -64,5 +67,10 @@ pub fn spawn_fire_tower(mut commands: Commands, pos: Vec2) {
             transform: Transform::from_translation(Vec3::new(pos.x, pos.y, 0.0)),
             ..default()
         },
-    });
+
+        
+    }
+            On::<Pointer<Over>>::send_event::<Greeting>())
+    
+    );
 }
