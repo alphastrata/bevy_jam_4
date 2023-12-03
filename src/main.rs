@@ -2,14 +2,16 @@
 
 use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
 use camera::{GameCamera, GameCameraPlugin};
+use placement::TowerPlacementPlugin;
 
 mod camera;
 mod towers;
+mod placement;
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_plugins(GameCameraPlugin)
+        .add_plugins((GameCameraPlugin, TowerPlacementPlugin))
         .add_systems(Startup, setup)
         .run();
 }
