@@ -31,9 +31,7 @@ fn main() {
         .run();
 }
 
-fn setup(
-    mut commands: Commands,
-) {
+fn setup(mut commands: Commands) {
     commands.spawn((Camera2dBundle::default(), GameCamera));
 
     // left as a reference for drawing shapes

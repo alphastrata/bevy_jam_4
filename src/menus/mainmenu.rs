@@ -22,7 +22,7 @@ enum MenuButtonAction {
     VolumeDown,
 }
 
-/// Marker component for any button on the Main Menu screen.
+/// Marker component for anything on the Main Menu screen.
 /// Used for despawning all UI nodes when leaving Main Menu screen
 #[derive(Component)]
 struct OnMainMenuScreen;
