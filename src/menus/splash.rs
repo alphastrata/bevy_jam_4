@@ -30,6 +30,7 @@ fn tick_timer(
     }
 }
 
+/// Runs when we enter [AppState::Splash]
 fn show_splash(mut commands: Commands, asset_server: Res<AssetServer>) {
     let texture_handle = asset_server.load("textures/skeejy-no-background.png");
 
