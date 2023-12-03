@@ -1,5 +1,6 @@
 //! Shows how to render simple primitive shapes with a single color.
 use bevy::prelude::*;
+use bevy_tweening::TweeningPlugin;
 use camera::GameCamera;
 use game::GamePlugin;
 use menus::{mainmenu::MainMenuPlugin, splash::SplashPlugin};
@@ -7,8 +8,8 @@ use menus::{mainmenu::MainMenuPlugin, splash::SplashPlugin};
 /// Top-level states that the game can be in
 #[derive(States, Debug, Clone, Eq, PartialEq, Hash, Default)]
 pub enum AppState {
-    Splash, // TODO
     #[default]
+    Splash,
     MainMenu,
     Playing,
     Paused,
@@ -21,6 +22,7 @@ pub struct PlayerState {}
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
+        .add_plugins(TweeningPlugin)
         .add_state::<AppState>() // Default state = Splash
         // add top-level plugins
         .add_plugins((SplashPlugin, MainMenuPlugin, GamePlugin))

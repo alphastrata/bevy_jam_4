@@ -31,7 +31,7 @@ mod button_styles {
     use bevy::prelude::Color;
 
     pub(super) const NORMAL: Color = Color::rgb(0.15, 0.15, 0.15);
-    pub(super) const HOVERED: Color = Color::rgb(0.40, 0.25, 0.40);
+    pub(super) const HOVERED: Color = Color::rgb(0.30, 0.50, 0.30);
     pub(super) const PRESSED: Color = Color::rgb(0.35, 0.35, 0.35);
 }
 

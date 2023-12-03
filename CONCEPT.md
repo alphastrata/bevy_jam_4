@@ -187,7 +187,54 @@ All plants have 3 phases.
 
 - [ ] Pause Menu
 
-## Structs
+## Structs and Systems
+
+### GPUAssist
+
+#### init<T, U>(property: String, format: TextureFormat, translate: |input: T| -> U, value: Vec<u8, Global>) -> void
+
+Initialises new GPU Assisted property
+| Property | Description |
+| ------------- | ------------- |
+| T | direct data type that can be cast from texture format |
+| U | type of the data that we wish GPUAssist to return |
+| property | name of the property to access this particular texture later |
+| format | texture format to save the data in |
+| translate | function to translate individual data into usable data |
+| value | values to load into object on init |
+
+#### load(property: String, value: Vec<u8, Global>) -> void
+
+Loads value into existing property
+| Property | Description |
+| ------------- | ------------- |
+| property | name of the property to access this particular texture later |
+| translate | function to translate individual data into usable data |
+
+#### add(key: String, property: String) -> void
+
+Adds new object with GPU Assisted property
+| Property | Description |
+| ------------- | ------------- |
+| key | name of object which we wish to add a property |
+| property | name of the property defined in init |
+
+#### remove(key: String) -> void
+
+Removes specified object and frees up the associated "registers"
+| Property | Description |
+| ------------- | ------------- |
+| key | name of object which we wish to free |
+
+#### get<T>(key: String) -> T
+
+Returns a populated struct for the object associated with key
+| Property | Description |
+| ------------- | ------------- |
+| T | Struct that contains properties named the same as properties stored in the object |
+| key | object key for the object we would like to query |
+
+---
 
 ### TechTree
 
