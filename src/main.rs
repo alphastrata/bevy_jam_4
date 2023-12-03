@@ -5,8 +5,8 @@ use camera::{GameCamera, GameCameraPlugin};
 use placement::TowerPlacementPlugin;
 
 mod camera;
-mod towers;
 mod placement;
+mod towers;
 
 fn main() {
     App::new()

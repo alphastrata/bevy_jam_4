@@ -35,6 +35,7 @@ pub fn spawn_fire_tower(mut commands: Commands, pos: Vec2) {
             // TODO: replace with a tower image asset
             sprite: Sprite {
                 color: Color::rgb(0.9, 0.1, 0.1),
+                custom_size: Some(Vec2::new(60.0, 60.0)),
                 ..default()
             },
             transform: Transform::from_translation(Vec3::new(pos.x, pos.y, 0.0)),
