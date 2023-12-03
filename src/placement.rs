@@ -20,11 +20,12 @@ fn spawn_at_click_pos(
         let window = q_window.single();
         let (camera, camera_transform) = q_camera.single();
 
-        if let Some(worldspace_pos) = window
+        // convert viewport pos to worldspace
+        if let Some(world_pos) = window
             .cursor_position()
             .and_then(|cursor| camera.viewport_to_world_2d(camera_transform, cursor))
         {
-            spawn_fire_tower(commands, worldspace_pos);
+            spawn_fire_tower(commands, world_pos);
         }
     }
 }
