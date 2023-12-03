@@ -1,14 +1,18 @@
 //! Different tower types and their functionality
-
 use bevy::prelude::*;
 
 /// Representing the types of tower we have
 #[derive(Component, Debug, PartialEq, Eq)]
 pub enum TowerType {
+    /// Combats wind
     Fan,
+    /// tbd
     Shield,
+    /// tbd
     Radar,
+    /// tbd
     Doppler,
+    /// tbd
     Distribution,
 }
 
