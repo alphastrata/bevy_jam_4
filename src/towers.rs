@@ -2,7 +2,7 @@
 use bevy::{math::vec4, prelude::*};
 use bevy_mod_picking::prelude::*;
 
-use crate::power::RequiresPower;
+use crate::{power::RequiresPower, Experience, Health};
 
 /// Representing the types of tower we have
 #[derive(Clone, Hash, Component, Debug, PartialEq, Eq)]
@@ -37,12 +37,6 @@ pub struct TowerBundle {
     exp: Experience,
     sprite: SpriteBundle,
 }
-
-#[derive(Component)]
-pub struct Health(u32);
-
-#[derive(Component)]
-pub struct Experience(u32);
 
 // TODO: generic definition of a "Tower"?
 pub trait TowerDefinition {
