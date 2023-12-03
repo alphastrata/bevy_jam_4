@@ -45,20 +45,19 @@ fn show_splash(mut commands: Commands, asset_server: Res<AssetServer>) {
     let bubble_2_handle = asset_server.load("textures/bubble-2.png");
     let bubble_3_handle = asset_server.load("textures/bubble-3.png");
 
-    commands
-        .spawn((
-            NodeBundle {
-                style: Style {
-                    align_items: AlignItems::Center,
-                    justify_content: JustifyContent::Center,
-                    width: Val::Vw(100.0),
-                    height: Val::Vh(100.0),
-                    ..default()
-                },
+    commands.spawn((
+        NodeBundle {
+            style: Style {
+                align_items: AlignItems::Center,
+                justify_content: JustifyContent::Center,
+                width: Val::Vw(100.0),
+                height: Val::Vh(100.0),
                 ..default()
             },
-            OnSplashScreen,
-        ))
+            ..default()
+        },
+        OnSplashScreen,
+    ));
 
     commands.spawn((
         SpriteBundle {
