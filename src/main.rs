@@ -4,6 +4,7 @@ use bevy::prelude::*;
 use camera::GameCamera;
 use game::GamePlugin;
 use menus::{mainmenu::MainMenuPlugin, splash::SplashPlugin};
+use towers::Tower;
 
 mod camera;
 mod game;
@@ -19,6 +20,12 @@ pub enum AppState {
     MainMenu,
     Playing,
     Paused,
+}
+
+/// Holding the current selection
+#[derive(States, Debug, Clone, Eq, PartialEq, Hash, Default)]
+pub struct PlayerState {
+    selected_tower: Option<Tower>,
 }
 
 fn main() {

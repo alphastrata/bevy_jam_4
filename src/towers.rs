@@ -2,9 +2,28 @@
 
 use bevy::prelude::*;
 
+/// Representing the types of tower we have
+#[derive(Component, Debug, PartialEq, Eq)]
+pub enum TowerType {
+    Fan,
+    Shield,
+    Radar,
+    Doppler,
+    Distribution,
+}
+
 /// Marker component for towers
-#[derive(Component)]
-pub struct Tower;
+#[derive(Component, Debug, PartialEq, Eq)]
+pub struct Tower {
+    tower_type: TowerType,
+}
+impl Default for Tower {
+    fn default() -> Self {
+        Self {
+            tower_type: TowerType::Distribution,
+        }
+    }
+}
 
 /// Blueprint for a generic tower entity
 #[derive(Bundle)]
@@ -28,7 +47,7 @@ pub trait TowerDefinition {
 
 pub fn spawn_fire_tower(mut commands: Commands, pos: Vec2) {
     commands.spawn(TowerBundle {
-        marker: Tower,
+        marker: Tower { ..default() },
         health: Health(100),
         exp: Experience(0),
         sprite: SpriteBundle {

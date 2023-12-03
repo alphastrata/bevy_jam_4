@@ -65,6 +65,7 @@ fn enter_menu(mut commands: Commands) {
     commands
         .entity(start_button)
         .insert(MenuButtonAction::StartGame);
+
     let quit_button = spawn_button(&mut commands, "Quit Game");
     commands
         .entity(quit_button)
