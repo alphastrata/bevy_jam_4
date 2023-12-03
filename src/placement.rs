@@ -1,12 +1,15 @@
 use bevy::{prelude::*, window::PrimaryWindow};
 
-use crate::{camera::GameCamera, towers::spawn_fire_tower};
+use crate::{camera::GameCamera, towers::spawn_fire_tower, AppState};
 
 /// Spawn towers when clicked
 pub struct TowerPlacementPlugin;
 impl Plugin for TowerPlacementPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, spawn_at_click_pos);
+        app.add_systems(
+            Update,
+            (spawn_at_click_pos).run_if(in_state(AppState::Playing)),
+        );
     }
 }
 

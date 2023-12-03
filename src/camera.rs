@@ -1,5 +1,7 @@
 use bevy::{prelude::*, window::PrimaryWindow};
 
+use crate::AppState;
+
 /// Play with this to modify the multiplier for camera pan movement
 const PAN_SPEED: f32 = 8.0;
 
@@ -10,7 +12,7 @@ pub struct GameCamera;
 pub struct GameCameraPlugin;
 impl Plugin for GameCameraPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, pan_camera);
+        app.add_systems(Update, (pan_camera).run_if(in_state(AppState::Playing)));
     }
 }
 
