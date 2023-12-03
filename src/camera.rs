@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 /// Play with this to modify the multiplier for camera pan movement
-const PAN_SPEED: f32 = 5.0;
+const PAN_SPEED: f32 = 8.0;
 
 /// Component that adds our gameplay camera controls
 #[derive(Component, Default)]
