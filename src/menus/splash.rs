@@ -46,20 +46,6 @@ fn show_splash(mut commands: Commands, asset_server: Res<AssetServer>) {
     let bubble_3_handle = asset_server.load("textures/bubble-3.png");
 
     commands.spawn((
-        NodeBundle {
-            style: Style {
-                align_items: AlignItems::Center,
-                justify_content: JustifyContent::Center,
-                width: Val::Vw(100.0),
-                height: Val::Vh(100.0),
-                ..default()
-            },
-            ..default()
-        },
-        OnSplashScreen,
-    ));
-
-    commands.spawn((
         SpriteBundle {
             sprite: Sprite {
                 custom_size: Some(Vec2::splat(512.0)),
