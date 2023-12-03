@@ -18,8 +18,7 @@ impl Plugin for MainMenuPlugin {
 enum MenuButtonAction {
     StartGame,
     QuitGame,
-    VolumeUp,
-    VolumeDown,
+    SetVolume,
 }
 
 /// Marker component for anything on the Main Menu screen.

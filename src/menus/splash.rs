@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use bevy::prelude::*;
+use bevy::{input::keyboard::KeyboardInput, prelude::*};
 use bevy_tweening::{
     lens::SpriteColorLens, Animator, Delay, EaseFunction, RepeatCount, RepeatStrategy, Tween,
 };
@@ -16,6 +16,7 @@ impl Plugin for SplashPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.add_systems(OnEnter(AppState::Splash), show_splash)
             .add_systems(OnExit(AppState::Splash), exit_splash)
+            .add_systems(Update, (keyboard_events).run_if(in_state(AppState::Splash)))
             .add_systems(Update, (tick_timer).run_if(in_state(AppState::Splash)));
     }
 }
@@ -25,6 +26,13 @@ struct SplashTimer(Timer);
 
 #[derive(Component)]
 struct OnSplashScreen;
+
+fn keyboard_events(mut ev: EventReader<KeyboardInput>, mut app_state: ResMut<NextState<AppState>>) {
+    for _ in ev.read() {
+        app_state.set(AppState::MainMenu);
+        break;
+    }
+}
 
 fn tick_timer(
     time: Res<Time>,
