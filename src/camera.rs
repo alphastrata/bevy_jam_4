@@ -58,7 +58,7 @@ fn pan_camera(
     };
     if mouse_btns.pressed(MouseButton::Left) {
         let mouse_delta = current_pos - last_pos.unwrap_or(current_pos);
-        transform.translation += Vec3::new(mouse_delta.x, mouse_delta.y, 0.0);
+        transform.translation -= Vec3::new(mouse_delta.x, mouse_delta.y, 0.0);
     }
     *last_pos = Some(current_pos);
 }
