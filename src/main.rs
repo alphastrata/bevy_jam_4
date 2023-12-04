@@ -39,7 +39,12 @@ fn main() {
 fn setup(mut commands: Commands, mut q_window: Query<&mut Window, With<PrimaryWindow>>) {
     // unlocks fps with fast vsync (Presentation::Mailbox)
     let mut window = q_window.single_mut();
-    window.present_mode = PresentMode::Mailbox;
+    window.present_mode = PresentMode::AutoNoVsync;
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        window.present_mode = PresentMode::Mailbox;
+    }
+
     // window.present_mode = PresentMode::
     info!("{:?}", window.present_mode);
 
