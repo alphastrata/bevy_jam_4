@@ -3,7 +3,7 @@ use bevy::{prelude::*, window::WindowResized};
 use bevy_tweening::TweeningPlugin;
 
 use flora_cause::{
-    game::camera::GameCamera,
+    game::{camera::GameCamera, keybinds::KeybindPlugin},
     scenes::{gameplay::GameplayPlugin, mainmenu::MainMenuPlugin, splash::SplashPlugin},
     AppState,
 };
@@ -16,11 +16,10 @@ fn main() {
     App::new()
         .insert_resource(ResolutionSettings {
             large: Vec2::new(1920.0, 1080.0),
-            medium: Vec2::new(800.0, 600.0),
-            small: Vec2::new(640.0, 360.0),
+            default: Vec2::new(960.0, 640.0),
         })
         .add_plugins(DefaultPlugins)
-        .add_plugins(TweeningPlugin)
+        .add_plugins((TweeningPlugin, KeybindPlugin))
         .add_state::<AppState>() // Default state = Splash
         // add top-level plugins
         .add_plugins((SplashPlugin, MainMenuPlugin, GameplayPlugin))
@@ -41,8 +40,7 @@ struct ResolutionText;
 #[derive(Resource)]
 struct ResolutionSettings {
     large: Vec2,
-    medium: Vec2,
-    small: Vec2,
+    default: Vec2,
 }
 
 // Spawns the UI
@@ -77,17 +75,12 @@ fn toggle_resolution(
     resolution: Res<ResolutionSettings>,
 ) {
     let mut window = windows.single_mut();
-
     if keys.just_pressed(KeyCode::Key1) {
-        let res = resolution.small;
+        let res = resolution.large;
         window.resolution.set(res.x, res.y);
     }
     if keys.just_pressed(KeyCode::Key2) {
-        let res = resolution.medium;
-        window.resolution.set(res.x, res.y);
-    }
-    if keys.just_pressed(KeyCode::Key3) {
-        let res = resolution.large;
+        let res = resolution.default;
         window.resolution.set(res.x, res.y);
     }
 }

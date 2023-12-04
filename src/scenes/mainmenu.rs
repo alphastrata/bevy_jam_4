@@ -18,6 +18,7 @@ impl Plugin for MainMenuPlugin {
 enum MenuButtonAction {
     StartGame,
     QuitGame,
+    Credits,
     SetVolume,
 }
 
@@ -49,8 +50,12 @@ fn menu_action(
                 MenuButtonAction::StartGame => {
                     app_state.set(AppState::Playing);
                 }
+                // the game can't quit in browser lmao
                 MenuButtonAction::QuitGame => {
                     app_exit_events.send(AppExit);
+                }
+                MenuButtonAction::Credits => {
+                    // show credits!
                 }
                 _ => todo!("Handle volume controls"),
             }
@@ -65,7 +70,9 @@ fn enter_menu(mut commands: Commands) {
         .entity(start_button)
         .insert(MenuButtonAction::StartGame);
 
+    #[cfg(not(target_arch = "wasm32"))]
     let quit_button = spawn_button(&mut commands, "Quit Game");
+    #[cfg(not(target_arch = "wasm32"))]
     commands
         .entity(quit_button)
         .insert(MenuButtonAction::QuitGame);
@@ -85,18 +92,21 @@ fn enter_menu(mut commands: Commands) {
             OnMainMenuScreen,
         ))
         .with_children(|parent| {
-            parent
-                .spawn(NodeBundle {
-                    style: Style {
-                        flex_direction: FlexDirection::Column,
-                        align_items: AlignItems::Center,
-                        ..default()
-                    },
-                    background_color: Color::CRIMSON.into(),
+            let mut cb = parent.spawn(NodeBundle {
+                style: Style {
+                    flex_direction: FlexDirection::Column,
+                    align_items: AlignItems::Center,
                     ..default()
-                })
-                .add_child(start_button)
-                .add_child(quit_button);
+                },
+                background_color: Color::CRIMSON.into(),
+                ..default()
+            });
+            cb.add_child(start_button);
+
+            #[cfg(not(target_arch = "wasm32"))]
+            {
+                cb.add_child(quit_button);
+            }
         });
 }
 
