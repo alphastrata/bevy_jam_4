@@ -2,6 +2,7 @@
 #![allow(unused_imports, dead_code)]
 use bevy::ecs::schedule::States;
 
+pub mod buildings;
 pub mod game;
 pub mod scenes;
 
