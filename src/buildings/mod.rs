@@ -29,6 +29,8 @@ pub trait BuildingDefinition: Default {
     const COST: u32;
     const NAME: &'static str;
     const DESCRIPTION: &'static str;
+
+    fn add_extra_components(commands: &mut Commands, end_id: Entity);
 }
 
 pub fn spawn_building<B: BuildingDefinition>(
@@ -38,7 +40,7 @@ pub fn spawn_building<B: BuildingDefinition>(
 ) -> Entity {
     let sprite_texture = asset_server.load(B::SPRITE_PATH);
 
-    commands
+    let ent_id = commands
         .spawn(MinimalBuilding {
             marker: Building,
             health: Health(B::BASE_HEALTH),
@@ -48,7 +50,11 @@ pub fn spawn_building<B: BuildingDefinition>(
                 ..default()
             },
         })
-        .id()
+        .id();
+
+    B::add_extra_components(commands, ent_id);
+
+    ent_id
 }
 
 // /// Representing the types of buildings we have

@@ -99,7 +99,7 @@ fn debug_power_map_ui(
     q_supply.iter().for_each(|(radius, transform)| {
         let pos = Vec2::new(transform.translation.x, transform.translation.y);
         gizmos
-            .circle_2d(pos, radius.0, Color::rgba(1.0, 1.0, 0.0, 1.0))
+            .circle_2d(pos, radius.0, Color::MIDNIGHT_BLUE)
             .segments(32);
     });
     // q_powered_buildings.iter().for_each(|(_, transform)| {
