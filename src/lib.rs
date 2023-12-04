@@ -3,14 +3,13 @@
 use bevy::ecs::{component::Component, schedule::States};
 
 pub mod camera;
+pub mod creeps;
 pub mod game;
 pub mod menus;
 pub mod placement;
 pub mod power;
 pub mod towers;
-pub mod creeps {
-    use bevy::prelude::*;
-}
+
 #[derive(Component)]
 pub struct MovementSpeed(u32);
 
