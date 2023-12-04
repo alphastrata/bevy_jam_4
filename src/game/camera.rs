@@ -45,7 +45,6 @@ pub struct CameraState {
     zoom_target: f32,
     velocity: Vec2,
     prev_mouse_pos: Vec2,
-    prev_delta: Vec2,
 }
 
 impl Default for CameraState {
@@ -54,7 +53,6 @@ impl Default for CameraState {
             zoom_target: 1.0,
             velocity: Vec2::ZERO,
             prev_mouse_pos: Vec2::ZERO,
-            prev_delta: Vec2::ZERO,
         }
     }
 }
@@ -70,7 +68,6 @@ fn move_camera(
     input: Res<Input<FloraCommand>>,
     time: Res<Time>,
     q_window: Query<&Window, With<PrimaryWindow>>,
-    q_camera: Query<(&Camera, &GlobalTransform), With<CameraState>>,
     mut query: Query<(
         &mut CameraState,
         &mut Transform,
@@ -94,7 +91,6 @@ fn move_camera(
     // zoom
     use bevy::input::mouse::MouseScrollUnit;
     for ev in wheel_ev.read() {
-        info!(ev.x);
         state.zoom_target += match ev.unit {
             MouseScrollUnit::Pixel => ev.y * ZOOM_VELOCITY_PX,
             MouseScrollUnit::Line => ev.y * ZOOM_VELOCITY_LINE,
@@ -102,24 +98,6 @@ fn move_camera(
     }
     state.zoom_target = state.zoom_target.clamp(ZOOM_MAX, ZOOM_MIN);
     projection.scale = projection.scale.lerp(&state.zoom_target, &ZOOM_FACTOR);
-
-    let window = q_window.single();
-    // let (camera, camera_transform) = q_camera.single();
-    // if let Some(world_pos) = window
-    //     .cursor_position()
-    //     .and_then(|cursor| camera.viewport_to_world_2d(camera_transform, cursor))
-    // {
-    //     let delta = state.prev_mouse_pos - world_pos;
-    //     state.prev_mouse_pos = world_pos;
-    //     let prev_delta = state.prev_delta;
-    //     state.prev_delta = delta;
-    //     info!("{}", delta);
-    //     if mouse_input.pressed(MouseButton::Middle) {
-    //         transform.translation += Vec3::from((delta, 0.0));
-    //         // state.velocity = delta;
-    //         return;
-    //     }
-    // }
 
     // read the mouse motion or it builds up speed
     let mut mousetache = Vec2::ZERO;
@@ -135,9 +113,9 @@ fn move_camera(
         mousetache *= DRAG_FACTOR * projection.scale;
         transform.translation += Vec3::new(mousetache.x, mousetache.y, 0.0);
         state.velocity = mousetache;
-        // info!("{:?}", motion);
     }
 
+    // quit out of other motion of middle click to drag is being used
     if mouse_input.pressed(MouseButton::Middle) {
         return;
     }
@@ -157,6 +135,7 @@ fn move_camera(
         accel -= Vec2::Y;
     }
 
+    let window = q_window.single();
     // edge pan
     let mut pan = Vec2::ZERO;
     let top_left = Vec2::ZERO;
@@ -190,8 +169,11 @@ fn move_camera(
 
     // motion physics
     accel = accel.normalize_or_zero();
-    state.velocity += accel * Vec2::splat(time.delta_seconds()) * ACCELERATION;
-    state.velocity = state.velocity.clamp(-VELOCITY_MAX, VELOCITY_MAX);
+    state.velocity += accel * Vec2::splat(time.delta_seconds()) * ACCELERATION * projection.scale;
+    state.velocity = state.velocity.clamp(
+        -VELOCITY_MAX * projection.scale,
+        VELOCITY_MAX * projection.scale,
+    );
 
     transform.translation += Vec3::from((state.velocity, 0.0));
     state.velocity *= FRICTION;
