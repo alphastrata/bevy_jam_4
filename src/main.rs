@@ -1,5 +1,6 @@
 //! Shows how to render simple primitive shapes with a single color.
 use bevy::{prelude::*, window::WindowResized};
+use bevy_ecs_tilemap::TilemapPlugin;
 use bevy_tweening::TweeningPlugin;
 
 use flora_cause::{
@@ -20,7 +21,9 @@ fn main() {
             small: Vec2::new(640.0, 360.0),
         })
         .add_plugins(DefaultPlugins)
+        // 3rd party dependencies
         .add_plugins(TweeningPlugin)
+        .add_plugins(TilemapPlugin)
         .add_state::<AppState>() // Default state = Splash
         // add top-level plugins
         .add_plugins((SplashPlugin, MainMenuPlugin, GameplayPlugin))

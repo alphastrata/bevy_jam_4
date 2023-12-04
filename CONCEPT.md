@@ -74,7 +74,7 @@ All plants have 3 phases.
 
 - Allows the distribution of resources/power.
 
-### - Roboport
+### - Roboport (skip for now)
 
 - Long range building that sends out robots to collect resources, robots return resources.
 
