@@ -3,6 +3,7 @@
 use bevy::ecs::schedule::States;
 
 pub mod buildings;
+pub mod debug;
 pub mod game;
 pub mod scenes;
 

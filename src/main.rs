@@ -1,8 +1,13 @@
 //! Shows how to render simple primitive shapes with a single color.
-use bevy::{prelude::*, window::WindowResized};
+use bevy::{
+    diagnostic::FrameTimeDiagnosticsPlugin,
+    prelude::*,
+    window::{PresentMode, PrimaryWindow, WindowResized},
+};
 use bevy_tweening::TweeningPlugin;
 
 use flora_cause::{
+    debug::fps_counter::FPSPlugin,
     game::{camera::CameraState, keybinds::KeybindPlugin},
     scenes::{gameplay::GameplayPlugin, mainmenu::MainMenuPlugin, splash::SplashPlugin},
     AppState,
@@ -19,17 +24,25 @@ fn main() {
             default: Vec2::new(960.0, 640.0),
         })
         .add_plugins(DefaultPlugins)
+        .add_plugins(FrameTimeDiagnosticsPlugin::default())
         .add_plugins((TweeningPlugin, KeybindPlugin))
         .add_state::<AppState>() // Default state = Splash
         // add top-level plugins
         .add_plugins((SplashPlugin, MainMenuPlugin, GameplayPlugin))
+        .add_plugins(FPSPlugin)
         .add_systems(Startup, setup)
         .add_systems(Startup, setup_ui)
         .add_systems(Update, (on_resize_system, toggle_resolution))
         .run();
 }
 
-fn setup(mut commands: Commands) {
+fn setup(mut commands: Commands, mut q_window: Query<&mut Window, With<PrimaryWindow>>) {
+    // unlocks fps with fast vsync (Presentation::Mailbox)
+    let mut window = q_window.single_mut();
+    window.present_mode = PresentMode::Mailbox;
+    // window.present_mode = PresentMode::
+    info!("{:?}", window.present_mode);
+
     commands.spawn((Camera2dBundle::default(), CameraState::default()));
 }
 
