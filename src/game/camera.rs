@@ -1,25 +1,33 @@
-use bevy::{log, prelude::*, window::PrimaryWindow};
+use bevy::{core::Zeroable, log, prelude::*, window::PrimaryWindow};
 
 use crate::AppState;
+
+use super::keybinds::FloraCommand;
 
 /// Play with this to modify the multiplier for camera pan movement
 const PAN_SPEED: f32 = 8.0;
 
+const CAMERA_BOUNDS_MIN: Vec2 = Vec2::new(-2000.0, -2000.0);
+const CAMERA_BOUNDS_MAX: Vec2 = Vec2::new(2000.0, 2000.0);
+
+const FRICTION: Vec2 = Vec2::splat(0.85);
+const ACCELERATION: Vec2 = Vec2::splat(100.0);
+const VELOCITY_MAX: Vec2 = Vec2::splat(1000.0);
+
 /// Component that adds our gameplay camera controls
 #[derive(Component)]
 pub struct GameCamera {
-    min_x: f32,
-    max_x: f32,
-    min_y: f32,
-    max_y: f32,
+    zoom_current: f32,
+    zoom_target: f32,
+    velocity: Vec2,
 }
+
 impl Default for GameCamera {
     fn default() -> Self {
         GameCamera {
-            min_x: -2000.0,
-            max_x: 2000.0,
-            min_y: -2000.0,
-            max_y: 2000.0,
+            zoom_current: 1.0,
+            zoom_target: 1.0,
+            velocity: Vec2::ZERO,
         }
     }
 }
@@ -27,11 +35,40 @@ impl Default for GameCamera {
 pub struct GameCameraPlugin;
 impl Plugin for GameCameraPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, (pan_camera).run_if(in_state(AppState::Playing)));
+        app.add_systems(Update, (move_camera).run_if(in_state(AppState::Playing)));
     }
 }
 
-fn pan_camera(
+fn move_camera(
+    input: Res<Input<FloraCommand>>,
+    mut query: Query<(&mut GameCamera, &mut Transform, &OrthographicProjection)>,
+    time: Res<Time>,
+) {
+    let (mut state, mut transform, _proj) = query.single_mut();
+
+    let mut accel = Vec2::ZERO;
+
+    if input.pressed(FloraCommand::Left) {
+        accel -= Vec2::X;
+    }
+    if input.pressed(FloraCommand::Right) {
+        accel += Vec2::X;
+    }
+    if input.pressed(FloraCommand::Up) {
+        accel += Vec2::Y;
+    }
+    if input.pressed(FloraCommand::Down) {
+        accel -= Vec2::Y;
+    }
+
+    accel = accel.normalize_or_zero();
+    state.velocity += accel * Vec2::splat(time.delta_seconds()) * ACCELERATION;
+
+    transform.translation += Vec3::from((state.velocity, 0.0));
+    state.velocity *= FRICTION;
+}
+
+/*fn pan_camera(
     keys: Res<Input<KeyCode>>,
     mouse_btns: Res<Input<MouseButton>>,
     primary_window: Query<&Window, With<PrimaryWindow>>,
@@ -79,3 +116,4 @@ fn pan_camera(
     }
     *last_pos = Some(current_pos);
 }
+*/
