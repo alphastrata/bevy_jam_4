@@ -43,41 +43,61 @@ pub enum FloraCommand {
 }
 
 lazy_static! {
-    static ref FLORA_COMMAND_MAPPING: HashMap<Vec<KeyCode>, FloraCommand> = {
+    static ref FLORA_COMMAND_MAPPING: HashMap<FloraCommand, Vec<Vec<KeyCode>>> = {
         let mut map = HashMap::new();
-        map.insert(vec![KeyCode::Escape], FloraCommand::Esc);
-        map.insert(vec![KeyCode::Left], FloraCommand::Left);
-        map.insert(vec![KeyCode::Right], FloraCommand::Right);
-        map.insert(vec![KeyCode::Up], FloraCommand::Up);
-        map.insert(vec![KeyCode::Down], FloraCommand::Down);
-        map.insert(vec![KeyCode::ControlLeft, KeyCode::C], FloraCommand::Copy);
-        map.insert(vec![KeyCode::ControlLeft, KeyCode::V], FloraCommand::Paste);
+        map.insert(FloraCommand::Esc, vec![vec![KeyCode::Escape]]);
+        map.insert(FloraCommand::Left, vec![vec![KeyCode::Left]]);
+        map.insert(FloraCommand::Right, vec![vec![KeyCode::Right]]);
+        map.insert(FloraCommand::Up, vec![vec![KeyCode::Up]]);
+        map.insert(FloraCommand::Down, vec![vec![KeyCode::Down]]);
+        map.insert(
+            FloraCommand::Copy,
+            vec![
+                vec![KeyCode::ControlLeft, KeyCode::C],
+                vec![KeyCode::ControlRight, KeyCode::C],
+            ],
+        );
+        map.insert(
+            FloraCommand::Paste,
+            vec![
+                vec![KeyCode::ControlLeft, KeyCode::V],
+                vec![KeyCode::ControlRight, KeyCode::V],
+            ],
+        );
         map
     };
 }
 
 fn keyboard_events(input: Res<Input<KeyCode>>, mut resource: ResMut<Input<FloraCommand>>) {
-    for combo in FLORA_COMMAND_MAPPING.keys() {
-        let flora = FLORA_COMMAND_MAPPING[combo];
+    for flora in FLORA_COMMAND_MAPPING.keys() {
+        let combos = &FLORA_COMMAND_MAPPING[flora];
 
-        let mut pressed = true;
-        for key in combo {
-            // quit out if any keys are not pressed
-            if !input.pressed(*key) {
-                pressed = false;
+        let mut pressed = false;
+        for combo in combos {
+            let mut combo_pressed = true;
+            for key in combo {
+                // quit out if any keys are not pressed
+                if !input.pressed(*key) {
+                    combo_pressed = false;
+                    break;
+                }
+            }
+            if combo_pressed {
+                pressed = true;
                 break;
             }
         }
+
         if pressed {
-            if resource.pressed(flora) {
-                resource.clear_just_pressed(flora);
+            if resource.pressed(*flora) {
+                resource.clear_just_pressed(*flora);
             }
-            resource.press(flora);
+            resource.press(*flora);
         } else {
-            if resource.pressed(flora) {
-                resource.release(flora);
+            if resource.pressed(*flora) {
+                resource.release(*flora);
             } else {
-                resource.reset(flora);
+                resource.reset(*flora);
             }
         }
     }
