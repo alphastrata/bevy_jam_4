@@ -1,5 +1,7 @@
-use crate::power::AddBuilding;
-use crate::{camera::GameCamera, towers::spawn_fire_tower, AppState};
+use crate::{
+    game::{camera::GameCamera, power::AddBuilding, towers::spawn_fire_tower},
+    AppState,
+};
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use bevy_mod_picking::prelude::*;

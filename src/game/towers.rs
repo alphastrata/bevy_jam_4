@@ -2,7 +2,7 @@
 use bevy::{math::vec4, prelude::*};
 use bevy_mod_picking::prelude::*;
 
-use crate::power::RequiresPower;
+use crate::game::power::RequiresPower;
 
 /// Representing the types of tower we have
 #[derive(Clone, Hash, Component, Debug, PartialEq, Eq)]

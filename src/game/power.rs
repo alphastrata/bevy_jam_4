@@ -4,7 +4,7 @@ use std::ops::ControlFlow;
 
 use bevy::prelude::*;
 
-use crate::{towers::TowerType, AppState};
+use crate::{game::towers::TowerType, AppState};
 
 /// Marker component for buildings that require Power
 #[derive(Component)]
