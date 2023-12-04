@@ -1,5 +1,8 @@
-use crate::power::AddBuilding;
-use crate::{camera::GameCamera, towers::spawn_fire_tower, AppState};
+use crate::{
+    buildings::{distribution::DistributionTower, spawn_building},
+    game::{camera::CameraState, power::AddBuilding},
+    AppState,
+};
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use bevy_mod_picking::prelude::*;
@@ -18,9 +21,10 @@ impl Plugin for TowerPlacementPlugin {
 }
 
 fn spawn_at_click_pos(
-    commands: Commands,
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
     q_window: Query<&Window, With<PrimaryWindow>>,
-    q_camera: Query<(&Camera, &GlobalTransform), With<GameCamera>>,
+    q_camera: Query<(&Camera, &GlobalTransform), With<CameraState>>,
     mouse_btns: Res<Input<MouseButton>>,
     mut add_building: EventWriter<AddBuilding>,
 ) {
@@ -33,7 +37,7 @@ fn spawn_at_click_pos(
             .cursor_position()
             .and_then(|cursor| camera.viewport_to_world_2d(camera_transform, cursor))
         {
-            _ = spawn_fire_tower(commands, world_pos);
+            let _ = spawn_building::<DistributionTower>(&mut commands, asset_server, world_pos);
             add_building.send(AddBuilding);
         }
     }

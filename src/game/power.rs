@@ -4,7 +4,7 @@ use std::ops::ControlFlow;
 
 use bevy::prelude::*;
 
-use crate::{towers::TowerType, AppState};
+use crate::AppState;
 
 /// Marker component for buildings that require Power
 #[derive(Component)]
@@ -93,21 +93,21 @@ fn update_powered_unpowered(
 fn debug_power_map_ui(
     mut gizmos: Gizmos,
     q_supply: Query<(&SupplyRadius, &Transform)>,
-    q_powered_buildings: Query<(&TowerType, &Transform), With<IsPowered>>,
-    q_unpowered_buildings: Query<(&TowerType, &Transform), Without<IsPowered>>,
+    // q_powered_buildings: Query<(&TowerType, &Transform), With<IsPowered>>,
+    // q_unpowered_buildings: Query<(&TowerType, &Transform), Without<IsPowered>>,
 ) {
     q_supply.iter().for_each(|(radius, transform)| {
         let pos = Vec2::new(transform.translation.x, transform.translation.y);
         gizmos
-            .circle_2d(pos, radius.0, Color::rgba(1.0, 1.0, 0.0, 1.0))
+            .circle_2d(pos, radius.0, Color::MIDNIGHT_BLUE)
             .segments(32);
     });
-    q_powered_buildings.iter().for_each(|(_, transform)| {
-        let pos = Vec2::new(transform.translation.x, transform.translation.y);
-        gizmos.circle_2d(pos, 20.0, Color::ALICE_BLUE).segments(16);
-    });
-    q_unpowered_buildings.iter().for_each(|(_, transform)| {
-        let pos = Vec2::new(transform.translation.x, transform.translation.y);
-        gizmos.circle_2d(pos, 20.0, Color::PURPLE).segments(16);
-    });
+    // q_powered_buildings.iter().for_each(|(_, transform)| {
+    //     let pos = Vec2::new(transform.translation.x, transform.translation.y);
+    //     gizmos.circle_2d(pos, 20.0, Color::ALICE_BLUE).segments(16);
+    // });
+    // q_unpowered_buildings.iter().for_each(|(_, transform)| {
+    //     let pos = Vec2::new(transform.translation.x, transform.translation.y);
+    //     gizmos.circle_2d(pos, 20.0, Color::PURPLE).segments(16);
+    // });
 }
