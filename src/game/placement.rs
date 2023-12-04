@@ -1,6 +1,6 @@
 use crate::{
     buildings::{distribution::DistributionTower, spawn_building},
-    game::{camera::GameCamera, power::AddBuilding},
+    game::{camera::CameraState, power::AddBuilding},
     AppState,
 };
 use bevy::prelude::*;
@@ -24,7 +24,7 @@ fn spawn_at_click_pos(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     q_window: Query<&Window, With<PrimaryWindow>>,
-    q_camera: Query<(&Camera, &GlobalTransform), With<GameCamera>>,
+    q_camera: Query<(&Camera, &GlobalTransform), With<CameraState>>,
     mouse_btns: Res<Input<MouseButton>>,
     mut add_building: EventWriter<AddBuilding>,
 ) {

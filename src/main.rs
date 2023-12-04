@@ -3,7 +3,7 @@ use bevy::{prelude::*, window::WindowResized};
 use bevy_tweening::TweeningPlugin;
 
 use flora_cause::{
-    game::{camera::GameCamera, keybinds::KeybindPlugin},
+    game::{camera::CameraState, keybinds::KeybindPlugin},
     scenes::{gameplay::GameplayPlugin, mainmenu::MainMenuPlugin, splash::SplashPlugin},
     AppState,
 };
@@ -30,7 +30,7 @@ fn main() {
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn((Camera2dBundle::default(), GameCamera::default()));
+    commands.spawn((Camera2dBundle::default(), CameraState::default()));
 }
 
 /// Marker component for the text that displays the current resolution.
