@@ -7,7 +7,7 @@ use bevy::{
 use bevy_tweening::TweeningPlugin;
 
 use flora_cause::{
-    debug::fps_counter::FPSPlugin,
+    // debug::fps_counter::FPSPlugin,
     game::{camera::CameraState, keybinds::KeybindPlugin},
     scenes::{gameplay::GameplayPlugin, mainmenu::MainMenuPlugin, splash::SplashPlugin},
     AppState,
@@ -26,10 +26,8 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugins(FrameTimeDiagnosticsPlugin::default())
         .add_plugins((TweeningPlugin, KeybindPlugin))
-        .add_state::<AppState>() // Default state = Splash
-        // add top-level plugins
+        .add_state::<AppState>()
         .add_plugins((SplashPlugin, MainMenuPlugin, GameplayPlugin))
-        .add_plugins(FPSPlugin)
         .add_systems(Startup, setup)
         .add_systems(Startup, setup_ui)
         .add_systems(Update, (on_resize_system, toggle_resolution))
