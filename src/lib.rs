@@ -9,9 +9,9 @@ pub mod scenes;
 /// Top-level states that the game can be in
 #[derive(States, Debug, Clone, Eq, PartialEq, Hash, Default)]
 pub enum AppState {
-    #[default]
-    Splash,
-    MainMenu,
-    Playing,
-    Paused,
+	#[default]
+	Splash,
+	MainMenu,
+	Playing,
+	Paused,
 }
