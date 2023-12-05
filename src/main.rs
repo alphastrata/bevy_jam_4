@@ -1,10 +1,15 @@
 //! Shows how to render simple primitive shapes with a single color.
-use bevy::{prelude::*, window::WindowResized};
+use bevy::{
+    diagnostic::FrameTimeDiagnosticsPlugin,
+    prelude::*,
+    window::{PresentMode, PrimaryWindow, WindowResized},
+};
 use bevy_ecs_tilemap::TilemapPlugin;
 use bevy_tweening::TweeningPlugin;
 
 use flora_cause::{
-    game::camera::GameCamera,
+    // debug::fps_counter::FPSPlugin,
+    game::{camera::CameraState, keybinds::KeybindPlugin},
     scenes::{gameplay::GameplayPlugin, mainmenu::MainMenuPlugin, splash::SplashPlugin},
     AppState,
 };
@@ -17,15 +22,14 @@ fn main() {
     App::new()
         .insert_resource(ResolutionSettings {
             large: Vec2::new(1920.0, 1080.0),
-            medium: Vec2::new(800.0, 600.0),
-            small: Vec2::new(640.0, 360.0),
+            default: Vec2::new(960.0, 640.0),
         })
         .add_plugins(DefaultPlugins)
         // 3rd party dependencies
-        .add_plugins(TweeningPlugin)
+        .add_plugins(FrameTimeDiagnosticsPlugin)
+        .add_plugins((TweeningPlugin, KeybindPlugin))
         .add_plugins(TilemapPlugin)
-        .add_state::<AppState>() // Default state = Splash
-        // add top-level plugins
+        .add_state::<AppState>()
         .add_plugins((SplashPlugin, MainMenuPlugin, GameplayPlugin))
         .add_systems(Startup, setup)
         .add_systems(Startup, setup_ui)
@@ -33,8 +37,19 @@ fn main() {
         .run();
 }
 
-fn setup(mut commands: Commands) {
-    commands.spawn((Camera2dBundle::default(), GameCamera::default()));
+fn setup(mut commands: Commands, mut q_window: Query<&mut Window, With<PrimaryWindow>>) {
+    // unlocks fps with fast vsync (Presentation::Mailbox)
+    let mut window = q_window.single_mut();
+    window.present_mode = PresentMode::AutoNoVsync;
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        window.present_mode = PresentMode::AutoVsync;
+    }
+
+    // window.present_mode = PresentMode::
+    info!("{:?}", window.present_mode);
+
+    commands.spawn((Camera2dBundle::default(), CameraState::default()));
 }
 
 /// Marker component for the text that displays the current resolution.
@@ -44,8 +59,7 @@ struct ResolutionText;
 #[derive(Resource)]
 struct ResolutionSettings {
     large: Vec2,
-    medium: Vec2,
-    small: Vec2,
+    default: Vec2,
 }
 
 // Spawns the UI
@@ -80,17 +94,12 @@ fn toggle_resolution(
     resolution: Res<ResolutionSettings>,
 ) {
     let mut window = windows.single_mut();
-
     if keys.just_pressed(KeyCode::Key1) {
-        let res = resolution.small;
+        let res = resolution.large;
         window.resolution.set(res.x, res.y);
     }
     if keys.just_pressed(KeyCode::Key2) {
-        let res = resolution.medium;
-        window.resolution.set(res.x, res.y);
-    }
-    if keys.just_pressed(KeyCode::Key3) {
-        let res = resolution.large;
+        let res = resolution.default;
         window.resolution.set(res.x, res.y);
     }
 }

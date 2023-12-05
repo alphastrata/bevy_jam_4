@@ -1,25 +1,58 @@
-use bevy::{log, prelude::*, window::PrimaryWindow};
+use bevy::{
+    core::Zeroable,
+    input::mouse::{MouseMotion, MouseWheel},
+    log,
+    prelude::*,
+    window::PrimaryWindow,
+};
+use bevy_tweening::Lerp;
 
 use crate::AppState;
 
-/// Play with this to modify the multiplier for camera pan movement
-const PAN_SPEED: f32 = 8.0;
+use super::keybinds::FloraCommand;
+
+// how close to the edges of the screen before camera moves
+const PAN_THRESHOLD: Vec2 = Vec2::splat(64.0);
+
+// loops camera when x value is met, stops camera from progressing when y value is met
+const CAMERA_BOUNDS_MIN: Vec2 = Vec2::new(-2000.0, -2000.0);
+// loops camera when x value is met, stops camera from progressing when y value is met
+const CAMERA_BOUNDS_MAX: Vec2 = Vec2::new(2000.0, 2000.0);
+
+// current camera velocity is multiplied by this value to slow it down
+const FRICTION: Vec2 = Vec2::splat(0.90);
+// max accel to speed up the camera to
+const ACCELERATION: Vec2 = Vec2::splat(100.0);
+// max speed the camera can travel
+const VELOCITY_MAX: Vec2 = Vec2::splat(1000.0);
+// arbitrary value to match zoom and drag
+const DRAG_FACTOR: Vec2 = Vec2::splat(0.5);
+
+// how fast to zoom when px value returned from event
+const ZOOM_VELOCITY_PX: f32 = 0.2;
+// how fast to zoom when line value returned from event
+const ZOOM_VELOCITY_LINE: f32 = 2.0;
+// how fast to lerp to result
+const ZOOM_FACTOR: f32 = 0.2;
+// how far in are we allowed to zoom
+const ZOOM_MAX: f32 = 0.5;
+// how far out are we allowed to zoom
+const ZOOM_MIN: f32 = 128.0;
 
 /// Component that adds our gameplay camera controls
 #[derive(Component)]
-pub struct GameCamera {
-    min_x: f32,
-    max_x: f32,
-    min_y: f32,
-    max_y: f32,
+pub struct CameraState {
+    zoom_target: f32,
+    velocity: Vec2,
+    prev_mouse_pos: Vec2,
 }
-impl Default for GameCamera {
+
+impl Default for CameraState {
     fn default() -> Self {
-        GameCamera {
-            min_x: -2000.0,
-            max_x: 2000.0,
-            min_y: -2000.0,
-            max_y: 2000.0,
+        CameraState {
+            zoom_target: 1.0,
+            velocity: Vec2::ZERO,
+            prev_mouse_pos: Vec2::ZERO,
         }
     }
 }
@@ -27,55 +60,121 @@ impl Default for GameCamera {
 pub struct GameCameraPlugin;
 impl Plugin for GameCameraPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, (pan_camera).run_if(in_state(AppState::Playing)));
+        app.add_systems(Update, (move_camera).run_if(in_state(AppState::Playing)));
     }
 }
 
-fn pan_camera(
-    keys: Res<Input<KeyCode>>,
-    mouse_btns: Res<Input<MouseButton>>,
-    primary_window: Query<&Window, With<PrimaryWindow>>,
-    mut query: Query<(&GameCamera, &mut Transform, &OrthographicProjection)>,
-    mut last_pos: Local<Option<Vec2>>,
+fn move_camera(
+    input: Res<Input<FloraCommand>>,
+    time: Res<Time>,
+    q_window: Query<&Window, With<PrimaryWindow>>,
+    mut query: Query<(
+        &mut CameraState,
+        &mut Transform,
+        &mut OrthographicProjection,
+    )>,
+    mouse_input: Res<Input<MouseButton>>,
+    mut mouse_ev: EventReader<MouseMotion>,
+    mut wheel_ev: EventReader<MouseWheel>,
 ) {
-    let window = primary_window.single();
-    let (_game_cam, mut transform, _proj) = query.single_mut();
+    let (mut state, mut transform, mut projection) = query.single_mut();
 
-    let mut direction_vecs = vec![];
-    if keys.pressed(KeyCode::W) || keys.pressed(KeyCode::Up) {
-        direction_vecs.push(Vec3::NEG_Y)
-    }
-    if keys.pressed(KeyCode::S) || keys.pressed(KeyCode::Down) {
-        direction_vecs.push(Vec3::Y)
-    }
-    if keys.pressed(KeyCode::A) || keys.pressed(KeyCode::Left) {
-        direction_vecs.push(Vec3::X)
-    }
-    if keys.pressed(KeyCode::D) || keys.pressed(KeyCode::Right) {
-        direction_vecs.push(Vec3::NEG_X)
+    // debug reset
+    if input.pressed(FloraCommand::Esc) {
+        state.zoom_target = CameraState::default().zoom_target;
+        state.velocity = CameraState::default().velocity;
+
+        transform.translation = Vec3::ZERO;
+        projection.scale = CameraState::default().zoom_target;
     }
 
-    let camera_move_vector = direction_vecs
-        .into_iter()
-        .fold(Vec3::ZERO, |avg, vec| avg + vec)
-        .try_normalize();
+    // zoom
+    use bevy::input::mouse::MouseScrollUnit;
+    for ev in wheel_ev.read() {
+        state.zoom_target += match ev.unit {
+            MouseScrollUnit::Pixel => ev.y * ZOOM_VELOCITY_PX,
+            MouseScrollUnit::Line => ev.y * ZOOM_VELOCITY_LINE,
+        }
+    }
+    state.zoom_target = state.zoom_target.clamp(ZOOM_MAX, ZOOM_MIN);
+    projection.scale = projection.scale.lerp(&state.zoom_target, &ZOOM_FACTOR);
 
-    if let Some(direction) = camera_move_vector {
-        log::info!("Camera move {direction}");
-        debug_assert!(direction.z == 0.0);
+    // read the mouse motion or it builds up speed
+    let mut mousetache = Vec2::ZERO;
+    for ev in mouse_ev.read() {
+        if mouse_input.pressed(MouseButton::Middle) {
+            mousetache += ev.delta;
+        }
+    }
 
-        transform.translation += PAN_SPEED * direction;
-        // WASD takes precedence over mouse dragging so early exit here
+    // if there's middle mouse down + mouse motion, then move the camera, ignore other inputs at this point
+    if mousetache != Vec2::ZERO {
+        mousetache.x *= -1.0;
+        mousetache *= DRAG_FACTOR * projection.scale;
+        transform.translation += Vec3::new(mousetache.x, mousetache.y, 0.0);
+        state.velocity = mousetache;
+    }
+
+    // quit out of other motion of middle click to drag is being used
+    if mouse_input.pressed(MouseButton::Middle) {
         return;
     }
 
-    let current_pos = match window.cursor_position() {
-        Some(p) => Vec2::new(p.x, -p.y), // Y Positive for mouse is Y Negative for world-space
-        None => return,                  // mouse is outside the window
-    };
-    if mouse_btns.pressed(MouseButton::Left) {
-        let mouse_delta = current_pos - last_pos.unwrap_or(current_pos);
-        transform.translation -= Vec3::new(mouse_delta.x, mouse_delta.y, 0.0);
+    // keyboard navigation
+    let mut accel = Vec2::ZERO;
+    if input.pressed(FloraCommand::Left) {
+        accel -= Vec2::X;
     }
-    *last_pos = Some(current_pos);
+    if input.pressed(FloraCommand::Right) {
+        accel += Vec2::X;
+    }
+    if input.pressed(FloraCommand::Up) {
+        accel += Vec2::Y;
+    }
+    if input.pressed(FloraCommand::Down) {
+        accel -= Vec2::Y;
+    }
+
+    let window = q_window.single();
+    // edge pan
+    let mut pan = Vec2::ZERO;
+    let top_left = Vec2::ZERO;
+    let bot_right = Vec2::new(window.width(), window.height());
+
+    // if we're in the pan threshold
+    if let Some(cursor_position) = window.cursor_position() {
+        // if we're not in the threshold, try the other side
+        pan.x = ((cursor_position.x - (bot_right.x - PAN_THRESHOLD.x)) / PAN_THRESHOLD.x).min(1.0);
+        if pan.x < 0.0 {
+            pan.x =
+                ((cursor_position.x - (top_left.x + PAN_THRESHOLD.x)) / PAN_THRESHOLD.x).max(-1.0);
+            if pan.x > 0.0 {
+                pan.x = 0.0;
+            }
+        }
+        // if we're in the pan threshold
+        pan.y = ((cursor_position.y - (bot_right.y - PAN_THRESHOLD.y)) / PAN_THRESHOLD.y).min(1.0);
+        // if we're not in the threshold, try the other side
+        if pan.y < 0.0 {
+            pan.y =
+                ((cursor_position.y - (top_left.y + PAN_THRESHOLD.y)) / PAN_THRESHOLD.y).max(-1.0);
+            if pan.y > 0.0 {
+                pan.y = 0.0;
+            }
+        }
+    }
+
+    pan *= Vec2::new(1.0, -1.0);
+    accel += pan;
+
+    // motion physics
+    accel = accel.normalize_or_zero();
+    state.velocity += accel * Vec2::splat(time.delta_seconds()) * ACCELERATION * projection.scale;
+    state.velocity = state.velocity.clamp(
+        -VELOCITY_MAX * projection.scale,
+        VELOCITY_MAX * projection.scale,
+    );
+
+    transform.translation += Vec3::from((state.velocity, 0.0));
+    state.velocity *= FRICTION;
 }

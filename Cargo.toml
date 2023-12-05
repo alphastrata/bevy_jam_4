@@ -3,6 +3,9 @@ name = "flora_cause"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "flora_cause"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
@@ -11,6 +14,7 @@ bevy_ecs_tilemap = {git="https://github.com/divark/bevy_ecs_tilemap", branch ="0
 bevy_mod_picking = "0.17.0"
 # bevy_rapier2d = "0.23.0"
 bevy_tweening = "0.9.0"
+lazy_static = "1.4.0"
  
 # Enable max optimizations for dependencies, but not for our code:
 [profile.dev.package."*"]

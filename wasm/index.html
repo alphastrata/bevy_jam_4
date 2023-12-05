@@ -1,12 +1,16 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
-<body style="margin: 0px;">
-  <script type="module">
-    import './restart-audio-context.js'
-    import init from './bevy_game.js'
-    init()
-  </script>
-</body>
-
+  <head>
+    <script>
+      addEventListener("contextmenu", (event) => {});
+      oncontextmenu = (event) => {};
+    </script>
+  </head>
+  <body style="margin: 0px">
+    <script type="module">
+      import "./restart-audio-context.js";
+      import init from "./flora_cause.js";
+      init();
+    </script>
+  </body>
 </html>

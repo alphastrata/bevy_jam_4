@@ -1,10 +1,7 @@
-use std::path::Path;
-
-use bevy::prelude::*;
-
-use crate::game::power::SupplyRadius;
-
 use super::BuildingDefinition;
+use crate::game::power::SupplyRadius;
+use bevy::prelude::*;
+use std::path::Path;
 
 /// Distributes power to other buildings within a radius.
 #[derive(Default)]
@@ -13,7 +10,7 @@ impl BuildingDefinition for DistributionTower {
     const SPRITE_PATH: &'static str = "textures/tower.png";
     const BASE_HEALTH: u32 = 100;
     const COST: u32 = 50;
-    // build time
+    const BUILD_TIME: u32 = 5;
     const NAME: &'static str = "Distribution Tower";
     const DESCRIPTION: &'static str = "";
 
