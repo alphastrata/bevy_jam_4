@@ -2,8 +2,8 @@ use bevy::{app::AppExit, prelude::*};
 
 use crate::AppState;
 
-pub struct MainMenuPlugin;
-impl Plugin for MainMenuPlugin {
+pub struct DevScenePlugin;
+impl Plugin for DevScenePlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(OnEnter(AppState::MainMenu), enter_menu)
             .add_systems(OnExit(AppState::MainMenu), exit_menu)
@@ -17,7 +17,7 @@ impl Plugin for MainMenuPlugin {
 #[derive(Component)]
 enum MenuButtonAction {
     StartGame,
-    DevScene,
+    TestScene,
     QuitGame,
     Credits,
     SetVolume,
@@ -51,9 +51,6 @@ fn menu_action(
                 MenuButtonAction::StartGame => {
                     app_state.set(AppState::Playing);
                 }
-                MenuButtonAction::DevScene => {
-                    app_state.set(AppState::DevScene);
-                }
                 // the game can't quit in browser lmao
                 MenuButtonAction::QuitGame => {
                     app_exit_events.send(AppExit);
@@ -74,8 +71,10 @@ fn enter_menu(mut commands: Commands) {
         .entity(start_button)
         .insert(MenuButtonAction::StartGame);
 
-    let gpu_test = spawn_button(&mut commands, "Dev Scene");
-    commands.entity(gpu_test).insert(MenuButtonAction::DevScene);
+    let gpu_test = spawn_button(&mut commands, "Test Scene");
+    commands
+        .entity(gpu_test)
+        .insert(MenuButtonAction::TestScene);
 
     #[cfg(not(target_arch = "wasm32"))]
     let quit_button = spawn_button(&mut commands, "Quit Game");

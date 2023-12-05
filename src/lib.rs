@@ -30,5 +30,6 @@ pub enum AppState {
     Splash,
     MainMenu,
     Playing,
+    DevScene,
     Paused,
 }
