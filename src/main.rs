@@ -20,8 +20,7 @@ pub struct PlayerState {}
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins)
-        .add_plugins(FrameTimeDiagnosticsPlugin)
+        .add_plugins((DefaultPlugins, FrameTimeDiagnosticsPlugin))
         .add_plugins((TweeningPlugin, KeybindPlugin, DisplayDebugPlugin))
         .add_state::<AppState>()
         .add_plugins((SplashPlugin, MainMenuPlugin, GameplayPlugin))
