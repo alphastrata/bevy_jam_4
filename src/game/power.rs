@@ -39,7 +39,7 @@ impl Plugin for PowerPlugin {
         app.add_systems(Startup, create_core);
         app.add_systems(
             PostUpdate,
-            (update_powered_unpowered).run_if(in_state(AppState::Playing)),
+            (update_powered_unpowered).run_if(in_state(AppState::Gameplay)),
         )
         .add_systems(
             Update,

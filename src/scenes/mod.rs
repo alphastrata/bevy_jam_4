@@ -1,4 +1,5 @@
+pub mod dev_scene;
 pub mod gameplay;
-pub mod gpu_test;
-pub mod mainmenu;
+pub mod menu;
+pub mod pause;
 pub mod splash;

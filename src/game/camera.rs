@@ -60,7 +60,7 @@ impl Default for CameraState {
 pub struct GameCameraPlugin;
 impl Plugin for GameCameraPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, (move_camera).run_if(in_state(AppState::Playing)));
+        app.add_systems(Update, (move_camera).run_if(in_state(AppState::Gameplay)));
     }
 }
 
@@ -80,7 +80,7 @@ fn move_camera(
     let (mut state, mut transform, mut projection) = query.single_mut();
 
     // debug reset
-    if input.pressed(FloraCommand::Esc) {
+    if input.pressed(FloraCommand::ResetCamera) {
         state.zoom_target = CameraState::default().zoom_target;
         state.velocity = CameraState::default().velocity;
 

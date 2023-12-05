@@ -7,10 +7,13 @@ use bevy::{
 use bevy_tweening::TweeningPlugin;
 
 use flora_cause::{
+    components::button::ButtonPlugin,
     debug::display_debug::DisplayDebugPlugin,
     // debug::fps_counter::FPSPlugin,
     game::{camera::CameraState, keybinds::KeybindPlugin},
-    scenes::{gameplay::GameplayPlugin, mainmenu::MainMenuPlugin, splash::SplashPlugin},
+    scenes::{
+        gameplay::GameplayPlugin, menu::MainMenuPlugin, pause::PausePlugin, splash::SplashPlugin,
+    },
     AppState,
 };
 
@@ -21,9 +24,14 @@ pub struct PlayerState {}
 fn main() {
     App::new()
         .add_plugins((DefaultPlugins, FrameTimeDiagnosticsPlugin))
-        .add_plugins((TweeningPlugin, KeybindPlugin, DisplayDebugPlugin))
+        .add_plugins((
+            TweeningPlugin,
+            KeybindPlugin,
+            DisplayDebugPlugin,
+            ButtonPlugin,
+        ))
         .add_state::<AppState>()
-        .add_plugins((SplashPlugin, MainMenuPlugin, GameplayPlugin))
+        .add_plugins((SplashPlugin, MainMenuPlugin, GameplayPlugin, PausePlugin))
         .add_systems(Startup, setup)
         .run();
 }
