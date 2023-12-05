@@ -40,6 +40,7 @@ pub enum FloraCommand {
     Down,
     Copy,
     Paste,
+    Debug,
 }
 
 lazy_static! {
@@ -50,6 +51,7 @@ lazy_static! {
         map.insert(FloraCommand::Right, vec![vec![KeyCode::Right]]);
         map.insert(FloraCommand::Up, vec![vec![KeyCode::Up]]);
         map.insert(FloraCommand::Down, vec![vec![KeyCode::Down]]);
+        map.insert(FloraCommand::Debug, vec![vec![KeyCode::F12]]);
         map.insert(
             FloraCommand::Copy,
             vec![

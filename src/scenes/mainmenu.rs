@@ -17,6 +17,7 @@ impl Plugin for MainMenuPlugin {
 #[derive(Component)]
 enum MenuButtonAction {
     StartGame,
+    TestScene,
     QuitGame,
     Credits,
     SetVolume,
@@ -70,6 +71,11 @@ fn enter_menu(mut commands: Commands) {
         .entity(start_button)
         .insert(MenuButtonAction::StartGame);
 
+    let gpu_test = spawn_button(&mut commands, "Test Scene");
+    commands
+        .entity(gpu_test)
+        .insert(MenuButtonAction::TestScene);
+
     #[cfg(not(target_arch = "wasm32"))]
     let quit_button = spawn_button(&mut commands, "Quit Game");
     #[cfg(not(target_arch = "wasm32"))]
@@ -102,6 +108,7 @@ fn enter_menu(mut commands: Commands) {
                 ..default()
             });
             cb.add_child(start_button);
+            cb.add_child(gpu_test);
 
             #[cfg(not(target_arch = "wasm32"))]
             {
