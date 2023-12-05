@@ -36,7 +36,7 @@ impl Plugin for PowerPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(PowerDebug(true));
         app.add_event::<AddBuilding>();
-        app.add_systems(Startup, create_core);
+        app.add_systems(OnEnter(AppState::Playing), create_core);
         app.add_systems(
             PostUpdate,
             (update_powered_unpowered).run_if(in_state(AppState::Playing)),
@@ -101,9 +101,7 @@ fn debug_power_map_ui(
 ) {
     q_supply.iter().for_each(|(radius, transform)| {
         let pos = Vec2::new(transform.translation.x, transform.translation.y);
-        gizmos
-            .circle_2d(pos, radius.0, Color::MIDNIGHT_BLUE)
-            .segments(32);
+        gizmos.circle_2d(pos, radius.0, Color::YELLOW).segments(32);
     });
     // q_powered_buildings.iter().for_each(|(_, transform)| {
     //     let pos = Vec2::new(transform.translation.x, transform.translation.y);
