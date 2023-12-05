@@ -4,6 +4,7 @@ use bevy::ecs::{component::Component, schedule::States};
 
 pub mod buildings;
 pub mod creeps;
+pub mod debug;
 pub mod game;
 pub mod scenes;
 
