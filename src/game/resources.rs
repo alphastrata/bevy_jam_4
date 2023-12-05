@@ -3,10 +3,7 @@ use bevy::prelude::*;
 pub struct ResourcePlugin;
 impl Plugin for ResourcePlugin {
     fn build(&self, app: &mut App) {
-        app
-            .init_resource::<Inventory>()
-        //
-        ;
+        app.init_resource::<Inventory>();
     }
 }
 
