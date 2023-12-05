@@ -4,7 +4,10 @@ use std::ops::ControlFlow;
 
 use bevy::prelude::*;
 
-use crate::AppState;
+use crate::{
+    buildings::{core::TheCore, spawn_building},
+    AppState,
+};
 
 /// Marker component for buildings that require Power
 #[derive(Component)]
@@ -33,7 +36,7 @@ impl Plugin for PowerPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(PowerDebug(true));
         app.add_event::<AddBuilding>();
-        app.add_systems(Startup, setup_imaginary_core);
+        app.add_systems(Startup, create_core);
         app.add_systems(
             PostUpdate,
             (update_powered_unpowered).run_if(in_state(AppState::Playing)),
@@ -45,9 +48,9 @@ impl Plugin for PowerPlugin {
     }
 }
 
-/// Temporary one-off that creates an imaginary "Core" building
-fn setup_imaginary_core(mut cmds: Commands) {
-    cmds.spawn((SupplyRadius(400.0), Transform::from_translation(Vec3::ZERO)));
+/// Spawn the [buildings::Core] building
+fn create_core(mut cmds: Commands, asset_server: Res<AssetServer>) {
+    spawn_building::<TheCore>(&mut cmds, asset_server, Vec2::ZERO);
 }
 
 /// Updates the set of towers that are powered or unpowered
