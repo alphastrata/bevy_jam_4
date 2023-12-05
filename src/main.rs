@@ -40,7 +40,7 @@ fn setup(mut commands: Commands, mut q_window: Query<&mut Window, With<PrimaryWi
     window.present_mode = PresentMode::AutoNoVsync;
     #[cfg(not(target_arch = "wasm32"))]
     {
-        window.present_mode = PresentMode::Mailbox;
+        window.present_mode = PresentMode::AutoVsync;
     }
 
     // window.present_mode = PresentMode::

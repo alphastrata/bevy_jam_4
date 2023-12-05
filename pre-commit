@@ -13,7 +13,7 @@ echo "cargo fmt check passed."
 
 
 # Run cargo clippy to check how shit you are.
-echo "Running cargo fmt..."
+echo "Running cargo clippy..."
 cargo clippy
 
 # Check if clippy succeeded
