@@ -1,30 +1,28 @@
 use bevy::prelude::*;
 use bevy_ecs_tilemap::prelude::*;
 
+use rand::{thread_rng, Rng};
+
 pub struct MapPlugin;
 impl Plugin for MapPlugin {
     fn build(&self, app: &mut App) {
-        app
-            .add_systems(Startup, create_initial_map)
-        ;
+        app.add_systems(Startup, create_initial_map);
     }
 }
 
-fn create_initial_map(
-    mut commands: Commands,
-    asset_server: Res<AssetServer>,
-) {
+fn create_initial_map(mut commands: Commands, asset_server: Res<AssetServer>) {
     info!("Create initial tilemap");
 
-    let texture = asset_server.load("textures/rock.png");
+    let texture = asset_server.load("tiles/temporary-terrain-tiles.png");
 
-    let map_size = TilemapSize { x: 128, y: 128 };
-    
+    let map_size = TilemapSize { x: 64, y: 64 };
+
     let mut tile_storage = TileStorage::empty(map_size);
 
     let tilemap_entity = commands.spawn_empty().id();
 
-    // fill_tilemap(texture, map_size, TilemapId(tilemap_entity), &mut commands, &mut tile_storage);
+    let mut random = thread_rng();
+
     for x in 0..map_size.x {
         for y in 0..map_size.y {
             let tile_pos = TilePos { x, y };
@@ -32,6 +30,7 @@ fn create_initial_map(
                 .spawn(TileBundle {
                     position: tile_pos,
                     tilemap_id: TilemapId(tilemap_entity),
+                    texture_index: TileTextureIndex(random.gen_range(0..9)),
                     ..Default::default()
                 })
                 .id();
@@ -44,7 +43,7 @@ fn create_initial_map(
     let grid_size = tile_size.into();
     let map_type = TilemapType::Square;
 
-     commands.entity(tilemap_entity).insert(TilemapBundle {
+    commands.entity(tilemap_entity).insert(TilemapBundle {
         grid_size,
         map_type,
         size: map_size,
