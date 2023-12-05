@@ -93,12 +93,10 @@ fn keyboard_events(input: Res<Input<KeyCode>>, mut resource: ResMut<Input<FloraC
                 resource.clear_just_pressed(*flora);
             }
             resource.press(*flora);
+        } else if resource.pressed(*flora) {
+            resource.release(*flora);
         } else {
-            if resource.pressed(*flora) {
-                resource.release(*flora);
-            } else {
-                resource.reset(*flora);
-            }
+            resource.reset(*flora);
         }
     }
     // info!("{:?}", event);

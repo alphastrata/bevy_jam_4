@@ -24,7 +24,7 @@ fn main() {
             default: Vec2::new(960.0, 640.0),
         })
         .add_plugins(DefaultPlugins)
-        .add_plugins(FrameTimeDiagnosticsPlugin::default())
+        .add_plugins(FrameTimeDiagnosticsPlugin)
         .add_plugins((TweeningPlugin, KeybindPlugin))
         .add_state::<AppState>()
         .add_plugins((SplashPlugin, MainMenuPlugin, GameplayPlugin))

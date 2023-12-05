@@ -1,7 +1,7 @@
+use bevy::prelude::*;
 use std::path::Path;
 
-use bevy::prelude::*;
-
+pub mod core;
 pub mod distribution;
 
 /// Marker component all buildings should have
@@ -26,7 +26,10 @@ pub struct Experience(u32);
 pub trait BuildingDefinition: Default {
     const SPRITE_PATH: &'static str;
     const BASE_HEALTH: u32;
+    /// How many Corporation Points it costs to build
     const COST: u32;
+    /// How long it takes to build in seconds
+    const BUILD_TIME: u32;
     const NAME: &'static str;
     const DESCRIPTION: &'static str;
 

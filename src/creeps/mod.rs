@@ -9,7 +9,7 @@ pub struct CreepPlugin;
 pub struct Creep;
 
 impl Plugin for CreepPlugin {
-    fn build(&self, app: &mut App) {
+    fn build(&self, _app: &mut App) {
         todo!()
 
         // spawn cmds
