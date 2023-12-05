@@ -1,5 +1,5 @@
 use super::BuildingDefinition;
-use crate::game::power::SupplyRadius;
+use crate::game::power::{SupplyRadius, RequiresPower};
 use bevy::prelude::*;
 use std::path::Path;
 
@@ -15,6 +15,7 @@ impl BuildingDefinition for DistributionTower {
     const DESCRIPTION: &'static str = "";
 
     fn add_extra_components(commands: &mut Commands, ent_id: Entity) {
-        commands.entity(ent_id).insert(SupplyRadius(300.0));
+        // commands.entity(ent_id).insert(SupplyRadius(300.0));
+        commands.entity(ent_id).insert(RequiresPower); // TESTING PURPOSES ONLY
     }
 }

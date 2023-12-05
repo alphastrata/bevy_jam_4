@@ -19,3 +19,8 @@ wasm-server-runner path/to/file.wasm
 ### Developing;
 - save the CI pipeline's juices by using the included `pre-commit`, dump a copy of it (with executable permissions) into your:
 `./git/hooks` folder and it will run whenever you make commits, failing them if any of the jobs that would run in the CI pipe fail locally. (This is a much, much faster workflow than using GH's runners)
+
+
+## TODO
+
+* [ ] Map generation
