@@ -31,8 +31,7 @@ fn main() {
         .add_plugins(TilemapPlugin)
         .add_state::<AppState>()
         .add_plugins((SplashPlugin, MainMenuPlugin, GameplayPlugin))
-        .add_systems(Startup, setup)
-        .add_systems(Startup, setup_ui)
+        .add_systems(Startup, (setup, setup_ui))
         .add_systems(Update, (on_resize_system, toggle_resolution))
         .run();
 }
