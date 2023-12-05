@@ -1,5 +1,5 @@
 use super::BuildingDefinition;
-use crate::game::power::{SupplyRadius, RequiresPower};
+use crate::game::power::{RequiresPower, SupplyRadius};
 use bevy::prelude::*;
 use std::path::Path;
 

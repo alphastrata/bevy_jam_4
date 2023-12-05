@@ -8,12 +8,14 @@ use crate::AppState;
 pub struct MapPlugin;
 impl Plugin for MapPlugin {
     fn build(&self, app: &mut App) {
-        app
-            .add_systems(OnEnter(AppState::Playing), (create_initial_map, setup_highlight_tile))
-            .add_systems(
-                Update,
-                (highlight_tile_labels).run_if(in_state(AppState::Playing)),
-            );
+        app.add_systems(
+            OnEnter(AppState::Playing),
+            (create_initial_map, setup_highlight_tile),
+        )
+        .add_systems(
+            Update,
+            (highlight_tile_labels).run_if(in_state(AppState::Playing)),
+        );
     }
 }
 
@@ -66,16 +68,19 @@ fn create_initial_map(mut commands: Commands, asset_server: Res<AssetServer>) {
 
 /// Highlight visualisation on tile hover
 fn highlight_tile_labels(
-    mut commands: Commands,
+    _commands: Commands,
     primary_window: Query<&Window, With<PrimaryWindow>>,
     q_camera: Query<(&GlobalTransform, &Camera)>,
-    q_tilemap: Query<(
-        &TilemapSize,
-        &TilemapGridSize,
-        &TilemapType,
-        &TileStorage,
-        &Transform,
-    ), Without<TheHighlightRect>>,
+    q_tilemap: Query<
+        (
+            &TilemapSize,
+            &TilemapGridSize,
+            &TilemapType,
+            &TileStorage,
+            &Transform,
+        ),
+        Without<TheHighlightRect>,
+    >,
     mut highlight_rect: Query<(Entity, &mut Transform), With<TheHighlightRect>>,
 ) {
     let window = primary_window.single();
@@ -112,16 +117,17 @@ fn highlight_tile_labels(
 #[derive(Component)]
 struct TheHighlightRect;
 
-fn setup_highlight_tile(
-    mut commands: Commands,
-) {
-    commands.spawn((SpriteBundle {
-        sprite: Sprite {
-            color: Color::rgba(0.2, 0.85, 0.2, 0.3),
-            custom_size: Some(Vec2::new(32.0, 32.0)),
+fn setup_highlight_tile(mut commands: Commands) {
+    commands.spawn((
+        SpriteBundle {
+            sprite: Sprite {
+                color: Color::rgba(0.2, 0.85, 0.2, 0.3),
+                custom_size: Some(Vec2::new(32.0, 32.0)),
+                ..default()
+            },
+            transform: Transform::default(),
             ..default()
         },
-        transform: Transform::default(),
-        ..default()
-    }, TheHighlightRect));
+        TheHighlightRect,
+    ));
 }
