@@ -3,7 +3,9 @@
 use bevy::ecs::{component::Component, schedule::States};
 
 pub mod buildings;
+pub mod components;
 pub mod creeps;
+pub mod debug;
 pub mod game;
 pub mod scenes;
 
@@ -28,6 +30,7 @@ pub enum AppState {
     #[default]
     Splash,
     MainMenu,
-    Playing,
+    Gameplay,
+    DevScene,
     Paused,
 }

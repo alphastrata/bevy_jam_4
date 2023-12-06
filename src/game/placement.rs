@@ -15,7 +15,7 @@ impl Plugin for TowerPlacementPlugin {
 
         app.add_systems(
             Update,
-            (spawn_at_click_pos).run_if(in_state(AppState::Playing)),
+            (spawn_at_click_pos).run_if(in_state(AppState::Gameplay)),
         );
     }
 }

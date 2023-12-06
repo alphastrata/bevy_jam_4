@@ -33,23 +33,27 @@ impl Plugin for KeybindPlugin {
 )]
 #[repr(u32)]
 pub enum FloraCommand {
-    Esc,
+    Pause,
     Left,
     Right,
     Up,
     Down,
     Copy,
     Paste,
+    Debug,
+    ResetCamera,
 }
 
 lazy_static! {
     static ref FLORA_COMMAND_MAPPING: HashMap<FloraCommand, Vec<Vec<KeyCode>>> = {
         let mut map = HashMap::new();
-        map.insert(FloraCommand::Esc, vec![vec![KeyCode::Escape]]);
+        map.insert(FloraCommand::Pause, vec![vec![KeyCode::Escape]]);
         map.insert(FloraCommand::Left, vec![vec![KeyCode::Left]]);
         map.insert(FloraCommand::Right, vec![vec![KeyCode::Right]]);
         map.insert(FloraCommand::Up, vec![vec![KeyCode::Up]]);
         map.insert(FloraCommand::Down, vec![vec![KeyCode::Down]]);
+        map.insert(FloraCommand::Debug, vec![vec![KeyCode::F12]]);
+        map.insert(FloraCommand::ResetCamera, vec![vec![KeyCode::F5]]);
         map.insert(
             FloraCommand::Copy,
             vec![
