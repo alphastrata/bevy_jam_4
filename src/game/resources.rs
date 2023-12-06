@@ -8,9 +8,14 @@ pub struct ResourcePlugin;
 impl Plugin for ResourcePlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<Inventory>()
+            .add_event::<ExpendResource>()
+            .add_event::<Harvest>()
             .add_systems(OnEnter(AppState::Gameplay), setup_debug_ui)
             .add_systems(OnExit(AppState::Gameplay), teardown_debug_ui)
-            .add_systems(Update, update_debug_ui);
+            .add_systems(
+                Update,
+                (update_debug_ui, add_harvest_to_inventory, expend_resource),
+            );
     }
 }
 
@@ -37,6 +42,9 @@ pub enum ResourceType {
     Wood,
 }
 
+#[derive(Event)]
+pub struct ExpendResource(pub ResourceType, pub u32);
+
 /// This event should be fired when a resource was harvested
 /// (resource, money_earned)
 #[derive(Event)]
@@ -48,6 +56,18 @@ fn add_harvest_to_inventory(mut inventory: ResMut<Inventory>, mut harvests: Even
         match harvest.0 {
             ResourceType::CorporationPoints => inv.money += harvest.1,
             ResourceType::Plant => inv.plant += harvest.1,
+            _ => (),
+        };
+        inv
+    });
+}
+
+fn expend_resource(mut inventory: ResMut<Inventory>, mut expent: EventReader<ExpendResource>) {
+    *inventory = expent.read().fold(inventory.clone(), |mut inv, harvest| {
+        match harvest.0 {
+            ResourceType::CorporationPoints => inv.money = inv.money.saturating_sub(harvest.1),
+            ResourceType::Plant => inv.plant = inv.plant.saturating_sub(harvest.1),
+            ResourceType::Wood => inv.wood = inv.wood.saturating_sub(harvest.1),
             _ => (),
         };
         inv
@@ -77,7 +97,6 @@ fn setup_debug_ui(mut cmds: Commands) {
         InventoryDebugUI,
     ))
     .with_children(|parent| {
-        // text
         parent.spawn((
             TextBundle::from_section(
                 "Wood: 0",

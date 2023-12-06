@@ -1,4 +1,4 @@
-use crate::game::power::SupplyRadius;
+use crate::game::power::{RequiresPower, SupplyRadius};
 use bevy::prelude::*;
 
 use super::BuildingDefinition;

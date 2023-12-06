@@ -58,19 +58,19 @@ fn setup_ui(mut cmd: Commands) {
 
 /// This system shows how to request the window to a new resolution
 fn toggle_resolution(
-    keys: Res<Input<KeyCode>>,
+    _keys: Res<Input<KeyCode>>,
     mut windows: Query<&mut Window>,
-    resolution: Res<ResolutionSettings>,
+    _resolution: Res<ResolutionSettings>,
 ) {
-    let mut window = windows.single_mut();
-    if keys.just_pressed(KeyCode::Key1) {
-        let res = resolution.large;
-        window.resolution.set(res.x, res.y);
-    }
-    if keys.just_pressed(KeyCode::Key2) {
-        let res = resolution.default;
-        window.resolution.set(res.x, res.y);
-    }
+    let _window = windows.single_mut();
+    // if keys.just_pressed(KeyCode::Key1) {
+    //     let res = resolution.large;
+    //     window.resolution.set(res.x, res.y);
+    // }
+    // if keys.just_pressed(KeyCode::Key2) {
+    //     let res = resolution.default;
+    //     window.resolution.set(res.x, res.y);
+    // }
 }
 
 /// This system shows how to respond to a window being resized.

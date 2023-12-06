@@ -1,8 +1,11 @@
 use bevy::prelude::*;
 use std::path::Path;
 
+use self::{distribution::DistributionTower, radar::RadarTower};
+
 pub mod core;
 pub mod distribution;
+pub mod radar;
 
 /// Marker component all buildings should have
 #[derive(Component)]
@@ -62,7 +65,7 @@ pub fn spawn_building<B: BuildingDefinition>(
 
 // /// Representing the types of buildings we have
 #[derive(Clone, Hash, Component, Debug, PartialEq, Eq)]
-pub enum TowerType {
+pub enum BuildingType {
     /// Combats wind
     Fan,
     /// tbd
@@ -77,4 +80,28 @@ pub enum TowerType {
     Roboport,
     ///
     LoggingCentre,
+}
+
+impl BuildingType {
+    pub fn spawn(&self, cmds: &mut Commands, asset_server: Res<AssetServer>, pos: Vec2) {
+        match self {
+            BuildingType::Fan => todo!(),
+            BuildingType::Shield => todo!(),
+            BuildingType::Radar => spawn_building::<RadarTower>(cmds, asset_server, pos),
+            BuildingType::Doppler => todo!(),
+            BuildingType::Distribution => {
+                spawn_building::<DistributionTower>(cmds, asset_server, pos)
+            }
+            BuildingType::Roboport => todo!(),
+            BuildingType::LoggingCentre => todo!(),
+        };
+    }
+
+    pub fn cost(&self) -> u32 {
+        match self {
+            BuildingType::Distribution => DistributionTower::COST,
+            BuildingType::Radar => RadarTower::COST,
+            _ => 0,
+        }
+    }
 }

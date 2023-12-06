@@ -42,8 +42,8 @@ pub enum FloraCommand {
     Paste,
     Debug,
     ResetCamera,
-    SpawnDistributionTower,
-    SpawnRadarTower,
+    SetPlaceDistributionTower,
+    SetPlaceRadarTower,
 }
 
 lazy_static! {
@@ -71,8 +71,8 @@ lazy_static! {
             ],
         );
         // Tower selection
-        map.insert(FloraCommand::SpawnDistributionTower, vec![vec![KeyCode::Numpad1]]);
-        map.insert(FloraCommand::SpawnRadarTower, vec![vec![KeyCode::Numpad2]]);
+        map.insert(FloraCommand::SetPlaceDistributionTower, vec![vec![KeyCode::Key1]]);
+        map.insert(FloraCommand::SetPlaceRadarTower, vec![vec![KeyCode::Key2]]);
 
         map
     };
