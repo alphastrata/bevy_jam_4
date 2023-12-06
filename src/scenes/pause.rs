@@ -1,6 +1,13 @@
 use bevy::{app::AppExit, prelude::*, window::CursorGrabMode};
 
-use crate::{components::button::spawn_button, game::keybinds::FloraCommand, AppState};
+use crate::{
+    components::{
+        button::spawn_button,
+        fade_transition::{transition_to, TransitionState},
+    },
+    game::keybinds::FloraCommand,
+    AppState,
+};
 
 pub struct PausePlugin;
 impl Plugin for PausePlugin {
@@ -76,13 +83,14 @@ struct OnMainMenuScreen;
 fn interact(
     interaction_query: Query<(&Interaction, &Action), (Changed<Interaction>, With<Button>)>,
     mut state: ResMut<PauseState>,
+    mut transition_state: ResMut<TransitionState>,
     mut next_state: ResMut<NextState<AppState>>,
 ) {
     for (interaction, menu_button_action) in &interaction_query {
         if *interaction == Interaction::Pressed {
             match menu_button_action {
                 Action::ReturnToMenu => {
-                    next_state.set(AppState::MainMenu);
+                    transition_to(AppState::MainMenu, &mut transition_state);
                     state.previous_state = None;
                 }
                 Action::Unpause => {
