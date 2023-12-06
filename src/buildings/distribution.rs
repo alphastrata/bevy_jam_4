@@ -10,12 +10,11 @@ impl BuildingDefinition for DistributionTower {
     const SPRITE_PATH: &'static str = "textures/tower.png";
     const BASE_HEALTH: u32 = 100;
     const COST: u32 = 50;
-    const BUILD_TIME: u32 = 5;
+    const BUILD_TIME: u32 = 6;
     const NAME: &'static str = "Distribution Tower";
     const DESCRIPTION: &'static str = "";
 
     fn add_extra_components(commands: &mut Commands, ent_id: Entity) {
-        // commands.entity(ent_id).insert(SupplyRadius(300.0));
-        commands.entity(ent_id).insert(RequiresPower); // TESTING PURPOSES ONLY
+        commands.entity(ent_id).insert(SupplyRadius(300.0));
     }
 }

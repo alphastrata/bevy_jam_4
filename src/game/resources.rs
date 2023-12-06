@@ -1,17 +1,34 @@
+use std::fmt::format;
+
 use bevy::prelude::*;
+
+use crate::AppState;
 
 pub struct ResourcePlugin;
 impl Plugin for ResourcePlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<Inventory>();
+        app.init_resource::<Inventory>()
+            .add_systems(OnEnter(AppState::Gameplay), setup_debug_ui)
+            .add_systems(OnExit(AppState::Gameplay), teardown_debug_ui)
+            .add_systems(Update, update_debug_ui);
     }
 }
 
 /// What the player currently has in the BANK
-#[derive(Resource, Clone, Default)]
+#[derive(Resource, Clone)]
 pub struct Inventory {
     money: u32,
     plant: u32,
+    wood: u32,
+}
+impl Default for Inventory {
+    fn default() -> Self {
+        Self {
+            money: 100,
+            plant: 50,
+            wood: 50,
+        }
+    }
 }
 
 pub enum ResourceType {
@@ -35,4 +52,57 @@ fn add_harvest_to_inventory(mut inventory: ResMut<Inventory>, mut harvests: Even
         };
         inv
     });
+}
+
+/// Marker component for despawning inventory UI later
+#[derive(Component)]
+struct InventoryDebugUI;
+
+#[derive(Component)]
+struct WoodNumber;
+
+/// Ugly UI for temporarily showing inventory. Will be beautified later!
+fn setup_debug_ui(mut cmds: Commands) {
+    cmds.spawn((
+        NodeBundle {
+            style: Style {
+                width: Val::Percent(100.0),
+                height: Val::Percent(100.0),
+                align_items: AlignItems::FlexEnd,
+                justify_content: JustifyContent::FlexEnd,
+                ..default()
+            },
+            ..default()
+        },
+        InventoryDebugUI,
+    ))
+    .with_children(|parent| {
+        // text
+        parent.spawn((
+            TextBundle::from_section(
+                "Wood: 0",
+                TextStyle {
+                    font_size: 30.0,
+                    ..default()
+                },
+            )
+            .with_style(Style {
+                margin: UiRect::all(Val::Px(15.)),
+                ..default()
+            }),
+            WoodNumber,
+        ));
+    });
+}
+
+fn update_debug_ui(mut q_text: Query<&mut Text, With<WoodNumber>>, inventory: Res<Inventory>) {
+    for mut text in &mut q_text {
+        text.sections[0].value = format!("Wood: {}", inventory.wood);
+    }
+}
+
+fn teardown_debug_ui(mut commands: Commands, nodes: Query<Entity, With<InventoryDebugUI>>) {
+    for ent in &nodes {
+        commands.entity(ent).despawn_recursive();
+    }
 }

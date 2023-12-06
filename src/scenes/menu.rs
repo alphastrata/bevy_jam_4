@@ -96,7 +96,7 @@ fn setup(mut commands: Commands) {
 }
 
 /// Runs when we exit [AppState::MainMenu]
-fn teardown(nodes: Query<Entity, With<OnMainMenuScreen>>, mut commands: Commands) {
+fn teardown(mut commands: Commands, nodes: Query<Entity, With<OnMainMenuScreen>>) {
     for ent in &nodes {
         commands.entity(ent).despawn_recursive();
     }

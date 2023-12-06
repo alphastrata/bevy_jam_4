@@ -7,7 +7,7 @@ use super::BuildingDefinition;
 #[derive(Default)]
 pub struct TheCore;
 impl BuildingDefinition for TheCore {
-    const SPRITE_PATH: &'static str = "textures/tower.png"; // FIXME
+    const SPRITE_PATH: &'static str = "textures/core.png";
     const BASE_HEALTH: u32 = 1000;
     const COST: u32 = 0; // Core is free since you start with it
     const BUILD_TIME: u32 = 0;
