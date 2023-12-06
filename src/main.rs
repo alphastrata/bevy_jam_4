@@ -7,7 +7,7 @@ use bevy::{
 use bevy_tweening::TweeningPlugin;
 
 use flora_cause::{
-    components::button::ButtonPlugin,
+    components::{button::ButtonPlugin, fade_transition::TransitionPlugin},
     debug::display_debug::DisplayDebugPlugin,
     // debug::fps_counter::FPSPlugin,
     game::{camera::CameraState, keybinds::KeybindPlugin},
@@ -29,6 +29,7 @@ fn main() {
             KeybindPlugin,
             DisplayDebugPlugin,
             ButtonPlugin,
+            TransitionPlugin,
         ))
         .add_state::<AppState>()
         .add_plugins((SplashPlugin, MainMenuPlugin, GameplayPlugin, PausePlugin))

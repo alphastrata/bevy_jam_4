@@ -1,6 +1,12 @@
 use bevy::{app::AppExit, prelude::*};
 
-use crate::{components::button::spawn_button, AppState};
+use crate::{
+    components::{
+        button::spawn_button,
+        fade_transition::{transition_to, TransitionState},
+    },
+    AppState,
+};
 
 pub struct MainMenuPlugin;
 impl Plugin for MainMenuPlugin {
@@ -30,12 +36,13 @@ fn interact(
     interaction_query: Query<(&Interaction, &Action), (Changed<Interaction>, With<Button>)>,
     mut app_exit_events: EventWriter<AppExit>,
     mut app_state: ResMut<NextState<AppState>>,
+    mut transition_state: ResMut<TransitionState>,
 ) {
     for (interaction, menu_button_action) in &interaction_query {
         if *interaction == Interaction::Pressed {
             match menu_button_action {
                 Action::StartGame => {
-                    app_state.set(AppState::Gameplay);
+                    transition_to(AppState::Gameplay, &mut transition_state);
                 }
                 Action::DevScene => {
                     app_state.set(AppState::DevScene);

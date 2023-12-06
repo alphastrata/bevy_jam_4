@@ -3,7 +3,10 @@ use std::time::Duration;
 use bevy::{input::keyboard::KeyboardInput, prelude::*};
 use bevy_tweening::{lens::SpriteColorLens, Animator, Delay, EaseFunction, Tween};
 
-use crate::AppState;
+use crate::{
+    components::fade_transition::{transition_to, TransitionState},
+    AppState,
+};
 
 const SPLASH_DURATION: f32 = 7.0;
 const ZERO_ALPHA: Color = Color::rgba(1., 1., 1., 0.);
@@ -25,28 +28,28 @@ struct SplashTimer(Timer);
 #[derive(Component)]
 struct OnSplashScreen;
 
-fn keyboard_events(mut ev: EventReader<KeyboardInput>, mut app_state: ResMut<NextState<AppState>>) {
+fn keyboard_events(input: Res<Input<KeyCode>>, mut transition_state: ResMut<TransitionState>) {
     #[allow(clippy::never_loop)] //TODO .read().next()
-    for _ in ev.read() {
-        app_state.set(AppState::MainMenu);
-        break;
+    if input.get_just_pressed().count() != 0 {
+        transition_to(AppState::MainMenu, &mut transition_state);
     }
 }
 
 fn tick_timer(
     time: Res<Time>,
     mut timer: ResMut<SplashTimer>,
-    mut app_state: ResMut<NextState<AppState>>,
+    mut transition_state: ResMut<TransitionState>,
 ) {
     if timer.0.tick(time.delta()).just_finished() {
         info!("Splash timer elapsed. Proceed to MainMenu");
-
-        app_state.set(AppState::MainMenu);
+        transition_to(AppState::MainMenu, &mut transition_state);
     }
 }
 
 /// Runs when we enter [AppState::Splash]
 fn show_splash(mut commands: Commands, asset_server: Res<AssetServer>) {
+    info!("enter");
+
     let splash_handle = asset_server.load("textures/skeejy-no-background.png");
     let bubble_1_handle = asset_server.load("textures/bubble-1.png");
     let bubble_2_handle = asset_server.load("textures/bubble-2.png");
@@ -132,6 +135,6 @@ fn exit_splash(nodes: Query<Entity, With<OnSplashScreen>>, mut commands: Command
     for ent in &nodes {
         commands.entity(ent).despawn_recursive();
     }
-
+    info!("wuit");
     commands.remove_resource::<SplashTimer>();
 }
