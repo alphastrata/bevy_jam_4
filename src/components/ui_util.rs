@@ -64,7 +64,6 @@ pub fn btn(commands: &mut Commands, text: &str, action: impl Bundle) -> Entity {
 }
 
 /// Handles changing the button styles
-
 fn btn_logic(
     mut interaction_query: Query<(&Interaction, &Children), (Changed<Interaction>, With<Button>)>,
     mut text_query: Query<&mut Text>,
@@ -74,9 +73,9 @@ fn btn_logic(
         .for_each(|(_interaction, children)| {
             children.iter().for_each(|child| {
                 if let Ok(mut text) = text_query.get_mut(*child) {
-                    for section in text.sections.iter_mut() {
+                    text.sections.iter_mut().for_each(|section| {
                         section.style.color = button_styles::PRESSED.into();
-                    }
+                    });
                 }
 
                 // match *interaction {
