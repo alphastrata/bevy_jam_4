@@ -64,32 +64,35 @@ pub fn btn(commands: &mut Commands, text: &str, action: impl Bundle) -> Entity {
 }
 
 /// Handles changing the button styles
-fn btn_logic(
-    world: &World,
-    mut interaction_query: Query<(&Interaction, &Children), (Changed<Interaction>, With<Button>)>,
-) {
-    for (interaction, children) in &mut interaction_query {
-        for child in children {
-            if let Some(text) = world.entity(*child).get::<Text>() {
-                for section in text.sections.iter_mut() {
-                    section.style.color = button_styles::PRESSED.into();
-                }
-            }
-        }
 
-        // match *interaction {
-        //     Interaction::Pressed => {
-        //         *color = button_styles::PRESSED.into();
-        //         border_color.0 = Color::RED;
-        //     }
-        //     Interaction::Hovered => {
-        //         *color = button_styles::HOVERED.into();
-        //         border_color.0 = Color::WHITE;
-        //     }
-        //     Interaction::None => {
-        //         *color = button_styles::NORMAL.into();
-        //         border_color.0 = Color::BLACK;
-        //     }
-        // }
-    }
+fn btn_logic(
+    mut interaction_query: Query<(&Interaction, &Children), (Changed<Interaction>, With<Button>)>,
+    mut text_query: Query<&mut Text>,
+) {
+    interaction_query
+        .iter_mut()
+        .for_each(|(_interaction, children)| {
+            children.iter().for_each(|child| {
+                if let Ok(mut text) = text_query.get_mut(*child) {
+                    for section in text.sections.iter_mut() {
+                        section.style.color = button_styles::PRESSED.into();
+                    }
+                }
+
+                // match *interaction {
+                //     Interaction::Pressed => {
+                //         *color = button_styles::PRESSED.into();
+                //         border_color.0 = Color::RED;
+                //     }
+                //     Interaction::Hovered => {
+                //         *color = button_styles::HOVERED.into();
+                //         border_color.0 = Color::WHITE;
+                //     }
+                //     Interaction::None => {
+                //         *color = button_styles::NORMAL.into();
+                //         border_color.0 = Color::BLACK;
+                //     }
+                // }
+            });
+        });
 }
