@@ -8,7 +8,7 @@ use bevy_ecs_tilemap::TilemapPlugin;
 use bevy_tweening::TweeningPlugin;
 
 use flora_cause::{
-    components::{button::ButtonPlugin, fade_transition::TransitionPlugin},
+    components::{fade_transition::TransitionPlugin, ui_util::UIUtilPlugin},
     debug::display_debug::DisplayDebugPlugin,
     // debug::fps_counter::FPSPlugin,
     game::{camera::CameraState, keybinds::KeybindPlugin},
@@ -29,7 +29,7 @@ fn main() {
             TweeningPlugin,
             KeybindPlugin,
             DisplayDebugPlugin,
-            ButtonPlugin,
+            UIUtilPlugin,
             TransitionPlugin,
             TilemapPlugin,
         ))

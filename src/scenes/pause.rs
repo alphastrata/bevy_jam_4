@@ -2,8 +2,8 @@ use bevy::{app::AppExit, prelude::*, window::CursorGrabMode};
 
 use crate::{
     components::{
-        button::spawn_button,
         fade_transition::{transition_to, TransitionState},
+        ui_util::btn,
     },
     game::keybinds::FloraCommand,
     AppState,
@@ -98,8 +98,8 @@ fn interact(
 
 /// Runs when we enter [AppState::MainMenu]
 fn setup(mut commands: Commands) {
-    let return_btn = spawn_button(&mut commands, "Return to Menu", Action::ReturnToMenu);
-    let unpause_btn = spawn_button(&mut commands, "Unpause", Action::Unpause);
+    let return_btn = btn(&mut commands, "Return to Menu", Action::ReturnToMenu);
+    let unpause_btn = btn(&mut commands, "Unpause", Action::Unpause);
 
     commands
         .spawn((

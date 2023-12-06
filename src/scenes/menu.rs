@@ -2,8 +2,8 @@ use bevy::{app::AppExit, prelude::*};
 
 use crate::{
     components::{
-        button::spawn_button,
         fade_transition::{transition_to, TransitionState},
+        ui_util::{btn, txt},
     },
     AppState,
 };
@@ -62,12 +62,12 @@ fn interact(
 
 /// Runs when we enter [AppState::MainMenu]
 fn setup(mut commands: Commands) {
-    let start_button = spawn_button(&mut commands, "Start Game", Action::StartGame);
-
-    let gpu_test = spawn_button(&mut commands, "Dev Scene", Action::DevScene);
+    let title = txt(&mut commands, "Flora Cause", 40.0);
+    let start_button = btn(&mut commands, "Start Game", Action::StartGame);
+    let gpu_test = btn(&mut commands, "Dev Scene", Action::DevScene);
 
     #[cfg(not(target_arch = "wasm32"))]
-    let quit_button = spawn_button(&mut commands, "Quit Game", Action::QuitGame);
+    let quit_button = btn(&mut commands, "Quit Game", Action::QuitGame);
 
     commands
         .spawn((
@@ -93,7 +93,9 @@ fn setup(mut commands: Commands) {
                 background_color: Color::CRIMSON.into(),
                 ..default()
             });
-            cb.add_child(start_button).add_child(gpu_test);
+            cb.add_child(title)
+                .add_child(start_button)
+                .add_child(gpu_test);
 
             #[cfg(not(target_arch = "wasm32"))]
             {

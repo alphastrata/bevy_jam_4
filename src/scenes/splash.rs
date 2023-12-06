@@ -41,15 +41,12 @@ fn tick_timer(
     mut transition_state: ResMut<TransitionState>,
 ) {
     if timer.0.tick(time.delta()).just_finished() {
-        info!("Splash timer elapsed. Proceed to MainMenu");
         transition_to(AppState::MainMenu, &mut transition_state);
     }
 }
 
 /// Runs when we enter [AppState::Splash]
 fn show_splash(mut commands: Commands, asset_server: Res<AssetServer>) {
-    info!("enter");
-
     let splash_handle = asset_server.load("textures/skeejy-no-background.png");
     let bubble_1_handle = asset_server.load("textures/bubble-1.png");
     let bubble_2_handle = asset_server.load("textures/bubble-2.png");
@@ -135,6 +132,5 @@ fn exit_splash(nodes: Query<Entity, With<OnSplashScreen>>, mut commands: Command
     for ent in &nodes {
         commands.entity(ent).despawn_recursive();
     }
-    info!("wuit");
     commands.remove_resource::<SplashTimer>();
 }
