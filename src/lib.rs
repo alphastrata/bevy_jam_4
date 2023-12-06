@@ -25,7 +25,7 @@ pub struct Health(u32);
 pub struct Experience(u32);
 
 /// Top-level states that the game can be in
-#[derive(States, Debug, Clone, Eq, PartialEq, Hash, Default)]
+#[derive(States, Debug, Clone, Copy, Eq, PartialEq, Hash, Default)]
 pub enum AppState {
     #[default]
     Splash,
