@@ -9,12 +9,12 @@ pub struct MapPlugin;
 impl Plugin for MapPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
-            OnEnter(AppState::Playing),
+            OnEnter(AppState::Gameplay),
             (create_initial_map, setup_highlight_tile),
         )
         .add_systems(
             Update,
-            (highlight_tile_labels).run_if(in_state(AppState::Playing)),
+            (highlight_tile_labels).run_if(in_state(AppState::Gameplay)),
         );
     }
 }

@@ -30,15 +30,8 @@ fn main() {
             KeybindPlugin,
             DisplayDebugPlugin,
             ButtonPlugin,
+            TilemapPlugin,
         ))
-        .insert_resource(ResolutionSettings {
-            large: Vec2::new(1920.0, 1080.0),
-            default: Vec2::new(960.0, 640.0),
-        })
-        .add_plugins(DefaultPlugins)
-        .add_plugins(FrameTimeDiagnosticsPlugin)
-        .add_plugins((TweeningPlugin, KeybindPlugin))
-        .add_plugins(TilemapPlugin)
         .add_state::<AppState>()
         .add_plugins((SplashPlugin, MainMenuPlugin, GameplayPlugin, PausePlugin))
         .add_systems(Startup, setup)

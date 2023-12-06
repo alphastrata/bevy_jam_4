@@ -36,7 +36,7 @@ impl Plugin for PowerPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(PowerDebug(true));
         app.add_event::<AddBuilding>();
-        app.add_systems(OnEnter(AppState::Playing), create_core);
+        app.add_systems(OnEnter(AppState::Gameplay), create_core);
         app.add_systems(
             PostUpdate,
             (update_powered_unpowered).run_if(in_state(AppState::Gameplay)),
