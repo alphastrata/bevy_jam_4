@@ -49,7 +49,7 @@ pub fn spawn_building<B: BuildingDefinition>(
             health: Health(B::BASE_HEALTH),
             sprite: SpriteBundle {
                 texture: sprite_texture,
-                transform: Transform::from_translation(Vec3::new(pos.x, pos.y, 0.0)),
+                transform: Transform::from_translation(Vec3::new(pos.x, pos.y, 0.10)),
                 ..default()
             },
         })

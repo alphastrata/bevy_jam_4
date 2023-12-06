@@ -2,8 +2,8 @@ use bevy::prelude::*;
 
 use crate::{
     game::{
-        camera::GameCameraPlugin, placement::TowerPlacementPlugin, power::PowerPlugin,
-        resources::ResourcePlugin,
+        camera::GameCameraPlugin, map::MapPlugin, placement::TowerPlacementPlugin,
+        power::PowerPlugin, resources::ResourcePlugin,
     },
     AppState,
 };
@@ -16,6 +16,7 @@ impl Plugin for GameplayPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
             GameCameraPlugin,
+            MapPlugin,
             TowerPlacementPlugin,
             PowerPlugin,
             ResourcePlugin,

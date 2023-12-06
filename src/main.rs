@@ -4,6 +4,7 @@ use bevy::{
     prelude::*,
     window::{PresentMode, PrimaryWindow},
 };
+use bevy_ecs_tilemap::TilemapPlugin;
 use bevy_tweening::TweeningPlugin;
 
 use flora_cause::{
@@ -29,6 +30,7 @@ fn main() {
             KeybindPlugin,
             DisplayDebugPlugin,
             ButtonPlugin,
+            TilemapPlugin,
         ))
         .add_state::<AppState>()
         .add_plugins((SplashPlugin, MainMenuPlugin, GameplayPlugin, PausePlugin))

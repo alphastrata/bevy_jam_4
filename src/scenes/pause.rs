@@ -15,19 +15,10 @@ impl Plugin for PausePlugin {
     }
 }
 
-#[derive(Resource)]
+#[derive(Resource, Default)]
 pub struct PauseState {
     pub paused: bool,
     pub previous_state: Option<AppState>,
-}
-
-impl Default for PauseState {
-    fn default() -> Self {
-        PauseState {
-            paused: false,
-            previous_state: None,
-        }
-    }
 }
 
 pub fn toggle_pause(

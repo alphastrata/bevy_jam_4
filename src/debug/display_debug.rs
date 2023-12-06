@@ -4,16 +4,11 @@ use crate::game::keybinds::FloraCommand;
 
 use super::{fps_counter::FPSPlugin, resolution::ResolutionPlugin};
 
-#[derive(Resource)]
+#[derive(Resource, Default)]
 pub struct DebugState {
     pub is_debug: bool,
 }
 
-impl Default for DebugState {
-    fn default() -> Self {
-        DebugState { is_debug: false }
-    }
-}
 pub struct DisplayDebugPlugin;
 impl Plugin for DisplayDebugPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
