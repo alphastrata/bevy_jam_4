@@ -2,8 +2,8 @@ use bevy::prelude::*;
 
 use crate::{
     game::{
-        camera::GameCameraPlugin, map::MapPlugin, placement::TowerPlacementPlugin, power::PowerPlugin,
-        resources::ResourcePlugin,
+        camera::GameCameraPlugin, map::MapPlugin, placement::TowerPlacementPlugin,
+        power::PowerPlugin, resources::ResourcePlugin,
     },
     AppState,
 };
