@@ -131,7 +131,7 @@ pub fn create_initial_map2(mut commands: Commands, asset_server: Res<AssetServer
                         .spawn(TileBundle {
                             position: tile_pos,
                             tilemap_id: TilemapId(tilemap_entity),
-                            texture_index: TileTextureIndex(*brightness as u32),
+                            texture_index: TileTextureIndex((*brightness % 8u8) as u32),
                             ..Default::default()
                         })
                         .id();
@@ -161,7 +161,7 @@ use noise::{NoiseFn, Perlin};
 fn brightness_map() -> GrayImage {
     let size = 512;
     let mut img = GrayImage::new(size, size);
-    let perlin = Perlin::new(1234836);
+    let perlin = Perlin::new(1);
 
     let center = (size as f32 / 2.0, size as f32 / 2.0);
     let radius = size as f32 / 4.0; // Adjust radius as needed
@@ -186,6 +186,8 @@ fn brightness_map() -> GrayImage {
             img.put_pixel(x, y, Luma([masked_value]));
         });
     });
+
+    img.save("noise_texture.png").unwrap();
     img
 }
 
@@ -253,4 +255,30 @@ fn setup_highlight_tile(mut commands: Commands) {
         },
         TheHighlightRect,
     ));
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use noise::utils::{
+        ColorGradient, ImageRenderer, NoiseImage, NoiseMap, NoiseMapBuilder, PlaneMapBuilder,
+        SphereMapBuilder,
+    };
+    use noise::*;
+
+    #[test]
+    fn noise_tex_output() {
+        // This is pretty fucking baller:
+        use noise::utils::{NoiseMapBuilder, PlaneMapBuilder};
+        use noise::{Fbm, Perlin};
+
+        let fbm = Fbm::<Perlin>::new(112356);
+
+        PlaneMapBuilder::<_, 2>::new(&fbm)
+            .set_size(512, 512)
+            .set_x_bounds(-5.0, 5.0)
+            .set_y_bounds(-5.0, 5.0)
+            .build()
+            .write_to_file("fbm.png");
+    }
 }
