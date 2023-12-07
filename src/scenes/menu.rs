@@ -61,13 +61,18 @@ fn interact(
 }
 
 /// Runs when we enter [AppState::MainMenu]
-fn setup(mut commands: Commands) {
-    let title = txt(&mut commands, "Flora Cause", 40.0);
-    let start_button = btn(&mut commands, "Start Game", Action::StartGame);
-    let gpu_test = btn(&mut commands, "Dev Scene", Action::DevScene);
+fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+    let title = txt(&mut commands, "Flora Cause", 40.0, &asset_server);
+    let start_button = btn(
+        &mut commands,
+        "Start Game",
+        Action::StartGame,
+        &asset_server,
+    );
+    let gpu_test = btn(&mut commands, "Dev Scene", Action::DevScene, &asset_server);
 
     #[cfg(not(target_arch = "wasm32"))]
-    let quit_button = btn(&mut commands, "Quit Game", Action::QuitGame);
+    let quit_button = btn(&mut commands, "Quit Game", Action::QuitGame, &asset_server);
 
     commands
         .spawn((
@@ -90,7 +95,6 @@ fn setup(mut commands: Commands) {
                     align_items: AlignItems::Center,
                     ..default()
                 },
-                background_color: Color::CRIMSON.into(),
                 ..default()
             });
             cb.add_child(title)

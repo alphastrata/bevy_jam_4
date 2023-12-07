@@ -3,7 +3,7 @@ use bevy::{app::AppExit, prelude::*, window::CursorGrabMode};
 use crate::{
     components::{
         fade_transition::{transition_to, TransitionState},
-        ui_util::btn,
+        ui_util::{btn, txt},
     },
     game::keybinds::FloraCommand,
     AppState,
@@ -97,9 +97,15 @@ fn interact(
 }
 
 /// Runs when we enter [AppState::MainMenu]
-fn setup(mut commands: Commands) {
-    let return_btn = btn(&mut commands, "Return to Menu", Action::ReturnToMenu);
-    let unpause_btn = btn(&mut commands, "Unpause", Action::Unpause);
+fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+    let title = txt(&mut commands, "Game Paused!", 48.0, &asset_server);
+    let return_btn = btn(
+        &mut commands,
+        "Return to Menu",
+        Action::ReturnToMenu,
+        &asset_server,
+    );
+    let unpause_btn = btn(&mut commands, "Unpause", Action::Unpause, &asset_server);
 
     commands
         .spawn((
@@ -111,6 +117,7 @@ fn setup(mut commands: Commands) {
                     justify_content: JustifyContent::Center,
                     ..default()
                 },
+                background_color: Color::rgba(0.0, 0.0, 0.0, 0.4).into(),
                 ..default()
             },
             OnMainMenuScreen,
@@ -122,9 +129,9 @@ fn setup(mut commands: Commands) {
                     align_items: AlignItems::Center,
                     ..default()
                 },
-                background_color: Color::CRIMSON.into(),
                 ..default()
             });
+            cb.add_child(title);
             cb.add_child(return_btn);
             cb.add_child(unpause_btn);
         });

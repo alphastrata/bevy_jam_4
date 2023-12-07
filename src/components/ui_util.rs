@@ -14,14 +14,20 @@ pub mod button_styles {
     pub(super) const PRESSED: Color = Color::rgb(0.75, 0.75, 0.75);
 }
 
-pub fn txt(commands: &mut Commands, text: &str, size: f32) -> Entity {
+pub fn txt(
+    commands: &mut Commands,
+    text: &str,
+    size: f32,
+    asset_server: &Res<AssetServer>,
+) -> Entity {
     commands
         .spawn(TextBundle {
             text: Text::from_section(
                 text,
                 TextStyle {
+                    font: asset_server.load("fonts/PixelifySans.ttf"),
                     font_size: size,
-                    color: Color::rgb(0.9, 0.9, 0.9),
+                    color: button_styles::NORMAL.into(),
                     ..Default::default()
                 },
             ),
@@ -31,7 +37,12 @@ pub fn txt(commands: &mut Commands, text: &str, size: f32) -> Entity {
 }
 
 /// Spawn a generic button
-pub fn btn(commands: &mut Commands, text: &str, action: impl Bundle) -> Entity {
+pub fn btn(
+    commands: &mut Commands,
+    text: &str,
+    action: impl Bundle,
+    asset_server: &Res<AssetServer>,
+) -> Entity {
     commands
         .spawn(ButtonBundle {
             style: Style {
@@ -45,16 +56,16 @@ pub fn btn(commands: &mut Commands, text: &str, action: impl Bundle) -> Entity {
                 ..default()
             },
             // border_color: BorderColor(Color::BLACK),
-            // background_color: button_styles::NORMAL.into(),
+            background_color: Color::rgba(0.0, 0.0, 0.0, 0.0).into(),
             ..default()
         })
         .with_children(|parent| {
             parent.spawn(TextBundle::from_section(
                 text,
                 TextStyle {
-                    // TODO: load font - font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                    font: asset_server.load("fonts/PixelifySans.ttf"),
                     font_size: 32.0,
-                    color: Color::rgb(0.9, 0.9, 0.9),
+                    color: button_styles::NORMAL.into(),
                     ..Default::default()
                 },
             ));
@@ -65,33 +76,26 @@ pub fn btn(commands: &mut Commands, text: &str, action: impl Bundle) -> Entity {
 
 /// Handles changing the button styles
 fn btn_logic(
-    mut interaction_query: Query<(&Interaction, &Children), (Changed<Interaction>, With<Button>)>,
-    mut text_query: Query<&mut Text>,
+    mut q_int: Query<(&Interaction, &Children), (Changed<Interaction>, With<Button>)>,
+    mut q_text: Query<&mut Text>,
 ) {
-    interaction_query
-        .iter_mut()
-        .for_each(|(_interaction, children)| {
-            children.iter().for_each(|child| {
-                if let Ok(mut text) = text_query.get_mut(*child) {
-                    text.sections.iter_mut().for_each(|section| {
-                        section.style.color = button_styles::PRESSED.into();
-                    });
+    for (interaction, children) in &mut q_int {
+        for child in children {
+            if let Ok(mut txt) = q_text.get_mut(*child) {
+                for sect in txt.sections.iter_mut() {
+                    match *interaction {
+                        Interaction::Pressed => {
+                            sect.style.color = button_styles::PRESSED.into();
+                        }
+                        Interaction::Hovered => {
+                            sect.style.color = button_styles::HOVERED.into();
+                        }
+                        Interaction::None => {
+                            sect.style.color = button_styles::NORMAL.into();
+                        }
+                    }
                 }
-
-                // match *interaction {
-                //     Interaction::Pressed => {
-                //         *color = button_styles::PRESSED.into();
-                //         border_color.0 = Color::RED;
-                //     }
-                //     Interaction::Hovered => {
-                //         *color = button_styles::HOVERED.into();
-                //         border_color.0 = Color::WHITE;
-                //     }
-                //     Interaction::None => {
-                //         *color = button_styles::NORMAL.into();
-                //         border_color.0 = Color::BLACK;
-                //     }
-                // }
-            });
-        });
+            }
+        }
+    }
 }
