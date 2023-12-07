@@ -83,14 +83,14 @@ pub enum BuildingType {
 }
 
 impl BuildingType {
-    pub fn spawn(&self, cmds: &mut Commands, asset_server: Res<AssetServer>, pos: Vec2) {
+    pub fn spawn(&self, commands: &mut Commands, asset_server: Res<AssetServer>, pos: Vec2) {
         match self {
             BuildingType::Fan => todo!(),
             BuildingType::Shield => todo!(),
-            BuildingType::Radar => spawn_building::<RadarTower>(cmds, asset_server, pos),
+            BuildingType::Radar => spawn_building::<RadarTower>(commands, asset_server, pos),
             BuildingType::Doppler => todo!(),
             BuildingType::Distribution => {
-                spawn_building::<DistributionTower>(cmds, asset_server, pos)
+                spawn_building::<DistributionTower>(commands, asset_server, pos)
             }
             BuildingType::Roboport => todo!(),
             BuildingType::LoggingCentre => todo!(),

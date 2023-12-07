@@ -49,8 +49,8 @@ impl Plugin for PowerPlugin {
 }
 
 /// Spawn the [buildings::Core] building
-fn create_core(mut cmds: Commands, asset_server: Res<AssetServer>) {
-    spawn_building::<TheCore>(&mut cmds, asset_server, Vec2::ZERO);
+fn create_core(mut commands: Commands, asset_server: Res<AssetServer>) {
+    spawn_building::<TheCore>(&mut commands, asset_server, Vec2::ZERO);
 }
 
 /// Updates the set of towers that are powered or unpowered
