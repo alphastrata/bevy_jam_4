@@ -9,6 +9,20 @@ pub mod debug;
 pub mod game;
 pub mod scenes;
 
+pub mod prelude {
+    pub use crate::{AttackSpeed, Experience, Heading, Health, MovementSpeed};
+}
+
+/// Used by the sprite movement system, to give creep a heading..
+#[derive(Component)]
+pub enum Heading {
+    North,
+    South,
+    West,
+    East,
+    Stationary,
+}
+
 #[derive(Component)]
 pub struct MovementSpeed(u32);
 

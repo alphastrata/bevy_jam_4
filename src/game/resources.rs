@@ -82,36 +82,37 @@ struct InventoryDebugUI;
 struct WoodNumber;
 
 /// Ugly UI for temporarily showing inventory. Will be beautified later!
-fn setup_debug_ui(mut cmds: Commands) {
-    cmds.spawn((
-        NodeBundle {
-            style: Style {
-                width: Val::Percent(100.0),
-                height: Val::Percent(100.0),
-                align_items: AlignItems::FlexEnd,
-                justify_content: JustifyContent::FlexEnd,
-                ..default()
-            },
-            ..default()
-        },
-        InventoryDebugUI,
-    ))
-    .with_children(|parent| {
-        parent.spawn((
-            TextBundle::from_section(
-                "Wood: 0",
-                TextStyle {
-                    font_size: 30.0,
+fn setup_debug_ui(mut commands: Commands) {
+    commands
+        .spawn((
+            NodeBundle {
+                style: Style {
+                    width: Val::Percent(100.0),
+                    height: Val::Percent(100.0),
+                    align_items: AlignItems::FlexEnd,
+                    justify_content: JustifyContent::FlexEnd,
                     ..default()
                 },
-            )
-            .with_style(Style {
-                margin: UiRect::all(Val::Px(15.)),
                 ..default()
-            }),
-            WoodNumber,
-        ));
-    });
+            },
+            InventoryDebugUI,
+        ))
+        .with_children(|parent| {
+            parent.spawn((
+                TextBundle::from_section(
+                    "Wood: 0",
+                    TextStyle {
+                        font_size: 30.0,
+                        ..default()
+                    },
+                )
+                .with_style(Style {
+                    margin: UiRect::all(Val::Px(15.)),
+                    ..default()
+                }),
+                WoodNumber,
+            ));
+        });
 }
 
 fn update_debug_ui(mut q_text: Query<&mut Text, With<WoodNumber>>, inventory: Res<Inventory>) {

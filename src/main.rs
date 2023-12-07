@@ -32,6 +32,7 @@ fn main() {
             UIUtilPlugin,
             TransitionPlugin,
             TilemapPlugin,
+            flora_cause::creeps::CreepPlugin,
         ))
         .add_state::<AppState>()
         .add_plugins((SplashPlugin, MainMenuPlugin, GameplayPlugin, PausePlugin))
