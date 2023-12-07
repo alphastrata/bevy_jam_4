@@ -1,3 +1,5 @@
+use std::ops::ControlFlow;
+
 use crate::prelude::*;
 use bevy::{asset::processor::ProcessorTransactionLog, ecs::bundle, prelude::*};
 use rand::Rng;
@@ -10,7 +12,7 @@ impl Plugin for CreepPlugin {
 
         app.add_event::<SpawnCreep>();
 
-        app.add_systems(Update, (sprite_movement, spawn_creep));
+        app.add_systems(Update, (move_sprite_toward_core, spawn_creep));
 
         #[cfg(debug_assertions)]
         app.add_systems(Update, (dbg_send_spawn_creep_on_enter, dbg_count_creeps));
@@ -49,8 +51,8 @@ fn spawn_creep(
     //TODO: random xy spawn at distance from center of map...
     spawner.read().for_each(|_spawn_event| {
         let mut rng = rand::thread_rng();
-        let x = rng.gen_range(-50.0..=50.);
-        let y = rng.gen_range(-50.0..=50.);
+        let x = rng.gen_range(-500.0..=500.);
+        let y = rng.gen_range(-500.0..=500.);
         //TODO: Keep a creep count, resource for UI?
         commands.spawn((
             SpriteBundle {
@@ -71,20 +73,37 @@ fn spawn_creep(
     })
 }
 
-fn sprite_movement(time: Res<Time>, mut sprite_position: Query<(&mut Heading, &mut Transform)>) {
-    for (mut creep, mut transform) in &mut sprite_position {
-        match *creep {
-            Heading::North => transform.translation.y += 150. * time.delta_seconds(),
-            Heading::South => transform.translation.y -= 150. * time.delta_seconds(),
-            Heading::East => transform.translation.x -= 150. * time.delta_seconds(),
-            Heading::West => transform.translation.x += 150. * time.delta_seconds(),
-            _ => return,
-        }
+fn move_sprite_toward_core(
+    time: Res<Time>,
+    mut sprite_position: Query<(&mut Heading, &mut Transform), With<Creep>>,
+) {
+    sprite_position
+        .iter_mut()
+        .for_each(|(mut creep, mut transform)| {
+            // Target position (0,0) //QUESTION: this is the core right?
+            let target = Vec3::new(0.0, 0.0, 0.0);
 
-        if transform.translation.y > 200. {
-            *creep = Heading::South;
-        } else if transform.translation.y < -200. {
-            *creep = Heading::North;
-        }
-    }
+            let current = transform.translation;
+            let direction = target - current;
+            if direction.length() < 0.1 {
+                ControlFlow::Continue::<()>(());
+                // attack!
+            }
+
+            let speed = 5.0; //
+            let normalized_direction = direction.normalize() * speed * time.delta_seconds();
+
+            transform.translation += normalized_direction;
+
+            // Update the creep's heading based on the direction
+            if normalized_direction.x > 0.0 {
+                *creep = Heading::East;
+            } else if normalized_direction.x < 0.0 {
+                *creep = Heading::West;
+            } else if normalized_direction.y > 0.0 {
+                *creep = Heading::North;
+            } else if normalized_direction.y < 0.0 {
+                *creep = Heading::South;
+            }
+        });
 }
