@@ -49,8 +49,8 @@ fn spawn_creep(
     //TODO: random xy spawn at distance from center of map...
     spawner.read().for_each(|_spawn_event| {
         let mut rng = rand::thread_rng();
-        let x = rng.gen_range(-0.5..=0.5);
-        let y = rng.gen_range(-0.5..=0.5);
+        let x = rng.gen_range(-50.0..=50.);
+        let y = rng.gen_range(-50.0..=50.);
         //TODO: Keep a creep count, resource for UI?
         commands.spawn((
             SpriteBundle {
