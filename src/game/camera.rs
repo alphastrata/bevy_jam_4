@@ -1,5 +1,6 @@
 use bevy::{
     core::Zeroable,
+    core_pipeline::clear_color::{self, ClearColorConfig},
     input::mouse::{MouseMotion, MouseWheel},
     log,
     prelude::*,
@@ -47,9 +48,14 @@ const ZOOM_MAX: f32 = 0.5;
 const ZOOM_MIN: f32 = 128.0;
 
 pub const UI_LAYER: Layer = 1;
+pub const V3D_LAYER: Layer = 1;
 
 pub fn ui_layer() -> RenderLayers {
     RenderLayers::layer(UI_LAYER)
+}
+
+pub fn v3d_layer() -> RenderLayers {
+    RenderLayers::layer(V3D_LAYER)
 }
 
 /// Component that adds our gameplay camera controls
@@ -70,6 +76,9 @@ impl Default for CameraState {
     }
 }
 
+#[derive(Component)]
+pub struct CameraState3d;
+
 pub struct GameCameraPlugin;
 impl Plugin for GameCameraPlugin {
     fn build(&self, app: &mut App) {
@@ -79,11 +88,19 @@ impl Plugin for GameCameraPlugin {
 }
 
 #[derive(Component)]
-pub struct ViewCameraState;
+pub struct ViewCamera;
 
-impl Default for ViewCameraState {
+impl Default for ViewCamera {
     fn default() -> Self {
-        ViewCameraState {}
+        ViewCamera {}
+    }
+}
+
+#[derive(Component)]
+pub struct V3DCamera;
+impl Default for V3DCamera {
+    fn default() -> Self {
+        V3DCamera {}
     }
 }
 
@@ -93,8 +110,13 @@ fn setup(mut commands: Commands, mut images: ResMut<Assets<Image>>) {
         height: 128,
         ..default()
     };
+    let v3d_size = Extent3d {
+        width: 960,
+        height: 640,
+        ..default()
+    };
 
-    let mut target_image = Image {
+    let mut target_img = Image {
         texture_descriptor: TextureDescriptor {
             label: None,
             size,
@@ -109,9 +131,28 @@ fn setup(mut commands: Commands, mut images: ResMut<Assets<Image>>) {
         },
         ..default()
     };
-    target_image.resize(size);
+    target_img.resize(size);
 
-    let target_handle = images.add(target_image);
+    let target_handle = images.add(target_img);
+
+    let mut v3d_target_img = Image {
+        texture_descriptor: TextureDescriptor {
+            label: None,
+            size: v3d_size,
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: TextureDimension::D2,
+            format: TextureFormat::Bgra8UnormSrgb,
+            usage: TextureUsages::TEXTURE_BINDING
+                | TextureUsages::COPY_DST
+                | TextureUsages::RENDER_ATTACHMENT,
+            view_formats: &[],
+        },
+        ..default()
+    };
+    v3d_target_img.resize(v3d_size);
+
+    let v3d_target_handle = images.add(v3d_target_img);
 
     let ui_image = commands
         .spawn((
@@ -130,7 +171,24 @@ fn setup(mut commands: Commands, mut images: ResMut<Assets<Image>>) {
         ))
         .id();
 
-    let game_camera = commands
+    let v3d_img = commands
+        .spawn((
+            ImageBundle {
+                style: Style {
+                    width: Val::Vw(100.0),
+                    height: Val::Vh(100.0),
+                    ..default()
+                },
+                image: UiImage::new(v3d_target_handle.clone()),
+                z_index: ZIndex::Global(i32::MAX),
+                visibility: Visibility::Hidden,
+                ..default()
+            },
+            ui_layer(),
+        ))
+        .id();
+
+    let game_cam = commands
         .spawn((
             Camera2dBundle {
                 camera: Camera {
@@ -145,7 +203,27 @@ fn setup(mut commands: Commands, mut images: ResMut<Assets<Image>>) {
         ))
         .id();
 
-    let view_camera = commands
+    let v3d_cam = commands
+        .spawn((
+            Camera3dBundle {
+                camera_3d: Camera3d {
+                    clear_color: ClearColorConfig::Custom(Color::PINK),
+                    ..default()
+                },
+                camera: Camera {
+                    order: -1,
+                    target: RenderTarget::Image(v3d_target_handle.clone()),
+                    ..default()
+                },
+                ..default()
+            },
+            v3d_layer(),
+            UiCameraConfig { show_ui: false },
+            V3DCamera::default(),
+        ))
+        .id();
+
+    let view_cam = commands
         .spawn((
             Camera2dBundle {
                 camera: Camera {
@@ -155,7 +233,7 @@ fn setup(mut commands: Commands, mut images: ResMut<Assets<Image>>) {
                 ..default()
             },
             ui_layer(),
-            ViewCameraState::default(),
+            ViewCamera::default(),
         ))
         .id();
 }

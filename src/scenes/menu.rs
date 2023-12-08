@@ -77,7 +77,6 @@ fn setup(mut commands: Commands, font: Res<GameFont>, asset_server: Res<AssetSer
     commands
         .spawn((
             NodeBundle {
-                background_color: Color::BLACK.into(),
                 style: Style {
                     width: Val::Percent(100.0),
                     height: Val::Percent(100.0),
