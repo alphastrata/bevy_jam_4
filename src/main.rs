@@ -2,6 +2,7 @@
 use bevy::{
     diagnostic::FrameTimeDiagnosticsPlugin,
     prelude::*,
+    render::texture::{ImageSampler, ImageSamplerDescriptor},
     window::{PresentMode, PrimaryWindow},
 };
 use bevy_ecs_tilemap::TilemapPlugin;
@@ -24,7 +25,12 @@ pub struct PlayerState {}
 
 fn main() {
     App::new()
-        .add_plugins((DefaultPlugins, FrameTimeDiagnosticsPlugin))
+        .add_plugins((
+            DefaultPlugins.set(ImagePlugin {
+                default_sampler: ImageSamplerDescriptor::nearest(),
+            }),
+            FrameTimeDiagnosticsPlugin,
+        ))
         .add_plugins((
             TweeningPlugin,
             KeybindPlugin,

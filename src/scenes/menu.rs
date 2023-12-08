@@ -3,7 +3,7 @@ use bevy::{app::AppExit, prelude::*};
 use crate::{
     components::{
         fade_transition::{transition_to, TransitionState},
-        ui_util::{btn, txt},
+        ui_util::{btn, img, txt, GameFont},
     },
     AppState,
 };
@@ -61,22 +61,23 @@ fn interact(
 }
 
 /// Runs when we enter [AppState::MainMenu]
-fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let title = txt(&mut commands, "Flora Cause", 40.0, &asset_server);
-    let start_button = btn(
+fn setup(mut commands: Commands, font: Res<GameFont>, asset_server: Res<AssetServer>) {
+    let title = img(
         &mut commands,
-        "Start Game",
-        Action::StartGame,
-        &asset_server,
+        asset_server.load("textures/title.png"),
+        Some(Val::Px(512.0)),
+        None,
     );
-    let gpu_test = btn(&mut commands, "Dev Scene", Action::DevScene, &asset_server);
+    let start_button = btn(&mut commands, &font, "Start Game", Action::StartGame);
+    let gpu_test = btn(&mut commands, &font, "Dev Scene", Action::DevScene);
 
     #[cfg(not(target_arch = "wasm32"))]
-    let quit_button = btn(&mut commands, "Quit Game", Action::QuitGame, &asset_server);
+    let quit_button = btn(&mut commands, &font, "Quit Game", Action::QuitGame);
 
     commands
         .spawn((
             NodeBundle {
+                background_color: Color::BLACK.into(),
                 style: Style {
                     width: Val::Percent(100.0),
                     height: Val::Percent(100.0),

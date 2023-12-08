@@ -28,9 +28,13 @@ struct SplashTimer(Timer);
 #[derive(Component)]
 struct OnSplashScreen;
 
-fn keyboard_events(input: Res<Input<KeyCode>>, mut transition_state: ResMut<TransitionState>) {
+fn keyboard_events(
+    mouse: Res<Input<MouseButton>>,
+    key: Res<Input<KeyCode>>,
+    mut transition_state: ResMut<TransitionState>,
+) {
     #[allow(clippy::never_loop)] //TODO .read().next()
-    if input.get_just_pressed().count() != 0 {
+    if key.get_just_pressed().count() != 0 || mouse.get_just_pressed().count() != 0 {
         transition_to(AppState::MainMenu, &mut transition_state);
     }
 }

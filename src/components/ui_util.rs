@@ -1,9 +1,24 @@
 use bevy::prelude::*;
 
+#[derive(Resource)]
+pub struct GameFont(Handle<Font>);
+
 pub struct UIUtilPlugin;
 impl Plugin for UIUtilPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, btn_logic);
+        app.init_resource::<GameFont>()
+            .add_systems(Update, btn_logic);
+    }
+}
+
+impl FromWorld for GameFont {
+    fn from_world(world: &mut World) -> Self {
+        Self(
+            world
+                .get_resource_mut::<AssetServer>()
+                .expect("Why did this not load the asset server?")
+                .load("fonts/PixelifySans.ttf"),
+        )
     }
 }
 
@@ -14,21 +29,41 @@ pub mod button_styles {
     pub(super) const PRESSED: Color = Color::rgb(0.75, 0.75, 0.75);
 }
 
-pub fn txt(
+#[derive(Component)]
+struct ImageBundleComponent;
+
+pub fn img(
     commands: &mut Commands,
-    text: &str,
-    size: f32,
-    asset_server: &Res<AssetServer>,
+    texture: Handle<Image>,
+    width: Option<Val>,
+    height: Option<Val>,
 ) -> Entity {
+    commands
+        .spawn((
+            ImageBundle {
+                style: Style {
+                    width: width.unwrap_or_default(),
+                    height: height.unwrap_or_default(),
+                    ..default()
+                },
+                image: UiImage::new(texture),
+                ..default()
+            },
+            ImageBundleComponent,
+        ))
+        .id()
+}
+
+pub fn txt(commands: &mut Commands, font: &Res<GameFont>, text: &str, size: f32) -> Entity {
     commands
         .spawn(TextBundle {
             text: Text::from_section(
                 text,
                 TextStyle {
-                    font: asset_server.load("fonts/PixelifySans.ttf"),
+                    font: (*font).0.clone(),
                     font_size: size,
                     color: button_styles::NORMAL.into(),
-                    ..Default::default()
+                    ..default()
                 },
             ),
             ..default()
@@ -39,9 +74,9 @@ pub fn txt(
 /// Spawn a generic button
 pub fn btn(
     commands: &mut Commands,
+    font: &Res<GameFont>,
     text: &str,
     action: impl Bundle,
-    asset_server: &Res<AssetServer>,
 ) -> Entity {
     commands
         .spawn(ButtonBundle {
@@ -63,7 +98,7 @@ pub fn btn(
             parent.spawn(TextBundle::from_section(
                 text,
                 TextStyle {
-                    font: asset_server.load("fonts/PixelifySans.ttf"),
+                    font: (*font).0.clone(),
                     font_size: 32.0,
                     color: button_styles::NORMAL.into(),
                     ..Default::default()
