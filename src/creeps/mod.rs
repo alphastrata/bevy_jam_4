@@ -38,7 +38,6 @@ fn dbg_count_creeps(q: Query<&Transform, With<Creep>>, mut count: ResMut<CreepCo
 fn dbg_send_spawn_creep_on_enter(mut spawner: EventWriter<SpawnCreep>, kb: Res<Input<KeyCode>>) {
     if kb.just_released(KeyCode::Return) {
         spawner.send(SpawnCreep);
-        println!("Creep will spawn!");
     }
 }
 
@@ -70,47 +69,10 @@ fn spawn_creep(
                 },
                 Creep,
                 //TODO: creep stats should probs be set by .csv or something?
-                MovementSpeed(10),
                 AttackSpeed(10),
                 Health(100),
                 Experience(100),
-                Heading::Stationary,
             ));
         }
     })
 }
-
-// fn move_sprite_toward_core(
-//     time: Res<Time>,
-//     mut sprite_position: Query<(&mut Heading, &mut Transform), With<Creep>>,
-// ) {
-//     sprite_position
-//         .iter_mut()
-//         .for_each(|(mut creep, mut transform)| {
-//             // Target position (0,0) //QUESTION: this is the core right?
-//             let target = Vec3::new(0.0, 0.0, 0.0);
-
-//             let current = transform.translation;
-//             let direction = target - current;
-//             if direction.length() < 0.1 {
-//                 ControlFlow::Continue::<()>(());
-//                 // attack!
-//             }
-
-//             let speed = 5.0; //
-//             let normalized_direction = direction.normalize() * speed * time.delta_seconds();
-
-//             transform.translation += normalized_direction;
-
-//             // Update the creep's heading based on the direction
-//             if normalized_direction.x > 0.0 {
-//                 *creep = Heading::East;
-//             } else if normalized_direction.x < 0.0 {
-//                 *creep = Heading::West;
-//             } else if normalized_direction.y > 0.0 {
-//                 *creep = Heading::North;
-//             } else if normalized_direction.y < 0.0 {
-//                 *creep = Heading::South;
-//             }
-//         });
-// }
