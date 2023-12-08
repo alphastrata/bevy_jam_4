@@ -3,7 +3,14 @@ use bevy::{
     input::mouse::{MouseMotion, MouseWheel},
     log,
     prelude::*,
-    window::PrimaryWindow,
+    render::{
+        camera::RenderTarget,
+        render_resource::{
+            Extent3d, TextureDescriptor, TextureDimension, TextureFormat, TextureUsages,
+        },
+        view::{Layer, RenderLayers},
+    },
+    window::{PrimaryWindow, WindowRef},
 };
 use bevy_tweening::Lerp;
 
@@ -39,6 +46,12 @@ const ZOOM_MAX: f32 = 0.5;
 // how far out are we allowed to zoom
 const ZOOM_MIN: f32 = 128.0;
 
+pub const UI_LAYER: Layer = 1;
+
+pub fn ui_layer() -> RenderLayers {
+    RenderLayers::layer(UI_LAYER)
+}
+
 /// Component that adds our gameplay camera controls
 #[derive(Component)]
 pub struct CameraState {
@@ -60,8 +73,91 @@ impl Default for CameraState {
 pub struct GameCameraPlugin;
 impl Plugin for GameCameraPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, (move_camera).run_if(in_state(AppState::Gameplay)));
+        app.add_systems(Startup, setup)
+            .add_systems(Update, (move_camera).run_if(in_state(AppState::Gameplay)));
     }
+}
+
+#[derive(Component)]
+pub struct ViewCameraState;
+
+impl Default for ViewCameraState {
+    fn default() -> Self {
+        ViewCameraState {}
+    }
+}
+
+fn setup(mut commands: Commands, mut images: ResMut<Assets<Image>>) {
+    let size = Extent3d {
+        width: 128,
+        height: 128,
+        ..default()
+    };
+
+    let mut target_image = Image {
+        texture_descriptor: TextureDescriptor {
+            label: None,
+            size,
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: TextureDimension::D2,
+            format: TextureFormat::Bgra8UnormSrgb,
+            usage: TextureUsages::TEXTURE_BINDING
+                | TextureUsages::COPY_DST
+                | TextureUsages::RENDER_ATTACHMENT,
+            view_formats: &[],
+        },
+        ..default()
+    };
+    target_image.resize(size);
+
+    let target_handle = images.add(target_image);
+
+    let ui_image = commands
+        .spawn((
+            ImageBundle {
+                style: Style {
+                    width: Val::Vw(100.0),
+                    height: Val::Vh(100.0),
+                    ..default()
+                },
+                image: UiImage::new(target_handle.clone()),
+                z_index: ZIndex::Global(i32::MIN),
+                visibility: Visibility::Hidden,
+                ..default()
+            },
+            ui_layer(),
+        ))
+        .id();
+
+    let game_camera = commands
+        .spawn((
+            Camera2dBundle {
+                camera: Camera {
+                    order: -1,
+                    target: RenderTarget::Image(target_handle.clone()),
+                    ..default()
+                },
+                ..default()
+            },
+            UiCameraConfig { show_ui: false },
+            CameraState::default(),
+        ))
+        .id();
+
+    let view_camera = commands
+        .spawn((
+            Camera2dBundle {
+                camera: Camera {
+                    target: RenderTarget::Window(WindowRef::Primary),
+                    ..default()
+                },
+                ..default()
+            },
+            ui_layer(),
+            ViewCameraState::default(),
+        ))
+        .id();
 }
 
 fn move_camera(

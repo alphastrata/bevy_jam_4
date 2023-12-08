@@ -50,7 +50,7 @@ pub fn toggle_pause(
 
 pub fn capture_cursor(mut windows: Query<&mut Window>) {
     let mut window = windows.single_mut();
-    window.cursor.grab_mode = CursorGrabMode::Locked;
+    window.cursor.grab_mode = CursorGrabMode::Confined;
 }
 
 pub fn release_cursor(mut windows: Query<&mut Window>) {

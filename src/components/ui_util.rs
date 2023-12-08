@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 
+use crate::game::camera::ui_layer;
+
 #[derive(Resource)]
 pub struct GameFont(Handle<Font>);
 
@@ -22,15 +24,12 @@ impl FromWorld for GameFont {
     }
 }
 
-pub mod button_styles {
+pub mod btn_styles {
     use bevy::prelude::Color;
     pub(super) const NORMAL: Color = Color::rgb(1.0, 1.0, 01.0);
     pub(super) const HOVERED: Color = Color::rgb(0.85, 0.85, 0.85);
     pub(super) const PRESSED: Color = Color::rgb(0.75, 0.75, 0.75);
 }
-
-#[derive(Component)]
-struct ImageBundleComponent;
 
 pub fn img(
     commands: &mut Commands,
@@ -49,25 +48,28 @@ pub fn img(
                 image: UiImage::new(texture),
                 ..default()
             },
-            ImageBundleComponent,
+            ui_layer(),
         ))
         .id()
 }
 
 pub fn txt(commands: &mut Commands, font: &Res<GameFont>, text: &str, size: f32) -> Entity {
     commands
-        .spawn(TextBundle {
-            text: Text::from_section(
-                text,
-                TextStyle {
-                    font: (*font).0.clone(),
-                    font_size: size,
-                    color: button_styles::NORMAL.into(),
-                    ..default()
-                },
-            ),
-            ..default()
-        })
+        .spawn((
+            TextBundle {
+                text: Text::from_section(
+                    text,
+                    TextStyle {
+                        font: (*font).0.clone(),
+                        font_size: size,
+                        color: btn_styles::NORMAL.into(),
+                        ..default()
+                    },
+                ),
+                ..default()
+            },
+            ui_layer(),
+        ))
         .id()
 }
 
@@ -79,30 +81,36 @@ pub fn btn(
     action: impl Bundle,
 ) -> Entity {
     commands
-        .spawn(ButtonBundle {
-            style: Style {
-                width: Val::Px(250.0),
-                height: Val::Px(50.0),
-                // border: UiRect::all(Val::Px(5.0)),
-                // horizontally center child text
-                justify_content: JustifyContent::Center,
-                // vertically center child text
-                align_items: AlignItems::Center,
+        .spawn((
+            ButtonBundle {
+                style: Style {
+                    width: Val::Px(250.0),
+                    height: Val::Px(50.0),
+                    // border: UiRect::all(Val::Px(5.0)),
+                    // horizontally center child text
+                    justify_content: JustifyContent::Center,
+                    // vertically center child text
+                    align_items: AlignItems::Center,
+                    ..default()
+                },
+                // border_color: BorderColor(Color::BLACK),
+                background_color: Color::rgba(0.0, 0.0, 0.0, 0.0).into(),
                 ..default()
             },
-            // border_color: BorderColor(Color::BLACK),
-            background_color: Color::rgba(0.0, 0.0, 0.0, 0.0).into(),
-            ..default()
-        })
+            ui_layer(),
+        ))
         .with_children(|parent| {
-            parent.spawn(TextBundle::from_section(
-                text,
-                TextStyle {
-                    font: (*font).0.clone(),
-                    font_size: 32.0,
-                    color: button_styles::NORMAL.into(),
-                    ..Default::default()
-                },
+            parent.spawn((
+                TextBundle::from_section(
+                    text,
+                    TextStyle {
+                        font: (*font).0.clone(),
+                        font_size: 32.0,
+                        color: btn_styles::NORMAL.into(),
+                        ..Default::default()
+                    },
+                ),
+                ui_layer(),
             ));
         })
         .insert(action)
@@ -120,13 +128,13 @@ fn btn_logic(
                 for sect in txt.sections.iter_mut() {
                     match *interaction {
                         Interaction::Pressed => {
-                            sect.style.color = button_styles::PRESSED.into();
+                            sect.style.color = btn_styles::PRESSED.into();
                         }
                         Interaction::Hovered => {
-                            sect.style.color = button_styles::HOVERED.into();
+                            sect.style.color = btn_styles::HOVERED.into();
                         }
                         Interaction::None => {
-                            sect.style.color = button_styles::NORMAL.into();
+                            sect.style.color = btn_styles::NORMAL.into();
                         }
                     }
                 }

@@ -56,6 +56,4 @@ fn setup(mut commands: Commands, mut q_window: Query<&mut Window, With<PrimaryWi
 
     // window.present_mode = PresentMode::
     info!("{:?}", window.present_mode);
-
-    commands.spawn((Camera2dBundle::default(), CameraState::default()));
 }
