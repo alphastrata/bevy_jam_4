@@ -8,6 +8,7 @@ pub mod creeps;
 pub mod debug;
 pub mod game;
 pub mod scenes;
+pub mod wind;
 
 pub mod prelude {
     pub use crate::{AttackSpeed, Experience, Health, MovementSpeed};
