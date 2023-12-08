@@ -10,15 +10,9 @@ struct TransitionParams {
 #[derive(Component)]
 struct TransitionComponent;
 
-#[derive(Resource)]
+#[derive(Resource, Default)]
 pub struct TransitionState {
     params: Option<TransitionParams>,
-}
-
-impl Default for TransitionState {
-    fn default() -> Self {
-        TransitionState { params: None }
-    }
 }
 
 pub struct TransitionPlugin;

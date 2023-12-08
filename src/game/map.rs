@@ -120,26 +120,23 @@ pub fn create_initial_map2(mut commands: Commands, asset_server: Res<AssetServer
         .into_iter()
         .enumerate()
         .for_each(|(x_idx, ixs)| {
-            ixs.iter()
-                .enumerate()
-                .into_iter()
-                .for_each(|(y_idx, brightness)| {
-                    let tile_pos = TilePos {
-                        x: x_idx as u32,
-                        y: y_idx as u32,
-                    };
+            ixs.iter().enumerate().for_each(|(y_idx, brightness)| {
+                let tile_pos = TilePos {
+                    x: x_idx as u32,
+                    y: y_idx as u32,
+                };
 
-                    let tile_entity = commands
-                        .spawn(TileBundle {
-                            position: tile_pos,
-                            tilemap_id: TilemapId(tilemap_entity),
-                            texture_index: TileTextureIndex((*brightness % 8u8) as u32),
-                            ..Default::default()
-                        })
-                        .id();
+                let tile_entity = commands
+                    .spawn(TileBundle {
+                        position: tile_pos,
+                        tilemap_id: TilemapId(tilemap_entity),
+                        texture_index: TileTextureIndex((*brightness % 8u8) as u32),
+                        ..Default::default()
+                    })
+                    .id();
 
-                    tile_storage.set(&tile_pos, tile_entity);
-                });
+                tile_storage.set(&tile_pos, tile_entity);
+            });
         });
 
     let tile_size = TilemapTileSize { x: 32.0, y: 32.0 };

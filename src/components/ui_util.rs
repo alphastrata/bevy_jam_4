@@ -27,7 +27,7 @@ pub fn txt(
                 TextStyle {
                     font: asset_server.load("fonts/PixelifySans.ttf"),
                     font_size: size,
-                    color: button_styles::NORMAL.into(),
+                    color: button_styles::NORMAL,
                     ..Default::default()
                 },
             ),
@@ -65,7 +65,7 @@ pub fn btn(
                 TextStyle {
                     font: asset_server.load("fonts/PixelifySans.ttf"),
                     font_size: 32.0,
-                    color: button_styles::NORMAL.into(),
+                    color: button_styles::NORMAL,
                     ..Default::default()
                 },
             ));
@@ -85,13 +85,13 @@ fn btn_logic(
                 for sect in txt.sections.iter_mut() {
                     match *interaction {
                         Interaction::Pressed => {
-                            sect.style.color = button_styles::PRESSED.into();
+                            sect.style.color = button_styles::PRESSED;
                         }
                         Interaction::Hovered => {
-                            sect.style.color = button_styles::HOVERED.into();
+                            sect.style.color = button_styles::HOVERED;
                         }
                         Interaction::None => {
-                            sect.style.color = button_styles::NORMAL.into();
+                            sect.style.color = button_styles::NORMAL;
                         }
                     }
                 }

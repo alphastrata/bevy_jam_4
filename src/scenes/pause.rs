@@ -37,11 +37,11 @@ pub fn toggle_pause(
     if input.just_pressed(FloraCommand::Pause) {
         state.paused = !state.paused;
         if state.paused {
-            state.previous_state = Some(app_state.get().clone());
+            state.previous_state = Some(*app_state.get());
             next_state.set(AppState::Paused);
         } else {
             if let Some(next) = &state.previous_state {
-                next_state.set(next.clone());
+                next_state.set(*next);
             }
             state.previous_state = None;
         }
@@ -86,7 +86,7 @@ fn interact(
                 }
                 Action::Unpause => {
                     if let Some(next) = &state.previous_state {
-                        next_state.set(next.clone());
+                        next_state.set(*next);
                     }
                     state.previous_state = None;
                 }

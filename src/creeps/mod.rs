@@ -76,7 +76,6 @@ fn spawn_creep(
                 Experience(100),
                 Heading::Stationary,
             ));
-            return;
         }
     })
 }
