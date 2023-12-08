@@ -36,17 +36,18 @@ enum TerrainTileType {
 lazy_static! {
     static ref TERRAIN_TILE_TYPE_TO_INDICIE_MAP: HashMap<usize, TerrainTileType> = {
         let mut m = HashMap::new();
-        m.insert(0usize, TerrainTileType::Rock);
-        m.insert(1usize, TerrainTileType::Rock);
-        m.insert(2usize, TerrainTileType::Rock);
+        m.insert(0usize, TerrainTileType::DeepWater);
+        m.insert(1usize, TerrainTileType::ShallowWater);
 
-        m.insert(3usize, TerrainTileType::Swamp);
-        m.insert(4usize, TerrainTileType::ShallowWater);
-        m.insert(5usize, TerrainTileType::DeepWater);
+        m.insert(2usize, TerrainTileType::Swamp);
+        m.insert(3usize, TerrainTileType::Sand);
 
-        m.insert(6usize, TerrainTileType::Sand);
-        m.insert(7usize, TerrainTileType::LightGrass);
-        m.insert(8usize, TerrainTileType::HeavyGrass);
+        m.insert(4usize, TerrainTileType::LightGrass);
+        m.insert(5usize, TerrainTileType::HeavyGrass);
+
+        m.insert(6usize, TerrainTileType::Rock);
+        m.insert(7usize, TerrainTileType::Rock);
+        m.insert(8usize, TerrainTileType::Rock);
 
         m
     };
@@ -127,6 +128,7 @@ pub fn create_initial_map2(mut commands: Commands, asset_server: Res<AssetServer
                         x: x_idx as u32,
                         y: y_idx as u32,
                     };
+
                     let tile_entity = commands
                         .spawn(TileBundle {
                             position: tile_pos,
@@ -135,6 +137,7 @@ pub fn create_initial_map2(mut commands: Commands, asset_server: Res<AssetServer
                             ..Default::default()
                         })
                         .id();
+
                     tile_storage.set(&tile_pos, tile_entity);
                 });
         });
