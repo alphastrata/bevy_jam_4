@@ -28,7 +28,6 @@ pub fn txt(
                     font: asset_server.load("fonts/PixelifySans.ttf"),
                     font_size: size,
                     color: button_styles::NORMAL,
-                    ..Default::default()
                 },
             ),
             ..default()
@@ -66,7 +65,6 @@ pub fn btn(
                     font: asset_server.load("fonts/PixelifySans.ttf"),
                     font_size: 32.0,
                     color: button_styles::NORMAL,
-                    ..Default::default()
                 },
             ));
         })

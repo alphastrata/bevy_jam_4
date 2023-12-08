@@ -43,6 +43,7 @@ fn change_current_building(mut state: ResMut<PlacementState>, input: Res<Input<F
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 fn spawn_at_click_pos(
     mut commands: Commands,
     mut add_building: EventWriter<AddBuilding>,
