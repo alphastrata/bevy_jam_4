@@ -127,8 +127,8 @@ pub fn rt_cam3d(
 }
 
 fn rt_cam2d(
-    mut commands: Commands,
-    mut images: ResMut<Assets<Image>>,
+    commands: &mut Commands,
+    images: &mut ResMut<Assets<Image>>,
     size: Extent3d,
     layers: RenderLayers,
     mut camera: Camera2dBundle,
@@ -158,8 +158,37 @@ fn rt_cam2d(
     (target_handle, camera)
 }
 
+pub fn screen_size() -> Extent3d {
+    Extent3d {
+        width: 120,
+        height: 80,
+        // width: 960,
+        // height: 640,
+        ..default()
+    }
+}
+
 fn setup(mut commands: Commands, mut images: ResMut<Assets<Image>>) {
-    let view_cam = commands
+    let (tx_handle, camera) = rt_cam2d(
+        &mut commands,
+        &mut images,
+        screen_size(),
+        main_layer(),
+        Camera2dBundle::default(),
+    );
+    commands.entity(camera).insert(ViewCamera::default());
+
+    commands.spawn(ImageBundle {
+        image: UiImage::new(tx_handle.clone()),
+        style: Style {
+            width: Val::Vw(100.0),
+            height: Val::Vh(100.0),
+            ..default()
+        },
+        ..default()
+    });
+
+    let final_cam = commands
         .spawn((
             Camera2dBundle {
                 camera: Camera {
@@ -168,7 +197,6 @@ fn setup(mut commands: Commands, mut images: ResMut<Assets<Image>>) {
                 },
                 ..default()
             },
-            main_layer(),
             ViewCamera::default(),
         ))
         .id();
