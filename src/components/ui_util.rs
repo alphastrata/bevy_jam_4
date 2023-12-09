@@ -60,9 +60,9 @@ pub fn txt(commands: &mut Commands, font: &Res<GameFont>, text: &str, size: f32)
                 text: Text::from_section(
                     text,
                     TextStyle {
-                        font: (*font).0.clone(),
+                        font: font.0.clone(),
                         font_size: size,
-                        color: btn_styles::NORMAL.into(),
+                        color: btn_styles::NORMAL,
                         ..default()
                     },
                 ),
@@ -104,9 +104,9 @@ pub fn btn(
                 TextBundle::from_section(
                     text,
                     TextStyle {
-                        font: (*font).0.clone(),
+                        font: font.0.clone(),
                         font_size: 32.0,
-                        color: btn_styles::NORMAL.into(),
+                        color: btn_styles::NORMAL,
                         ..Default::default()
                     },
                 ),
@@ -128,13 +128,13 @@ fn btn_logic(
                 for sect in txt.sections.iter_mut() {
                     match *interaction {
                         Interaction::Pressed => {
-                            sect.style.color = btn_styles::PRESSED.into();
+                            sect.style.color = btn_styles::PRESSED;
                         }
                         Interaction::Hovered => {
-                            sect.style.color = btn_styles::HOVERED.into();
+                            sect.style.color = btn_styles::HOVERED;
                         }
                         Interaction::None => {
-                            sect.style.color = btn_styles::NORMAL.into();
+                            sect.style.color = btn_styles::NORMAL;
                         }
                     }
                 }
