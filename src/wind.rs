@@ -7,7 +7,8 @@ use bevy::{
 pub struct WindPlugin;
 impl Plugin for WindPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(MaterialPlugin::<WindSimMaterial>::default());
+        app.add_plugins(MaterialPlugin::<WindSimMaterial>::default())
+            .add_systems(Startup, setup);
     }
 }
 
@@ -50,9 +51,10 @@ fn setup(
         &[127, 127],
         TextureFormat::Rg8Snorm,
     );
+    // wind_image.
     let wind_handle = images.add(wind_image);
 
-    let quad = meshes.add(shape::Quad::new(Vec2::new(0.0, 0.0)).into());
+    let quad = meshes.add(shape::Quad::new(Vec2::new(512.0, 512.0)).into());
     commands.spawn(MaterialMeshBundle {
         mesh: quad,
         material: materials.add(WindSimMaterial {
@@ -60,7 +62,7 @@ fn setup(
             vector_map: Some(wind_handle),
             // particle_positions: todo!(),
         }),
-        transform: Transform::from_translation(Vec3::new(0.0, 0.0, 0.0)),
+        transform: Transform::from_translation(Vec3::new(5.0, 5.0, 0.3)),
         ..default()
     });
 }

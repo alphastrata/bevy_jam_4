@@ -11,5 +11,9 @@ struct WindSimMaterial {
 
 @fragment
 fn fragment(mesh: VertexOutput) -> @location(0) vec4<f32> {
-  return material.color *
+  return textureSample(
+    vector_map_texture,
+    vector_map_sampler,
+    mesh.uv);
+  //return material.color;
 }

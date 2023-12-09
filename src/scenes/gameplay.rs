@@ -5,6 +5,7 @@ use crate::{
         camera::GameCameraPlugin, map::MapPlugin, placement::TowerPlacementPlugin,
         power::PowerPlugin, resources::ResourcePlugin,
     },
+    wind::WindPlugin,
     AppState,
 };
 
@@ -17,9 +18,10 @@ impl Plugin for GameplayPlugin {
         app.add_plugins((
             GameCameraPlugin,
             MapPlugin,
-            TowerPlacementPlugin,
-            PowerPlugin,
-            ResourcePlugin,
+            // TowerPlacementPlugin,
+            // PowerPlugin,
+            // ResourcePlugin,
+            WindPlugin,
         ))
         .add_systems(OnEnter(AppState::Gameplay), capture_cursor)
         .add_systems(OnExit(AppState::Gameplay), release_cursor)
