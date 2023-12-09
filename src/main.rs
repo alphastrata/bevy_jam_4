@@ -10,6 +10,7 @@ use bevy_tweening::TweeningPlugin;
 
 use flora_cause::{
     components::{fade_transition::TransitionPlugin, ui_util::UIUtilPlugin},
+    creeps::CreepPlugin,
     debug::display_debug::DisplayDebugPlugin,
     // debug::fps_counter::FPSPlugin,
     game::keybinds::KeybindPlugin,
@@ -32,16 +33,19 @@ fn main() {
             FrameTimeDiagnosticsPlugin,
         ))
         .add_plugins((
-            TweeningPlugin,
-            KeybindPlugin,
+            CreepPlugin,
             DisplayDebugPlugin,
-            UIUtilPlugin,
-            TransitionPlugin,
+            GameplayPlugin,
+            KeybindPlugin,
+            MainMenuPlugin,
+            PausePlugin,
+            SplashPlugin,
             TilemapPlugin,
-            flora_cause::creeps::CreepPlugin,
+            TransitionPlugin,
+            TweeningPlugin,
+            UIUtilPlugin,
         ))
         .add_state::<AppState>()
-        .add_plugins((SplashPlugin, MainMenuPlugin, GameplayPlugin, PausePlugin))
         .add_systems(Startup, setup)
         .run();
 }
