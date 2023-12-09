@@ -49,6 +49,8 @@ impl Plugin for DrainTowerPlugin {
             DRAIN_TICK_RATE,
             TimerMode::Repeating,
         )))
+        .add_event::<AddBuilding>()
+        .add_event::<SpawnCreep>()
         .add_systems(
             Update,
             (calculate_drainees, drain_closeby_trees).run_if(in_state(AppState::Gameplay)),
