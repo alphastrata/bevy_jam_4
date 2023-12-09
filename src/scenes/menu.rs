@@ -81,7 +81,7 @@ fn setup(
     font: Res<GameFont>,
     asset_server: Res<AssetServer>,
 ) {
-    let (img_handle, _) = rt_cam3d(
+    let (_img_handle, _) = rt_cam3d(
         &mut commands,
         &mut images,
         Extent3d {
@@ -104,23 +104,22 @@ fn setup(
             ..default()
         },
     );
-
-    let _ui_image = commands
-        .spawn((
-            ImageBundle {
-                style: Style {
-                    width: Val::Vw(100.0),
-                    height: Val::Vh(100.0),
-                    ..default()
-                },
-                image: UiImage::new(img_handle.clone()),
-                z_index: ZIndex::Global(i32::MIN),
-                ..default()
-            },
-            main_layer(),
-        ))
-        .id();
-
+    // let ui_image = commands
+    //     .spawn((
+    //         ImageBundle {
+    //             style: Style {
+    //                 width: Val::Vw(100.0),
+    //                 height: Val::Vh(100.0),
+    //                 ..default()
+    //             },
+    //             image: UiImage::new(img_handle.clone()),
+    //             z_index: ZIndex::Global(i32::MIN),
+    //             ..default()
+    //         },
+    //         main_layer(),
+    //     ))
+    //     .id();
+    //
     let cube_size = 4.0;
     let cube_handle = meshes.add(Mesh::from(shape::Box::new(cube_size, cube_size, cube_size)));
     let cube_material_handle = materials.add(StandardMaterial {

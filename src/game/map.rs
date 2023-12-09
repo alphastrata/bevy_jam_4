@@ -197,7 +197,7 @@ fn brightness_map() -> GrayImage {
 fn highlight_tile_labels(
     _commands: Commands,
     primary_window: Query<&Window, With<PrimaryWindow>>,
-    q_camera: Query<((&GlobalTransform, &Camera), With<ViewCamera>)>,
+    q_camera: Query<(&GlobalTransform, &Camera), With<ViewCamera>>,
     q_tilemap: Query<
         (
             &TilemapSize,
@@ -211,7 +211,7 @@ fn highlight_tile_labels(
     mut highlight_rect: Query<(Entity, &mut Transform), With<TheHighlightRect>>,
 ) {
     let window = primary_window.single();
-    let ((cam_tf, cam), _) = q_camera.single();
+    let (cam_tf, cam) = q_camera.single();
     let (map_size, grid_size, map_type, tile_storage, map_transform) = q_tilemap.single();
 
     let cursor_world_space_pos = window
