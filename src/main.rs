@@ -33,16 +33,19 @@ fn main() {
             FrameTimeDiagnosticsPlugin,
         ))
         .add_plugins((
-            TweeningPlugin,
-            KeybindPlugin,
-            DisplayDebugPlugin,
-            UIUtilPlugin,
-            TransitionPlugin,
-            TilemapPlugin,
             CreepPlugin,
+            DisplayDebugPlugin,
+            GameplayPlugin,
+            KeybindPlugin,
+            MainMenuPlugin,
+            PausePlugin,
+            SplashPlugin,
+            TilemapPlugin,
+            TransitionPlugin,
+            TweeningPlugin,
+            UIUtilPlugin,
         ))
         .add_state::<AppState>()
-        .add_plugins((SplashPlugin, MainMenuPlugin, GameplayPlugin, PausePlugin))
         .add_systems(Startup, setup)
         .run();
 }
