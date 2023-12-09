@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::game::camera::ui_layer;
+use crate::game::camera::main_layer;
 
 #[derive(Resource)]
 pub struct GameFont(Handle<Font>);
@@ -48,7 +48,7 @@ pub fn img(
                 image: UiImage::new(texture),
                 ..default()
             },
-            ui_layer(),
+            main_layer(),
         ))
         .id()
 }
@@ -68,7 +68,7 @@ pub fn txt(commands: &mut Commands, font: &Res<GameFont>, text: &str, size: f32)
                 ),
                 ..default()
             },
-            ui_layer(),
+            main_layer(),
         ))
         .id()
 }
@@ -97,7 +97,7 @@ pub fn btn(
                 background_color: Color::rgba(0.0, 0.0, 0.0, 0.0).into(),
                 ..default()
             },
-            ui_layer(),
+            main_layer(),
         ))
         .with_children(|parent| {
             parent.spawn((
@@ -110,7 +110,7 @@ pub fn btn(
                         ..Default::default()
                     },
                 ),
-                ui_layer(),
+                main_layer(),
             ));
         })
         .insert(action)

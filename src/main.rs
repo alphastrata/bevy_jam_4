@@ -2,7 +2,7 @@
 use bevy::{
     diagnostic::FrameTimeDiagnosticsPlugin,
     prelude::*,
-    render::texture::{ImageSampler, ImageSamplerDescriptor},
+    render::texture::ImageSamplerDescriptor,
     window::{PresentMode, PrimaryWindow},
 };
 use bevy_ecs_tilemap::TilemapPlugin;
@@ -12,7 +12,7 @@ use flora_cause::{
     components::{fade_transition::TransitionPlugin, ui_util::UIUtilPlugin},
     debug::display_debug::DisplayDebugPlugin,
     // debug::fps_counter::FPSPlugin,
-    game::{camera::CameraState, keybinds::KeybindPlugin},
+    game::keybinds::KeybindPlugin,
     scenes::{
         gameplay::GameplayPlugin, menu::MainMenuPlugin, pause::PausePlugin, splash::SplashPlugin,
     },

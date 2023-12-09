@@ -5,7 +5,7 @@ use bevy_tweening::{lens::SpriteColorLens, Animator, Delay, EaseFunction, Tween}
 
 use crate::{
     components::fade_transition::{transition_to, TransitionState},
-    game::camera::ui_layer,
+    game::camera::main_layer,
     AppState,
 };
 
@@ -67,7 +67,7 @@ fn show_splash(mut commands: Commands, asset_server: Res<AssetServer>) {
             ..default()
         },
         OnSplashScreen,
-        ui_layer(),
+        main_layer(),
     ));
 
     let duration = 2000;
@@ -122,7 +122,7 @@ fn show_splash(mut commands: Commands, asset_server: Res<AssetServer>) {
                 ..default()
             },
             animator,
-            ui_layer(),
+            main_layer(),
             OnSplashScreen,
         ));
     }
