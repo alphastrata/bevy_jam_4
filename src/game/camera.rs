@@ -189,16 +189,13 @@ fn setup(mut commands: Commands, mut images: ResMut<Assets<Image>>) {
     });
 
     let final_cam = commands
-        .spawn((
-            Camera2dBundle {
-                camera: Camera {
-                    target: RenderTarget::Window(WindowRef::Primary),
-                    ..default()
-                },
+        .spawn(Camera2dBundle {
+            camera: Camera {
+                target: RenderTarget::Window(WindowRef::Primary),
                 ..default()
             },
-            ViewCamera::default(),
-        ))
+            ..default()
+        })
         .id();
 }
 

@@ -157,6 +157,8 @@ pub fn create_initial_map2(mut commands: Commands, asset_server: Res<AssetServer
 
 use image::{GrayImage, Luma};
 use noise::{NoiseFn, Perlin};
+
+use super::camera::ViewCamera;
 /// Make a perlin-noise based brightnessmap:
 fn brightness_map() -> GrayImage {
     let size = 512;
@@ -195,7 +197,7 @@ fn brightness_map() -> GrayImage {
 fn highlight_tile_labels(
     _commands: Commands,
     primary_window: Query<&Window, With<PrimaryWindow>>,
-    q_camera: Query<(&GlobalTransform, &Camera)>,
+    q_camera: Query<(&GlobalTransform, &Camera), With<ViewCamera>>,
     q_tilemap: Query<
         (
             &TilemapSize,
