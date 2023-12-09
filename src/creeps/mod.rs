@@ -73,7 +73,7 @@ fn spawn_creep(commands: &mut Commands, asset_server: &Res<AssetServer>) {
             //TODO: creep stats should probs be set by .csv or something?
             AttackSpeed(10),
             Health(100),
-            Experience(100),
+            CorpoPoints(rng.gen_range(1.0..50.0) as u32),
         ));
     }
 }

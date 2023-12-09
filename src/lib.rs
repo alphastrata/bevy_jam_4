@@ -10,7 +10,7 @@ pub mod game;
 pub mod scenes;
 
 pub mod prelude {
-    pub use crate::{AttackSpeed, Experience, Health, MovementSpeed};
+    pub use crate::{AttackSpeed, CorpoPoints, Health, MovementSpeed};
 }
 
 #[derive(Component)]
@@ -26,7 +26,7 @@ pub struct AttackSpeed(usize);
 pub struct Health(u32);
 
 #[derive(Component)]
-pub struct Experience(u32);
+pub struct CorpoPoints(u32);
 
 /// Top-level states that the game can be in
 #[derive(States, Debug, Clone, Copy, Eq, PartialEq, Hash, Default)]
