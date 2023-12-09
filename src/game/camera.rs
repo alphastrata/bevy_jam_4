@@ -158,8 +158,8 @@ fn rt_cam2d(
     (target_handle, camera)
 }
 
-fn setup(mut commands: Commands, mut images: ResMut<Assets<Image>>) {
-    let view_cam = commands
+fn setup(mut commands: Commands, _images: ResMut<Assets<Image>>) {
+    let _view_cam = commands
         .spawn((
             Camera2dBundle {
                 camera: Camera {
@@ -169,7 +169,7 @@ fn setup(mut commands: Commands, mut images: ResMut<Assets<Image>>) {
                 ..default()
             },
             main_layer(),
-            ViewCamera::default(),
+            ViewCamera,
         ))
         .id();
 }

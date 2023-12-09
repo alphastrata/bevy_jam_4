@@ -89,6 +89,7 @@ fn spawn_on_trigger(
 }
 
 /// System: Update 'attack' the closest tower.
+//TODO: generify and make the attack<T> where T could be either the creep or building
 fn attack_towers(
     q_building: Query<(&Transform, &AttackSpeed, &Range, &Health), With<Building>>,
     q_creep: Query<(&Transform, &AttackSpeed, &Range, &Health), With<Creep>>,
@@ -97,10 +98,12 @@ fn attack_towers(
     q_building
         .iter()
         .for_each(|(building_transform, _, building_range, building_health)| {
+            // Can the building attack?
             if building_health.0 > 0 {
                 q_creep
                     .iter()
                     .for_each(|(creep_transform, _, _, creep_health)| {
+                        // Is it worth it?
                         if creep_health.0 > 0 {
                             let distance = building_transform
                                 .translation
@@ -119,7 +122,7 @@ fn attack_towers(
 /// System: Update, remove anything with Health 0.
 fn cleanup_dead(mut commands: Commands, q: Query<(Entity, &Health)>) {
     q.iter()
-        .filter(|(_entity, health)| health.0 <= 0)
+        .filter(|(_entity, health)| health.0 == 0)
         .for_each(|(entity, _health)| {
             commands.entity(entity).despawn();
         });
