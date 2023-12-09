@@ -25,8 +25,13 @@ pub struct AttackSpeed(usize);
 #[derive(Component)]
 pub struct Health(u32);
 
+/// The game's currency
 #[derive(Component)]
 pub struct CorpoPoints(u32);
+
+/// The range/radius a given building/creep can effect
+#[derive(Component)]
+pub struct Range(u32);
 
 /// Top-level states that the game can be in
 #[derive(States, Debug, Clone, Copy, Eq, PartialEq, Hash, Default)]
