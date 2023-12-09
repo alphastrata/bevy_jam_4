@@ -27,8 +27,8 @@ impl FromWorld for GameFont {
 pub mod btn_styles {
     use bevy::prelude::Color;
     pub(super) const NORMAL: Color = Color::rgb(1.0, 1.0, 01.0);
-    pub(super) const HOVERED: Color = Color::rgb(0.85, 0.85, 0.85);
-    pub(super) const PRESSED: Color = Color::rgb(0.75, 0.75, 0.75);
+    pub(super) const HOVERED: Color = Color::rgb(0.75, 0.75, 0.75);
+    pub(super) const PRESSED: Color = Color::rgb(0.5, 0.5, 0.5);
 }
 
 pub fn img(
@@ -105,7 +105,7 @@ pub fn btn(
                     text,
                     TextStyle {
                         font: font.0.clone(),
-                        font_size: 32.0,
+                        font_size: 48.0,
                         color: btn_styles::NORMAL,
                         ..Default::default()
                     },
