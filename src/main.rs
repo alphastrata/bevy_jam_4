@@ -29,7 +29,7 @@ fn main() {
             DefaultPlugins.set(ImagePlugin {
                 default_sampler: ImageSamplerDescriptor::nearest(),
             }),
-            FrameTimeDiagnosticsPlugin,
+            // FrameTimeDiagnosticsPlugin,
         ))
         .add_plugins((
             TweeningPlugin,
@@ -41,7 +41,8 @@ fn main() {
             flora_cause::creeps::CreepPlugin,
         ))
         .add_state::<AppState>()
-        .add_plugins((SplashPlugin, MainMenuPlugin, GameplayPlugin, PausePlugin))
+        // .add_plugins((SplashPlugin, MainMenuPlugin, GameplayPlugin, PausePlugin))
+        .add_plugins((GameplayPlugin, MainMenuPlugin, SplashPlugin))
         .add_systems(Startup, setup)
         .run();
 }

@@ -119,6 +119,7 @@ fn attack_towers(
             }
         });
 }
+
 /// System: Update, remove anything with Health 0.
 fn cleanup_dead(mut commands: Commands, q: Query<(Entity, &Health)>) {
     q.iter()

@@ -10,6 +10,7 @@ use bevy::window::PrimaryWindow;
 use bevy_mod_picking::prelude::*;
 
 use super::{
+    camera::ViewCamera,
     keybinds::FloraCommand,
     resources::{ExpendResource, ResourceType},
 };
@@ -51,7 +52,7 @@ fn spawn_at_click_pos(
     asset_server: Res<AssetServer>,
     state: Res<PlacementState>,
     q_window: Query<&Window, With<PrimaryWindow>>,
-    q_camera: Query<(&Camera, &GlobalTransform), With<CameraState>>,
+    q_camera: Query<(&Camera, &GlobalTransform), (With<CameraState>, With<ViewCamera>)>,
     mouse_btns: Res<Input<MouseButton>>,
 ) {
     if mouse_btns.just_pressed(MouseButton::Right) {

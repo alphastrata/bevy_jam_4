@@ -192,15 +192,13 @@ fn move_camera(
         &mut CameraState,
         &mut Transform,
         &mut OrthographicProjection,
-        With<ViewCamera>,
+        // With<ViewCamera>,
         // Without<UiCamera>,
     )>,
     mouse_input: Res<Input<MouseButton>>,
     mut mouse_ev: EventReader<MouseMotion>,
     mut wheel_ev: EventReader<MouseWheel>,
 ) {
-    assert!(!query.is_empty());
-
     for v in query.iter_mut() {
         let mut cam = v.0;
         let mut state = v.1;
