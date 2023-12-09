@@ -1,9 +1,20 @@
+use std::f32::consts::PI;
+
 use bevy::{
     core::Zeroable,
+    core_pipeline::clear_color::{self, ClearColorConfig},
     input::mouse::{MouseMotion, MouseWheel},
     log,
     prelude::*,
-    window::PrimaryWindow,
+    render::{
+        camera::RenderTarget,
+        render_resource::{
+            Extent3d, TextureDescriptor, TextureDimension, TextureFormat, TextureUsages,
+        },
+        texture::{ImageSampler, ImageSamplerDescriptor},
+        view::{Layer, RenderLayers},
+    },
+    window::{PrimaryWindow, WindowRef},
 };
 use bevy_tweening::Lerp;
 
@@ -39,6 +50,17 @@ const ZOOM_MAX: f32 = 0.5;
 // how far out are we allowed to zoom
 const ZOOM_MIN: f32 = 128.0;
 
+pub const UI_LAYER: Layer = 1;
+pub const V3D_LAYER: Layer = 1;
+
+pub fn main_layer() -> RenderLayers {
+    RenderLayers::layer(UI_LAYER)
+}
+
+pub fn v3d_layer() -> RenderLayers {
+    RenderLayers::layer(V3D_LAYER)
+}
+
 /// Component that adds our gameplay camera controls
 #[derive(Component)]
 pub struct CameraState {
@@ -57,11 +79,99 @@ impl Default for CameraState {
     }
 }
 
+#[derive(Component)]
+pub struct CameraState3d;
+
 pub struct GameCameraPlugin;
 impl Plugin for GameCameraPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, (move_camera).run_if(in_state(AppState::Gameplay)));
+        app.add_systems(Startup, setup)
+            .add_systems(Update, (move_camera).run_if(in_state(AppState::Gameplay)));
     }
+}
+
+#[derive(Component, Default)]
+pub struct ViewCamera;
+
+/// creates a linked (render_target: Handle<Image>, camera: Camera)
+pub fn rt_cam3d(
+    commands: &mut Commands,
+    images: &mut ResMut<Assets<Image>>,
+    size: Extent3d,
+    layers: RenderLayers,
+    mut camera: Camera3dBundle,
+) -> (Handle<Image>, Entity) {
+    let mut target_img = Image {
+        texture_descriptor: TextureDescriptor {
+            label: None,
+            size,
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: TextureDimension::D2,
+            format: TextureFormat::Bgra8UnormSrgb,
+            usage: TextureUsages::TEXTURE_BINDING
+                | TextureUsages::COPY_DST
+                | TextureUsages::RENDER_ATTACHMENT,
+            view_formats: &[],
+        },
+        sampler: ImageSampler::Descriptor(ImageSamplerDescriptor::nearest()),
+        ..default()
+    };
+    target_img.resize(size);
+    let target_handle = images.add(target_img);
+    camera.camera.target = RenderTarget::Image(target_handle.clone());
+    let camera = commands
+        .spawn((camera, UiCameraConfig { show_ui: false }, layers))
+        .id();
+    (target_handle, camera)
+}
+
+fn rt_cam2d(
+    mut commands: Commands,
+    mut images: ResMut<Assets<Image>>,
+    size: Extent3d,
+    layers: RenderLayers,
+    mut camera: Camera2dBundle,
+) -> (Handle<Image>, Entity) {
+    let mut target_img = Image {
+        texture_descriptor: TextureDescriptor {
+            label: None,
+            size,
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: TextureDimension::D2,
+            format: TextureFormat::Bgra8UnormSrgb,
+            usage: TextureUsages::TEXTURE_BINDING
+                | TextureUsages::COPY_DST
+                | TextureUsages::RENDER_ATTACHMENT,
+            view_formats: &[],
+        },
+        sampler: ImageSampler::Descriptor(ImageSamplerDescriptor::nearest()),
+        ..default()
+    };
+    target_img.resize(size);
+    let target_handle = images.add(target_img);
+    camera.camera.target = RenderTarget::Image(target_handle.clone());
+    let camera = commands
+        .spawn((camera, UiCameraConfig { show_ui: false }, layers))
+        .id();
+    (target_handle, camera)
+}
+
+fn setup(mut commands: Commands, mut images: ResMut<Assets<Image>>) {
+    let view_cam = commands
+        .spawn((
+            Camera2dBundle {
+                camera: Camera {
+                    target: RenderTarget::Window(WindowRef::Primary),
+                    ..default()
+                },
+                ..default()
+            },
+            main_layer(),
+            ViewCamera::default(),
+        ))
+        .id();
 }
 
 fn move_camera(

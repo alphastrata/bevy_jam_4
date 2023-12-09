@@ -3,7 +3,7 @@ use bevy::{app::AppExit, prelude::*, window::CursorGrabMode};
 use crate::{
     components::{
         fade_transition::{transition_to, TransitionState},
-        ui_util::{btn, txt},
+        ui_util::{btn, txt, GameFont},
     },
     game::keybinds::FloraCommand,
     AppState,
@@ -50,7 +50,7 @@ pub fn toggle_pause(
 
 pub fn capture_cursor(mut windows: Query<&mut Window>) {
     let mut window = windows.single_mut();
-    window.cursor.grab_mode = CursorGrabMode::Locked;
+    window.cursor.grab_mode = CursorGrabMode::Confined;
 }
 
 pub fn release_cursor(mut windows: Query<&mut Window>) {
@@ -97,15 +97,10 @@ fn interact(
 }
 
 /// Runs when we enter [AppState::MainMenu]
-fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let title = txt(&mut commands, "Game Paused!", 48.0, &asset_server);
-    let return_btn = btn(
-        &mut commands,
-        "Return to Menu",
-        Action::ReturnToMenu,
-        &asset_server,
-    );
-    let unpause_btn = btn(&mut commands, "Unpause", Action::Unpause, &asset_server);
+fn setup(mut commands: Commands, font: Res<GameFont>) {
+    let title = txt(&mut commands, &font, "Game Paused!", 48.0);
+    let return_btn = btn(&mut commands, &font, "Return to Menu", Action::ReturnToMenu);
+    let unpause_btn = btn(&mut commands, &font, "Unpause", Action::Unpause);
 
     commands
         .spawn((

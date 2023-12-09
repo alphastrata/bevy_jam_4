@@ -1,10 +1,16 @@
-use bevy::{app::AppExit, prelude::*};
+use std::f32::consts::PI;
+
+use bevy::{
+    app::AppExit, core_pipeline::clear_color::ClearColorConfig, prelude::*,
+    render::render_resource::Extent3d,
+};
 
 use crate::{
     components::{
         fade_transition::{transition_to, TransitionState},
-        ui_util::{btn, txt},
+        ui_util::{btn, img, txt, GameFont},
     },
+    game::camera::{main_layer, rt_cam3d, v3d_layer},
     AppState,
 };
 
@@ -13,7 +19,10 @@ impl Plugin for MainMenuPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(OnEnter(AppState::MainMenu), setup)
             .add_systems(OnExit(AppState::MainMenu), teardown)
-            .add_systems(Update, interact.run_if(in_state(AppState::MainMenu)));
+            .add_systems(
+                Update,
+                (interact, rotator_system).run_if(in_state(AppState::MainMenu)),
+            );
     }
 }
 
@@ -30,6 +39,9 @@ enum Action {
 /// Used for despawning all UI nodes when leaving Main Menu screen
 #[derive(Component)]
 struct OnMainMenuScreen;
+
+#[derive(Component, Default)]
+struct DemoCube;
 
 /// React to button presses
 fn interact(
@@ -61,18 +73,96 @@ fn interact(
 }
 
 /// Runs when we enter [AppState::MainMenu]
-fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let title = txt(&mut commands, "Flora Cause", 40.0, &asset_server);
-    let start_button = btn(
+fn setup(
+    mut commands: Commands,
+    mut images: ResMut<Assets<Image>>,
+    mut materials: ResMut<Assets<StandardMaterial>>,
+    mut meshes: ResMut<Assets<Mesh>>,
+    font: Res<GameFont>,
+    asset_server: Res<AssetServer>,
+) {
+    let (img_handle, _) = rt_cam3d(
         &mut commands,
-        "Start Game",
-        Action::StartGame,
-        &asset_server,
+        &mut images,
+        Extent3d {
+            width: 120,
+            height: 80,
+            ..default()
+        },
+        v3d_layer(),
+        Camera3dBundle {
+            camera_3d: Camera3d {
+                clear_color: ClearColorConfig::Custom(Color::BLACK),
+                ..default()
+            },
+            camera: Camera {
+                order: -1,
+                ..default()
+            },
+            transform: Transform::from_translation(Vec3::new(0.0, 0.0, 15.0))
+                .looking_at(Vec3::ZERO, Vec3::Y),
+            ..default()
+        },
     );
-    let gpu_test = btn(&mut commands, "Dev Scene", Action::DevScene, &asset_server);
+    let ui_image = commands
+        .spawn((
+            ImageBundle {
+                style: Style {
+                    width: Val::Vw(100.0),
+                    height: Val::Vh(100.0),
+                    ..default()
+                },
+                image: UiImage::new(img_handle.clone()),
+                z_index: ZIndex::Global(i32::MIN),
+                ..default()
+            },
+            main_layer(),
+        ))
+        .id();
+
+    let cube_size = 4.0;
+    let cube_handle = meshes.add(Mesh::from(shape::Box::new(cube_size, cube_size, cube_size)));
+    let cube_material_handle = materials.add(StandardMaterial {
+        base_color: Color::rgb(0.8, 0.7, 0.6),
+        reflectance: 0.02,
+        unlit: false,
+        ..default()
+    });
+
+    // Main pass cube, with material containing the rendered first pass texture.
+    commands.spawn((
+        (
+            PbrBundle {
+                mesh: cube_handle,
+                material: cube_material_handle,
+                transform: Transform::from_xyz(0.0, 0.0, 1.5)
+                    .with_rotation(Quat::from_rotation_x(-PI / 5.0)),
+                ..default()
+            },
+            v3d_layer(),
+        ),
+        DemoCube,
+    ));
+
+    commands.spawn((
+        PointLightBundle {
+            transform: Transform::from_translation(Vec3::new(0.0, 0.0, 10.0)),
+            ..default()
+        },
+        v3d_layer(),
+    ));
+
+    let title = img(
+        &mut commands,
+        asset_server.load("textures/title.png"),
+        Some(Val::Px(512.0)),
+        None,
+    );
+    let start_button = btn(&mut commands, &font, "Start Game", Action::StartGame);
+    let gpu_test = btn(&mut commands, &font, "Dev Scene", Action::DevScene);
 
     #[cfg(not(target_arch = "wasm32"))]
-    let quit_button = btn(&mut commands, "Quit Game", Action::QuitGame, &asset_server);
+    let quit_button = btn(&mut commands, &font, "Quit Game", Action::QuitGame);
 
     commands
         .spawn((
@@ -106,6 +196,14 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                 cb.add_child(quit_button);
             }
         });
+}
+
+/// Rotates the inner cube (first pass)
+fn rotator_system(time: Res<Time>, mut query: Query<&mut Transform, With<DemoCube>>) {
+    for mut transform in &mut query {
+        transform.rotate_x(1.5 * time.delta_seconds());
+        transform.rotate_z(1.3 * time.delta_seconds());
+    }
 }
 
 /// Runs when we exit [AppState::MainMenu]

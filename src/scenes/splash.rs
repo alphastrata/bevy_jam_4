@@ -1,10 +1,11 @@
 use std::time::Duration;
 
-use bevy::{input::keyboard::KeyboardInput, prelude::*};
+use bevy::{input::keyboard::KeyboardInput, prelude::*, render::view::RenderLayers};
 use bevy_tweening::{lens::SpriteColorLens, Animator, Delay, EaseFunction, Tween};
 
 use crate::{
     components::fade_transition::{transition_to, TransitionState},
+    game::camera::main_layer,
     AppState,
 };
 
@@ -28,9 +29,13 @@ struct SplashTimer(Timer);
 #[derive(Component)]
 struct OnSplashScreen;
 
-fn keyboard_events(input: Res<Input<KeyCode>>, mut transition_state: ResMut<TransitionState>) {
+fn keyboard_events(
+    mouse: Res<Input<MouseButton>>,
+    key: Res<Input<KeyCode>>,
+    mut transition_state: ResMut<TransitionState>,
+) {
     #[allow(clippy::never_loop)] //TODO .read().next()
-    if input.get_just_pressed().count() != 0 {
+    if key.get_just_pressed().count() != 0 || mouse.get_just_pressed().count() != 0 {
         transition_to(AppState::MainMenu, &mut transition_state);
     }
 }
@@ -62,6 +67,7 @@ fn show_splash(mut commands: Commands, asset_server: Res<AssetServer>) {
             ..default()
         },
         OnSplashScreen,
+        main_layer(),
     ));
 
     let duration = 2000;
@@ -116,6 +122,7 @@ fn show_splash(mut commands: Commands, asset_server: Res<AssetServer>) {
                 ..default()
             },
             animator,
+            main_layer(),
             OnSplashScreen,
         ));
     }
