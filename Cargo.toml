@@ -9,7 +9,7 @@ name = "flora_cause"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bevy = "0.12.1"
+bevy = { version = "0.12.1", features = ["file_watcher"] }
 bevy_ecs_tilemap = {git="https://github.com/divark/bevy_ecs_tilemap", branch ="0.12-fixes", features = ["atlas"]}
 bevy_mod_picking = "0.17.0"
 # bevy_rapier2d = "0.23.0"
