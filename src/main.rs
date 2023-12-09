@@ -41,8 +41,7 @@ fn main() {
             flora_cause::creeps::CreepPlugin,
         ))
         .add_state::<AppState>()
-        // .add_plugins((SplashPlugin, MainMenuPlugin, GameplayPlugin, PausePlugin))
-        .add_plugins((GameplayPlugin, MainMenuPlugin, SplashPlugin))
+        .add_plugins((SplashPlugin, MainMenuPlugin, GameplayPlugin, PausePlugin))
         .add_systems(Startup, setup)
         .run();
 }
