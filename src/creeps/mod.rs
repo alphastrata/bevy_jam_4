@@ -4,16 +4,17 @@ use crate::{buildings::Building, prelude::*, Range};
 use bevy::{asset::processor::ProcessorTransactionLog, ecs::bundle, prelude::*};
 use rand::Rng;
 
+/// Handles the setup, spawning, despawning, attacking of our 'creeps'.
 pub struct CreepPlugin;
 impl Plugin for CreepPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<SpawnCreep>();
 
         app.add_systems(Startup, initial_creep_spawn)
-            .add_systems(Update, spawn_on_trigger);
+            .add_systems(Update, (spawn_on_trigger, cleanup_dead));
 
         #[cfg(debug_assertions)]
-        app.insert_resource(CreepCount(0));
+        app.insert_resource(CreepCount(1000)); //TODO: maybe we ensure a certain 'minimum' ammount of creeps at any one time?
         #[cfg(debug_assertions)]
         app.add_systems(Update, (dbg_send_spawn_creep_on_enter, dbg_count_creeps));
     }
@@ -48,18 +49,19 @@ fn initial_creep_spawn(mut commands: Commands, asset_server: Res<AssetServer>) {
 
 /// Helper: for the Systems: [initial_creep_spawn, spawn_on_trigger]
 fn spawn_creep(commands: &mut Commands, asset_server: &Res<AssetServer>) {
+    const MAP_LIMIT: f32 = 8192.0;
+
     let mut rng = rand::thread_rng();
-    let eps = 8192.0;
-    let x = rng.gen_range(-eps..=eps);
-    let y = rng.gen_range(-eps..=eps);
+    let x = rng.gen_range(-MAP_LIMIT..=MAP_LIMIT);
+    let y = rng.gen_range(-MAP_LIMIT..=MAP_LIMIT);
 
     let current = Vec3::new(x, y, 0.0);
     let target = Vec3::ZERO;
     let direction = target - current;
 
     if direction.length() > 240.0 {
-        // Approximately the circle of the 'core'
-        //TODO: Keep a creep count, resource for UI?
+        //TODO: Random selection of sprite from upcomming options.
+        //TODO: remove placeholder creep.png
         commands.spawn((
             SpriteBundle {
                 transform: Transform::from_xyz(x, y, 0.10),
@@ -68,11 +70,10 @@ fn spawn_creep(commands: &mut Commands, asset_server: &Res<AssetServer>) {
                 ..default()
             },
             Creep,
-            //TODO: creep stats should probs be set by .csv or something?
-            AttackSpeed(10),
-            Health(100),
-            Range(300),
-            CorpoPoints(rng.gen_range(1.0..50.0) as u32),
+            AttackSpeed(10), //TODO: multiply out by the tick?, QUESTION: relative to the sprite we load?
+            Health(100),     //QUESTION: relative to the sprite we load?
+            Range(300),      //QUESTION: relative to the sprite we load?
+            CorpoPoints(rng.gen_range(1.0..50.0) as u32), //QUESTION: relative to the sprite we load?
         ));
     }
 }
