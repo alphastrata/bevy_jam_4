@@ -46,7 +46,7 @@ fn main() {
         .run();
 }
 
-fn setup(mut commands: Commands, mut q_window: Query<&mut Window, With<PrimaryWindow>>) {
+fn setup(_commands: Commands, mut q_window: Query<&mut Window, With<PrimaryWindow>>) {
     // unlocks fps with fast vsync (Presentation::Mailbox)
     let mut window = q_window.single_mut();
     window.present_mode = PresentMode::AutoNoVsync;

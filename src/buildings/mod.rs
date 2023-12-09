@@ -1,10 +1,13 @@
 use bevy::prelude::*;
 use std::path::Path;
 
+use crate::Health;
+
 use self::{distribution::DistributionTower, radar::RadarTower};
 
 pub mod core;
 pub mod distribution;
+pub mod drain;
 pub mod radar;
 
 /// Marker component all buildings should have
@@ -18,9 +21,6 @@ pub struct MinimalBuilding {
     health: Health,
     sprite: SpriteBundle,
 }
-
-#[derive(Component)]
-pub struct Health(u32);
 
 #[derive(Component)]
 pub struct Experience(u32);

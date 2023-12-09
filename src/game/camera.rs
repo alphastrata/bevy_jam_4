@@ -176,7 +176,7 @@ fn setup(mut commands: Commands, mut images: ResMut<Assets<Image>>) {
         main_layer(),
         Camera2dBundle::default(),
     );
-    commands.entity(camera).insert(ViewCamera::default());
+    commands.entity(camera).insert(ViewCamera);
 
     commands.spawn(ImageBundle {
         image: UiImage::new(tx_handle.clone()),
@@ -188,7 +188,7 @@ fn setup(mut commands: Commands, mut images: ResMut<Assets<Image>>) {
         ..default()
     });
 
-    let final_cam = commands
+    let _final_cam = commands
         .spawn(Camera2dBundle {
             camera: Camera {
                 target: RenderTarget::Window(WindowRef::Primary),

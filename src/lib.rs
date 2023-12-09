@@ -14,6 +14,9 @@ pub mod prelude {
 }
 
 #[derive(Component)]
+pub struct Tree;
+
+#[derive(Component)]
 pub struct MovementSpeed(u32);
 
 #[derive(Component)]
@@ -24,6 +27,12 @@ pub struct AttackSpeed(usize);
 
 #[derive(Component)]
 pub struct Health(u32);
+
+impl Health {
+    pub fn deduct(&mut self, value: u32) {
+        _ = self.0.saturating_sub(value);
+    }
+}
 
 #[derive(Component)]
 pub struct Experience(u32);
