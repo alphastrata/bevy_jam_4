@@ -7,13 +7,17 @@
 //!
 //! Every frame we try and drain a tree
 
-use crate::{creeps::SpawnCreep, game::power::AddBuilding, AppState, Health, Tree};
-use bevy::prelude::*;
+use crate::{
+    creeps::SpawnCreep,
+    game::power::{AddBuilding, IsPowered, RequiresPower},
+    AppState, Health, Tree,
+};
+use bevy::{prelude::*, tasks::IoTaskPool};
 
 use super::BuildingDefinition;
 
 /// Drain damage applied to trees per tick of [GlobalDrainTick]
-const DRAIN_DPT: u32 = 20;
+const DRAIN_DPT: u32 = 100;
 /// Every *this* many seconds trees get drained
 const DRAIN_TICK_RATE: f32 = 1.5;
 
@@ -40,7 +44,7 @@ impl BuildingDefinition for DrainTower {
     fn add_extra_components(commands: &mut Commands, ent_id: Entity) {
         commands
             .entity(ent_id)
-            .insert((DrainRadius(150.0), DrainTower::default()));
+            .insert((RequiresPower, DrainRadius(400.0), DrainTower::default()));
     }
 }
 
@@ -127,6 +131,7 @@ fn drain_closeby_trees(
             tower.trees_in_proximity.iter().for_each(|ent| {
                 if let Ok((_tree, mut hp)) = q_trees.get_mut(*ent) {
                     hp.deduct(DRAIN_DPT);
+                    debug!("hp rem: {}", hp.0);
                 }
             });
         });

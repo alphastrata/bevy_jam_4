@@ -15,13 +15,10 @@ impl Plugin for CreepPlugin {
 
         #[cfg(debug_assertions)]
         app.insert_resource(CreepCount(1000)); //TODO: maybe we ensure a certain 'minimum' ammount of creeps at any one time?
-        #[cfg(debug_assertions)]
-        app.add_systems(Update, (dbg_send_spawn_creep_on_enter, dbg_count_creeps));
+                                               // #[cfg(debug_assertions)]
+                                               //app.add_systems(Update, (dbg_send_spawn_creep_on_enter, dbg_count_creeps));
     }
 }
-
-#[derive(Component)]
-pub struct Creep;
 
 #[derive(Event)]
 pub struct SpawnCreep;
@@ -31,7 +28,9 @@ pub struct SpawnCreep;
 pub struct CreepCount(pub usize);
 
 #[cfg(debug_assertions)]
-fn dbg_count_creeps(q: Query<&Transform, With<Creep>>, mut count: ResMut<CreepCount>) {
+fn dbg_count_creeps(q: Query<&Transform, With<Tree>>, mut count: ResMut<CreepCount>) {
+    use crate::Tree;
+
     (*count) = CreepCount(q.iter().count());
 }
 
@@ -44,7 +43,7 @@ fn dbg_send_spawn_creep_on_enter(mut spawner: EventWriter<SpawnCreep>, kb: Res<I
 
 /// System: Setup
 fn initial_creep_spawn(mut commands: Commands, asset_server: Res<AssetServer>) {
-    (0..1000).for_each(|_| spawn_creep(&mut commands, &asset_server));
+    (0..10000).for_each(|_| spawn_creep(&mut commands, &asset_server));
 }
 
 /// Helper: for the Systems: [initial_creep_spawn, spawn_on_trigger]
@@ -69,7 +68,7 @@ fn spawn_creep(commands: &mut Commands, asset_server: &Res<AssetServer>) {
                 //
                 ..default()
             },
-            Creep,
+            Tree,
             AttackSpeed(10), //TODO: multiply out by the tick?, QUESTION: relative to the sprite we load?
             Health(100),     //QUESTION: relative to the sprite we load?
             Range(300),      //QUESTION: relative to the sprite we load?
@@ -93,7 +92,7 @@ fn spawn_on_trigger(
 //TODO: generify and make the attack<T> where T could be either the creep or building
 fn attack_towers(
     q_building: Query<(&Transform, &AttackSpeed, &Range, &Health), With<Building>>,
-    q_creep: Query<(&Transform, &AttackSpeed, &Range, &Health), With<Creep>>,
+    q_creep: Query<(&Transform, &AttackSpeed, &Range, &Health), With<Tree>>,
     _time: Res<Time>, // Replace with Josh's ticker as needed
 ) {
     q_building

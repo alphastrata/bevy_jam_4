@@ -231,7 +231,7 @@ fn move_camera(
     assert!(!query.is_empty());
 
     for v in query.iter_mut() {
-        let mut cam = v.0;
+        let _cam = v.0;
         let mut state = v.1;
         let mut transform = v.2;
         let mut projection = v.3;

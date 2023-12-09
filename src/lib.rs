@@ -10,7 +10,7 @@ pub mod game;
 pub mod scenes;
 
 pub mod prelude {
-    pub use crate::{AttackSpeed, CorpoPoints, Health, MovementSpeed};
+    pub use crate::{AttackSpeed, CorpoPoints, Health, MovementSpeed, Tree};
 }
 
 #[derive(Component)]
@@ -30,7 +30,7 @@ pub struct Health(u32);
 
 impl Health {
     pub fn deduct(&mut self, value: u32) {
-        _ = self.0.saturating_sub(value);
+        self.0 = self.0.saturating_sub(value);
     }
 }
 
