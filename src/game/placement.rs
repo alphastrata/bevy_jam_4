@@ -10,6 +10,7 @@ use bevy::window::PrimaryWindow;
 use bevy_mod_picking::prelude::*;
 
 use super::{
+    camera::ViewCamera,
     keybinds::FloraCommand,
     resources::{ExpendResource, ResourceType},
 };
@@ -41,6 +42,9 @@ fn change_current_building(mut state: ResMut<PlacementState>, input: Res<Input<F
     if input.just_released(FloraCommand::SetPlaceRadarTower) {
         state.being_placed_building_type = Some(BuildingType::Radar);
     }
+    if input.just_released(FloraCommand::SetPlaceDrainTower) {
+        state.being_placed_building_type = Some(BuildingType::Drain);
+    }
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -51,7 +55,7 @@ fn spawn_at_click_pos(
     asset_server: Res<AssetServer>,
     state: Res<PlacementState>,
     q_window: Query<&Window, With<PrimaryWindow>>,
-    q_camera: Query<(&Camera, &GlobalTransform), With<CameraState>>,
+    q_camera: Query<(&Camera, &GlobalTransform), (With<CameraState>, With<ViewCamera>)>,
     mouse_btns: Res<Input<MouseButton>>,
 ) {
     if mouse_btns.just_pressed(MouseButton::Right) {

@@ -10,7 +10,7 @@ use crate::{
         fade_transition::{transition_to, TransitionState},
         ui_util::{btn, img, txt, GameFont},
     },
-    game::camera::{main_layer, rt_cam3d, v3d_layer},
+    game::camera::{main_layer, rt_cam3d, v3d_layer, UiCamera},
     AppState,
 };
 
