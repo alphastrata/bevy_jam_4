@@ -68,7 +68,6 @@ fn expend_resource(mut inventory: ResMut<Inventory>, mut expent: EventReader<Exp
             ResourceType::CorporationPoints => inv.money = inv.money.saturating_sub(harvest.1),
             ResourceType::Plant => inv.plant = inv.plant.saturating_sub(harvest.1),
             ResourceType::Wood => inv.wood = inv.wood.saturating_sub(harvest.1),
-            _ => (),
         };
         inv
     });

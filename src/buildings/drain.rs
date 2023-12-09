@@ -15,7 +15,7 @@ use super::BuildingDefinition;
 /// Drain damage applied to trees per tick of [GlobalDrainTick]
 const DRAIN_DPT: u32 = 20;
 /// Every *this* many seconds trees get drained
-const DRAIN_TICK_RATE: f32 = 3.0;
+const DRAIN_TICK_RATE: f32 = 1.5;
 
 #[derive(Component)]
 pub struct DrainRadius(f32);
@@ -38,7 +38,9 @@ impl BuildingDefinition for DrainTower {
         closeby towers. Upgrading it increases it's active radius.";
 
     fn add_extra_components(commands: &mut Commands, ent_id: Entity) {
-        commands.entity(ent_id).insert(DrainRadius(150.0));
+        commands
+            .entity(ent_id)
+            .insert((DrainRadius(150.0), DrainTower::default()));
     }
 }
 
@@ -66,6 +68,7 @@ fn calculate_drainees(
     mut q_towers: Query<(&mut DrainTower, &Transform, &DrainRadius)>,
     q_trees: Query<(Entity, &Transform), With<Tree>>,
 ) {
+    let mut total_trees = 0;
     creep_spawned.read().for_each(|_| {
         q_towers
             .iter_mut()
@@ -77,6 +80,7 @@ fn calculate_drainees(
                     })
                     .map(|(tree, _)| tree)
                     .collect();
+                total_trees += close_trees.len();
 
                 dt.trees_in_proximity = close_trees;
             });
@@ -93,10 +97,14 @@ fn calculate_drainees(
                     })
                     .map(|(tree, _)| tree)
                     .collect();
+                total_trees += close_trees.len();
 
                 dt.trees_in_proximity = close_trees;
             });
     });
+    if !(creep_spawned.is_empty() && tower_spawned.is_empty()) {
+        trace!("Recalculated trees within range of Drain Towers (tower build)\n {} trees are being sucked", total_trees);
+    }
 }
 
 /// Each [DrainTower] slowly drains the health of every close tree
@@ -110,6 +118,10 @@ fn drain_closeby_trees(
     time: Res<Time>,
 ) {
     if timer.0.tick(time.delta()).just_finished() {
+        trace!(
+            "Drain Tick: draining from {} Drain Towers",
+            q_towers.iter().len()
+        );
         // for each tower check all the trees in proximity and deduct hp from them.
         q_towers.iter().for_each(|tower: &DrainTower| {
             tower.trees_in_proximity.iter().for_each(|ent| {
@@ -119,4 +131,8 @@ fn drain_closeby_trees(
             });
         });
     }
+}
+
+fn debug_drain_radii() {
+    // TODO
 }

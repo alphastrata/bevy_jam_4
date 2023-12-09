@@ -41,6 +41,9 @@ fn change_current_building(mut state: ResMut<PlacementState>, input: Res<Input<F
     if input.just_released(FloraCommand::SetPlaceRadarTower) {
         state.being_placed_building_type = Some(BuildingType::Radar);
     }
+    if input.just_released(FloraCommand::SetPlaceDrainTower) {
+        state.being_placed_building_type = Some(BuildingType::Drain);
+    }
 }
 
 #[allow(clippy::too_many_arguments)]

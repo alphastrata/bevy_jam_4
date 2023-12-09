@@ -3,7 +3,11 @@ use std::path::Path;
 
 use crate::Health;
 
-use self::{distribution::DistributionTower, radar::RadarTower};
+use self::{
+    distribution::DistributionTower,
+    drain::{DrainTower, DrainTowerPlugin},
+    radar::RadarTower,
+};
 
 pub mod core;
 pub mod distribution;
@@ -66,34 +70,20 @@ pub fn spawn_building<B: BuildingDefinition>(
 // /// Representing the types of buildings we have
 #[derive(Clone, Hash, Component, Debug, PartialEq, Eq)]
 pub enum BuildingType {
-    /// Combats wind
-    Fan,
-    /// tbd
-    Shield,
-    /// tbd
     Radar,
-    /// tbd
-    Doppler,
     /// Pylons, you must construct additional...
     Distribution,
-    ///
-    Roboport,
-    ///
-    LoggingCentre,
+    Drain,
 }
 
 impl BuildingType {
     pub fn spawn(&self, commands: &mut Commands, asset_server: Res<AssetServer>, pos: Vec2) {
         match self {
-            BuildingType::Fan => todo!(),
-            BuildingType::Shield => todo!(),
             BuildingType::Radar => spawn_building::<RadarTower>(commands, asset_server, pos),
-            BuildingType::Doppler => todo!(),
             BuildingType::Distribution => {
                 spawn_building::<DistributionTower>(commands, asset_server, pos)
             }
-            BuildingType::Roboport => todo!(),
-            BuildingType::LoggingCentre => todo!(),
+            BuildingType::Drain => spawn_building::<DrainTower>(commands, asset_server, pos),
         };
     }
 
