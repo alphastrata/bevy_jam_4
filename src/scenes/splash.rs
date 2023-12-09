@@ -60,14 +60,14 @@ fn show_splash(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn((
         SpriteBundle {
             sprite: Sprite {
-                custom_size: Some(Vec2::splat(96.0)),
+                custom_size: Some(Vec2::splat(512.0)),
                 ..default()
             },
             texture: splash_handle,
             ..default()
         },
-        OnSplashScreen,
         main_layer(),
+        OnSplashScreen,
     ));
 
     let duration = 2000;

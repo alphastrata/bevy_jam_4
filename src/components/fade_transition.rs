@@ -1,4 +1,4 @@
-use crate::{scenes::pause::PauseState, AppState};
+use crate::{game::camera::main_layer, scenes::pause::PauseState, AppState};
 use bevy::{prelude::*, render::view::RenderLayers};
 
 const TRANSITION_DURATION: f32 = 1.0;
@@ -38,7 +38,7 @@ fn setup(mut cmd: Commands) {
             },
             ..default()
         },
-        RenderLayers::layer(1),
+        main_layer(),
         TransitionComponent,
     ));
 }

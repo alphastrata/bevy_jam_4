@@ -169,25 +169,6 @@ pub fn screen_size() -> Extent3d {
 }
 
 fn setup(mut commands: Commands, _images: ResMut<Assets<Image>>) {
-    // let (tx_handle, camera) = rt_cam2d(
-    //     &mut commands,
-    //     &mut images,
-    //     screen_size(),
-    //     main_layer(),
-    //     Camera2dBundle::default(),
-    // );
-    // commands.entity(camera).insert(ViewCamera::default());
-
-    // commands.spawn(ImageBundle {
-    //     image: UiImage::new(tx_handle.clone()),
-    //     style: Style {
-    //         width: Val::Vw(100.0),
-    //         height: Val::Vh(100.0),
-    //         ..default()
-    //     },
-    //     ..default()
-    // });
-
     let _final_cam = commands
         .spawn((
             Camera2dBundle {
@@ -197,6 +178,7 @@ fn setup(mut commands: Commands, _images: ResMut<Assets<Image>>) {
                 },
                 ..default()
             },
+            main_layer(),
             ViewCamera,
             CameraState::default(),
         ))
