@@ -86,11 +86,20 @@ fn play_system(
     asset_server: Res<AssetServer>,
     mut event_reader: EventReader<AudioRequest>,
 ) {
-    let audio_assets = [
-        ("audio/musictrack 1.mp3", AudioComponent::Track1(Track1)),
-        ("audio/musictrack 2.mp3", AudioComponent::Track2(Track2)),
-        // ... other assets ...
-    ];
+    // let audio_assets = [
+    //     ("audio/musictrack 1.mp3", AudioComponent::Track1(Track1)),
+    //     ("audio/musictrack 2.mp3", AudioComponent::Track2(Track2)),
+    //     (
+    //         "audio/introductionvoice.mp3",
+    //         AudioComponent::IntroVoice(IntroVoice),
+    //     ),
+    //     ("audio/radar1.mp3", AudioComponent::Radar1(Radar1)),
+    //     ("audio/radar2.mp3", AudioComponent::Radar2(Radar2)),
+    //     (
+    //         "audio/thecompanythanksyou.mp3        ",
+    //         AudioComponent::TheCompanyThanksYou(TheCompanyThanksYou),
+    //     ),
+    // ];
 
     for event in event_reader.read() {
         info!("Read AudioRequest");
@@ -110,7 +119,12 @@ fn play_system(
                     })
                     .insert(Track1);
             }
-            _ => error!("Unknown audiosink/source/track pairing!"),
+            AudioComponent::Track2(_) => todo!(),
+            AudioComponent::Radar1(_) => todo!(),
+            AudioComponent::Radar2(_) => todo!(),
+            AudioComponent::TheCompanyThanksYou(_) => todo!(),
+            AudioComponent::IntroVoice(_) => todo!(),
+            // _ => error!("Unknown audiosink/source/track pairing!"),
         };
     }
 }
