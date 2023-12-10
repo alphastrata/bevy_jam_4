@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use std::path::Path;
 
-use crate::{game::hp_bars::HpBarUISettings, Health};
+use crate::{eargasm::AudioRequest, game::hp_bars::HpBarUISettings, Health};
 
 use self::{
     distribution::DistributionTower,
@@ -88,13 +88,25 @@ impl BuildingType {
         texture_atlases: ResMut<Assets<TextureAtlas>>,
         asset_server: Res<AssetServer>,
         pos: Vec2,
+        mut audio_mngr: EventWriter<AudioRequest>,
     ) {
+        let electric = || {
+            audio_mngr.send(AudioRequest {
+                component: crate::eargasm::AudioComponent::Electric(crate::eargasm::Electric),
+            })
+        };
+
         match self {
-            BuildingType::Radar => spawn_building::<RadarTower>(commands, asset_server, pos),
+            BuildingType::Radar => {
+                //TODO: radar
+                spawn_building::<RadarTower>(commands, asset_server, pos)
+            }
             BuildingType::Distribution => {
+                electric;
                 spawn_building::<DistributionTower>(commands, asset_server, pos)
             }
             BuildingType::Drain => {
+                //TODO: Sound
                 DrainTower::custom_spawn(commands, texture_atlases, asset_server, pos)
             }
         };

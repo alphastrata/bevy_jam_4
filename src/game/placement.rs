@@ -2,6 +2,7 @@ use crate::{
     buildings::{
         distribution::DistributionTower, spawn_building, BuildingDefinition, BuildingType,
     },
+    eargasm::AudioRequest,
     game::{camera::CameraState, power::AddBuilding},
     AppState,
 };
@@ -58,6 +59,7 @@ fn spawn_at_click_pos(
     q_window: Query<&Window, With<PrimaryWindow>>,
     q_camera: Query<(&Camera, &GlobalTransform), (With<CameraState>, With<ViewCamera>)>,
     mouse_btns: Res<Input<MouseButton>>,
+    audio_mngr: EventWriter<AudioRequest>,
 ) {
     if mouse_btns.just_pressed(MouseButton::Right) {
         let window = q_window.single();
@@ -69,7 +71,13 @@ fn spawn_at_click_pos(
             .and_then(|cursor| camera.viewport_to_world_2d(camera_transform, cursor))
         {
             if let Some(building) = &state.being_placed_building_type {
-                building.spawn(&mut commands, texture_atlases, asset_server, world_pos);
+                building.spawn(
+                    &mut commands,
+                    texture_atlases,
+                    asset_server,
+                    world_pos,
+                    audio_mngr,
+                );
                 expend_resource.send(ExpendResource(
                     ResourceType::CorporationPoints,
                     building.cost(),
