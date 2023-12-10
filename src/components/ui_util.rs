@@ -63,7 +63,6 @@ pub fn txt(commands: &mut Commands, font: &Res<GameFont>, text: &str, size: f32)
                         font: font.0.clone(),
                         font_size: size,
                         color: btn_styles::NORMAL,
-                        ..default()
                     },
                 ),
                 ..default()
@@ -107,7 +106,6 @@ pub fn btn(
                         font: font.0.clone(),
                         font_size: 48.0,
                         color: btn_styles::NORMAL,
-                        ..Default::default()
                     },
                 ),
                 main_layer(),
