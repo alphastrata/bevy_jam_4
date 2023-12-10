@@ -1,6 +1,6 @@
 use super::{Building, BuildingDefinition, BuildingState};
 use crate::{
-    game::power::{RequiresPower, SupplyRadius},
+    game::power::{IsPowered, RequiresPower, SupplyRadius},
     AnimationIndices, AnimationTimer, AppState, Health, Teardown,
 };
 use bevy::prelude::*;
@@ -45,6 +45,7 @@ impl DistributionTower {
                 DistributionTower,
                 Building,
                 BuildingState::Building,
+                RequiresPower,
                 Teardown,
                 Health(Self::BASE_HEALTH),
                 SpriteSheetBundle {

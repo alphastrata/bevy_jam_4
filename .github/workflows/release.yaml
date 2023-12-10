@@ -9,7 +9,7 @@ env:
   # update with the name of the main binary
   binary: flora_cause
   add_binaries_to_github_release: true
-  itch_target: alphastrata/flora-cause
+  itch_target: alphastrata/flora_cause
 
 jobs:
   # Build for wasm
@@ -33,11 +33,11 @@ jobs:
 
       - name: Prepare package
         run: |
-          wasm-bindgen --no-typescript --out-name flora_cause --out-dir out --target web target/wasm32-unknown-unknown/release/${{ env.binary }}.wasm
-          cp -r assets out/
+          wasm-bindgen --no-typescript --out-name bevy_game --out-dir wasm --target web target/wasm32-unknown-unknown/release/${{ env.binary }}.wasm
+          cp -r assets wasm/
 
       - name: Package as a zip
-        working-directory: ./out
+        working-directory: ./wasm
         run: |
           zip --recurse-paths ../${{ env.binary }}.zip .
 
@@ -45,7 +45,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           path: ${{ env.binary }}.zip
-          name: out
+          name: wasm
           retention-days: 1
 
       - name: Upload binaries to release
@@ -257,7 +257,7 @@ jobs:
       - release-linux
       - release-windows
       - release-macOS-intel
-      # - release-macOS-apple-silicon
+      - release-macOS-apple-silicon
     if: ${{ needs.check-if-upload-to-itch-is-configured.outputs.should-upload == 'yes' }}
 
     steps:

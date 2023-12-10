@@ -1,5 +1,6 @@
+use crate::global_systems::eargasm::AudioRequest;
 use crate::Teardown;
-use crate::{game::hp_bars::HpBarUISettings, global_systems::eargasm::AudioRequest, Health};
+use crate::{game::hp_bars::HpBarUISettings, Health};
 use bevy::prelude::*;
 use std::path::Path;
 
@@ -132,6 +133,14 @@ impl BuildingType {
             BuildingType::Distribution => DistributionTower::COST,
             BuildingType::Radar => RadarTower::COST,
             BuildingType::Drain => RadarTower::COST,
+        }
+    }
+
+    pub fn sprite(&self) -> &'static str {
+        match self {
+            BuildingType::Radar => "",
+            BuildingType::Distribution => "textures/tower_single.png",
+            BuildingType::Drain => "textures/sucky-uppy-single-frame.png",
         }
     }
 }
