@@ -27,7 +27,7 @@ fn once_fire_music_test(
     }
 }
 
-#[derive(Component)]
+#[derive(Component, Debug)]
 pub enum AudioComponent {
     Track1(Track1),
     Track2(Track2),
@@ -37,32 +37,23 @@ pub enum AudioComponent {
     IntroVoice(IntroVoice),
 }
 
-#[derive(Component)]
+#[derive(Component, Debug)]
 pub struct Track1;
-#[derive(Component)]
+#[derive(Component, Debug)]
 pub struct Track2;
-#[derive(Component)]
+#[derive(Component, Debug)]
 pub struct Radar1;
-#[derive(Component)]
+#[derive(Component, Debug)]
 pub struct Radar2;
-#[derive(Component)]
+#[derive(Component, Debug)]
 pub struct TheCompanyThanksYou;
-#[derive(Component)]
+#[derive(Component, Debug)]
 pub struct IntroVoice;
 
 #[derive(Event)]
 pub struct AudioRequest {
     pub component: AudioComponent,
 }
-
-#[derive(SystemParam)]
-pub struct AudioSysParam<'w, 's> {
-    // Use queries without explicit reference lifetimes
-    query_track1: Query<'w, 's, (&'static AudioSink, &'static Handle<AudioSource>), With<Track1>>,
-    query_track2: Query<'w, 's, (&'static AudioSink, &'static Handle<AudioSource>), With<Track2>>,
-    asset_server: Res<'w, AssetServer>,
-}
-
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     let audio_assets = [
         ("audio/musictrack 1.mp3", AudioComponent::Track1(Track1)),
@@ -79,25 +70,47 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                     mode: bevy::audio::PlaybackMode::Once,
                     // volume: todo!(),
                     // speed: todo!(),
-                    // paused: todo!(),
+                    paused: true,
                     // spatial: todo!(),
                     ..default()
                 },
             })
             .insert(component);
+
+        info!("Added {}", path);
     }
 }
 
-fn play_system(param: AudioSysParam, mut event_reader: EventReader<AudioRequest>) {
+fn play_system(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut event_reader: EventReader<AudioRequest>,
+) {
+    let audio_assets = [
+        ("audio/musictrack 1.mp3", AudioComponent::Track1(Track1)),
+        ("audio/musictrack 2.mp3", AudioComponent::Track2(Track2)),
+        // ... other assets ...
+    ];
+
     for event in event_reader.read() {
         info!("Read AudioRequest");
         match &event.component {
             AudioComponent::Track1(_) => {
-                let q = param.query_track1.get_single().unwrap();
-                q.0.toggle();
-                info!("Toggled");
+                commands
+                    .spawn(AudioBundle {
+                        source: asset_server.load("audio/musictrack 1.mp3"),
+                        settings: PlaybackSettings {
+                            mode: bevy::audio::PlaybackMode::Once,
+                            // volume: todo!(),
+                            // speed: todo!(),
+                            // paused: todo!(),
+                            // spatial: todo!(),
+                            ..default()
+                        },
+                    })
+                    .insert(Track1);
             }
-            _ => todo!(" Add the other tracks n audio"),
+            _ => error!("Unknown audiosink/source/track pairing!"),
         };
     }
 }
