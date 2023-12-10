@@ -2,7 +2,10 @@ use std::fmt::format;
 
 use bevy::prelude::*;
 
-use crate::AppState;
+use crate::{
+    eargasm::{AudioRequest, Track2},
+    AppState,
+};
 
 pub struct ResourcePlugin;
 impl Plugin for ResourcePlugin {
@@ -41,6 +44,16 @@ pub struct ExpendResource(pub ResourceType, pub u32);
 /// (resource, money_earned)
 #[derive(Event)]
 pub struct Harvest(pub ResourceType, pub u32);
+
+/// System:
+/// Changes the music of the game based on how much money you have.
+fn game_stage_music_choice(inventory: Res<Inventory>, mut audio_mngr: EventWriter<AudioRequest>) {
+    if inventory.money > 1000 {
+        audio_mngr.send(AudioRequest {
+            component: crate::eargasm::AudioComponent::Track2(Track2),
+        })
+    }
+}
 
 /// System that adds all harvested resources to the players inventory
 fn add_harvest_to_inventory(mut inventory: ResMut<Inventory>, mut harvests: EventReader<Harvest>) {

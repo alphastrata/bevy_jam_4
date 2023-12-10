@@ -89,6 +89,7 @@ fn play_system(
     mut event_reader: EventReader<AudioRequest>,
 ) {
     for event in event_reader.read() {
+        //TODO: if track1 or 2 is already playing -- we want to stop that? (if on track1 and request == 2 and vice versa...)
         info!("Read AudioRequest");
         match &event.component {
             AudioComponent::Track1(_) => {
