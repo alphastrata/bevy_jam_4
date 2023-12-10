@@ -68,6 +68,8 @@ pub fn create_initial_map2(mut commands: Commands, asset_server: Res<AssetServer
     // Convert the image to grayscale
     let greyscale_img = brightness_map();
     let (width, height) = greyscale_img.dimensions();
+    dbg!(width, height, greyscale_img.to_vec().len());
+
     let brightness_map: Vec<Vec<u8>> = (0..height)
         .map(|y| {
             (0..width)
@@ -76,8 +78,13 @@ pub fn create_initial_map2(mut commands: Commands, asset_server: Res<AssetServer
         })
         .collect();
 
+    dbg!(brightness_map.len(), width / 8, height / 8,);
+
     let texture = asset_server.load("textures/terrain.png");
-    let map_size = TilemapSize { x: 512, y: 512 };
+    let map_size = TilemapSize {
+        x: (width / 8),
+        y: (height / 8),
+    };
     let mut tile_storage = TileStorage::empty(map_size);
     let tilemap_entity = commands.spawn_empty().id();
 
@@ -126,7 +133,7 @@ pub fn create_initial_map2(mut commands: Commands, asset_server: Res<AssetServer
 fn brightness_map() -> GrayImage {
     let static_map: &[u8] = include_bytes!("../../assets/textures/static-map.png");
     image::load_from_memory_with_format(static_map, ImageFormat::Png)
-        .expect("Failed to load image")
+        .expect("Failed to load static-map.png!")
         .to_luma8()
 }
 
