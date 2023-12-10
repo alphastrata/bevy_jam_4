@@ -187,7 +187,7 @@ fn animate_sprite(
             &mut AnimationTimer,
             &mut TextureAtlasSprite,
         ),
-        With<DrainTower>,
+        (With<DrainTower>, With<IsPowered>),
     >,
 ) {
     for (indices, mut timer, mut sprite) in &mut query {
