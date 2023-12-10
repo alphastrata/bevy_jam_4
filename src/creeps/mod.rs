@@ -10,7 +10,7 @@ use crate::{
         resources::{Harvest, ResourceType},
     },
     prelude::*,
-    AppState, Range,
+    Range, Teardown,
 };
 use bevy::{asset::processor::ProcessorTransactionLog, ecs::bundle, prelude::*, time::Stopwatch};
 use rand::Rng;
@@ -21,15 +21,8 @@ impl Plugin for CreepPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<SpawnCreep>();
 
-        app.add_systems(
-            OnEnter(AppState::Gameplay),
-            (initial_creep_spawn, creep_spawning_timer),
-        )
-        .add_systems(OnExit(AppState::Gameplay), teardown)
-        .add_systems(
-            Update,
-            (periodically_spawn_creep, cleanup_dead_creeps).run_if(in_state(AppState::Gameplay)),
-        );
+        app.add_systems(Startup, (initial_creep_spawn, creep_spawning_timer))
+            .add_systems(Update, (cleanup_dead_creeps, periodically_spawn_creep));
     }
 }
 
@@ -41,9 +34,16 @@ struct CreepSpawnTimer {
     timer: Stopwatch,
 }
 
+#[derive(Resource)]
+struct TreeCreepAtlas(Handle<TextureAtlas>);
+
 /// System: Setup
-fn initial_creep_spawn(mut commands: Commands, asset_server: Res<AssetServer>) {
-    (0..10_000).for_each(|_| spawn_creep(&mut commands, &asset_server));
+fn initial_creep_spawn(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+) {
+    (0..10_000).for_each(|_| spawn_creep(&mut commands, &asset_server, &mut texture_atlases));
 }
 
 fn creep_spawning_timer(mut commands: Commands) {
@@ -58,22 +58,20 @@ fn periodically_spawn_creep(
     asset_server: Res<AssetServer>,
     time: Res<Time>,
     mut creep_timer: ResMut<CreepSpawnTimer>,
+    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {
     creep_timer.timer.tick(time.delta());
     if creep_timer.timer.elapsed_secs() > 30.0 {
-        (0..500).for_each(|_| spawn_creep(&mut commands, &asset_server));
+        (0..500).for_each(|_| spawn_creep(&mut commands, &asset_server, &mut texture_atlases));
         creep_timer.timer.reset()
     }
 }
 
-pub fn teardown(mut commands: Commands, q: Query<(Entity, &Health, &CorpoPoints), With<Tree>>) {
-    q.iter().for_each(|(entity, _health, _corpo_pts)| {
-        commands.entity(entity).despawn();
-    });
-}
-
-/// Helper: for the Systems: [initial_creep_spawn, spawn_on_trigger]
-fn spawn_creep(commands: &mut Commands, asset_server: &Res<AssetServer>) {
+fn spawn_creep(
+    commands: &mut Commands,
+    asset_server: &Res<AssetServer>,
+    texture_atlases: &mut ResMut<Assets<TextureAtlas>>,
+) {
     const MAP_LIMIT: f32 = 8192.0;
 
     let mut rng = rand::thread_rng();
@@ -84,26 +82,32 @@ fn spawn_creep(commands: &mut Commands, asset_server: &Res<AssetServer>) {
     let target = Vec3::ZERO;
     let direction = target - current;
 
+    let texture_handle = asset_server.load("textures/trees.png");
+    let texture_atlas =
+        TextureAtlas::from_grid(texture_handle, Vec2::new(32.0, 32.0), 3, 3, None, None);
+    let texture_atlas_handle = texture_atlases.add(texture_atlas);
+
     if direction.length() > 240.0 {
-        //TODO: Random selection of sprite from upcomming options.
-        //TODO: remove placeholder creep.png
-        commands.spawn((
-            SpriteBundle {
+        let atlas_handle = texture_atlas_handle.clone();
+        let sprite_index = rng.gen_range(0..9); // Randomly select one of the 9 sprites
+
+        commands
+            .spawn(SpriteSheetBundle {
+                texture_atlas: atlas_handle,
+                sprite: TextureAtlasSprite::new(sprite_index),
                 transform: Transform::from_xyz(x, y, 0.10),
-                texture: asset_server.load("textures/creep.png"),
-                //
                 ..default()
-            },
-            Tree,
-            AttackSpeed(10), //TODO: multiply out by the tick?, QUESTION: relative to the sprite we load?
-            Health(100),     //QUESTION: relative to the sprite we load?
-            HpBarUISettings {
+            })
+            .insert(Teardown)
+            .insert(Tree)
+            .insert(AttackSpeed(10))
+            .insert(Health(100))
+            .insert(HpBarUISettings {
                 max: 100,
                 offset: Some(Vec2::new(0.0, -32.0)),
-            },
-            Range(300), //QUESTION: relative to the sprite we load?
-            CorpoPoints(rng.gen_range(1.0..50.0) as u32), //QUESTION: relative to the sprite we load?
-        ));
+            })
+            .insert(Range(300))
+            .insert(CorpoPoints(rng.gen_range(1.0..50.0) as u32));
     }
 }
 
