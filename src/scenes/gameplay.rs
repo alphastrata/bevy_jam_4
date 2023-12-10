@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use bevy_ecs_tilemap::TilemapPlugin;
 
 use crate::{
-    buildings::{distribution::DistributionTowerPlugin, drain::DrainTowerPlugin},
+    buildings::{distribution::DistributionTowerPlugin, drain::DrainTowerPlugin, Building},
     creeps::CreepPlugin,
     game::{
         camera::GameCameraPlugin, hp_bars::HealthBarUIPlugin, map::MapPlugin,
@@ -35,9 +35,9 @@ impl Plugin for GameplayPlugin {
     }
 }
 
-fn teardown_all(mut commands: Commands, to_teardown: Query<(Entity, &Teardown)>) {
+fn teardown_all(mut commands: Commands, to_teardown: Query<Entity, With<Teardown>>) {
     info!("Tearing down all gameplay entities!!!");
-    to_teardown.iter().for_each(|(entity, _)| {
+    to_teardown.iter().for_each(|entity| {
         commands.entity(entity).despawn_recursive();
     });
 }
