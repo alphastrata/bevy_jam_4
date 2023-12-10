@@ -12,6 +12,7 @@ use flora_cause::{
     components::{fade_transition::TransitionPlugin, ui_util::UIUtilPlugin},
     creeps::CreepPlugin,
     debug::display_debug::DisplayDebugPlugin,
+    eargasm::EargasmPlugin,
     // debug::fps_counter::FPSPlugin,
     game::keybinds::KeybindPlugin,
     scenes::{
@@ -44,6 +45,7 @@ fn main() {
             TransitionPlugin,
             TweeningPlugin,
             UIUtilPlugin,
+            EargasmPlugin,
         ))
         .add_state::<AppState>()
         .add_systems(Startup, setup)
