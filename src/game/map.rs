@@ -9,19 +9,26 @@ use crate::{AppState, Teardown};
 pub struct MapPlugin;
 impl Plugin for MapPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(
-            OnEnter(AppState::Gameplay),
-            (create_initial_map2, setup_highlight_tile),
-        )
-        .add_systems(
-            Update,
-            (highlight_tile_labels).run_if(in_state(AppState::Gameplay)),
-        );
+        app.init_resource::<CurrentTileHover>()
+            .add_systems(
+                OnEnter(AppState::Gameplay),
+                (create_initial_map2, setup_highlight_tile),
+            )
+            .add_systems(
+                Update,
+                (highlight_tile_labels).run_if(in_state(AppState::Gameplay)),
+            );
     }
 }
 
 #[derive(Component)]
 struct HighlightedTile;
+
+#[derive(Resource, Default)]
+pub struct CurrentTileHover {
+    pub tile_pos: Option<TilePos>,
+    pub world_pos: Option<Vec2>,
+}
 
 enum TerrainTileType {
     Rock,
@@ -168,6 +175,7 @@ fn highlight_tile_labels(
         Without<TheHighlightRect>,
     >,
     mut highlight_rect: Query<(Entity, &mut Transform), With<TheHighlightRect>>,
+    mut tile_hover: ResMut<CurrentTileHover>,
 ) {
     let window = primary_window.single();
     let (cam_tf, cam) = q_camera.single();
@@ -190,7 +198,14 @@ fn highlight_tile_labels(
             trace!("Hovered over Tile {:?} entity {:?}", tile_pos, tile_entity);
 
             let tile_center = tile_pos.center_in_world(grid_size, map_type).extend(1.0);
+
             let transform = *map_transform * Transform::from_translation(tile_center);
+
+            let tile_top_left = Vec2::new(transform.translation.x, transform.translation.y)
+                + Vec2::new(0.0, 32.0 / 2.0);
+            tile_hover.tile_pos = Some(tile_pos);
+            tile_hover.world_pos = Some(tile_top_left);
+
             *hr = transform;
         }
     } else {

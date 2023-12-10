@@ -12,6 +12,7 @@ use bevy_mod_picking::prelude::*;
 use super::{
     camera::ViewCamera,
     keybinds::FloraCommand,
+    map::CurrentTileHover,
     resources::{ExpendResource, Inventory, ResourceType},
 };
 
@@ -55,23 +56,15 @@ fn spawn_at_click_pos(
     texture_atlases: ResMut<Assets<TextureAtlas>>,
     asset_server: Res<AssetServer>,
     state: Res<PlacementState>,
-    q_window: Query<&Window, With<PrimaryWindow>>,
-    q_camera: Query<(&Camera, &GlobalTransform), (With<CameraState>, With<ViewCamera>)>,
     mouse_btns: Res<Input<MouseButton>>,
     inventory: Res<Inventory>,
+    tile_hover: Res<CurrentTileHover>,
 ) {
     if mouse_btns.just_pressed(MouseButton::Right) {
-        let window = q_window.single();
-        let (camera, camera_transform) = q_camera.single();
-
-        // convert viewport pos to worldspace
-        if let Some(world_pos) = window
-            .cursor_position()
-            .and_then(|cursor| camera.viewport_to_world_2d(camera_transform, cursor))
-        {
-            if let Some(building) = &state.being_placed_building_type {
-                if inventory.money > building.cost() {
-                    building.spawn(&mut commands, texture_atlases, asset_server, world_pos);
+        if let Some(building) = &state.being_placed_building_type {
+            if inventory.money > building.cost() {
+                if let Some(tile_world_pos) = tile_hover.world_pos {
+                    building.spawn(&mut commands, texture_atlases, asset_server, tile_world_pos);
 
                     expend_resource.send(ExpendResource(
                         ResourceType::CorporationPoints,
