@@ -74,7 +74,7 @@ pub fn create_initial_map2(mut commands: Commands, asset_server: Res<AssetServer
         })
         .collect();
 
-    let texture = asset_server.load("tiles/temporary-terrain-tiles.png");
+    let texture = asset_server.load("textures/terrain.png");
     let map_size = TilemapSize { x: 512, y: 512 };
     let mut tile_storage = TileStorage::empty(map_size);
     let tilemap_entity = commands.spawn_empty().id();
@@ -132,7 +132,7 @@ fn brightness_map() -> GrayImage {
     let perlin = Perlin::new(1);
 
     let center = (size as f32 / 2.0, size as f32 / 2.0);
-    let radius = size as f32 / 4.0; // Adjust radius as needed
+    let radius = size as f32 / 64.0; // Adjust radius as needed
 
     (0..size).for_each(|x| {
         (0..size).for_each(|y| {
@@ -145,6 +145,7 @@ fn brightness_map() -> GrayImage {
             // Apply a circular mask
             let dist_from_center =
                 ((x as f32 - center.0).powi(2) + (y as f32 - center.1).powi(2)).sqrt();
+
             let masked_value = if dist_from_center < radius {
                 6
             } else {

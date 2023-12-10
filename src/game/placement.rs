@@ -2,6 +2,7 @@ use crate::{
     buildings::{
         distribution::DistributionTower, spawn_building, BuildingDefinition, BuildingType,
     },
+    eargasm::AudioRequest,
     game::{camera::CameraState, power::AddBuilding},
     AppState,
 };
@@ -50,6 +51,8 @@ fn change_current_building(mut state: ResMut<PlacementState>, input: Res<Input<F
 
 #[allow(clippy::too_many_arguments)]
 fn spawn_at_click_pos(
+    q_window: Query<&Window, With<PrimaryWindow>>,
+    q_camera: Query<(&Camera, &GlobalTransform), (With<CameraState>, With<ViewCamera>)>,
     mut commands: Commands,
     mut add_building: EventWriter<AddBuilding>,
     mut expend_resource: EventWriter<ExpendResource>,
@@ -57,21 +60,32 @@ fn spawn_at_click_pos(
     asset_server: Res<AssetServer>,
     state: Res<PlacementState>,
     mouse_btns: Res<Input<MouseButton>>,
+    audio_mngr: EventWriter<AudioRequest>,
     inventory: Res<Inventory>,
     tile_hover: Res<CurrentTileHover>,
 ) {
     if mouse_btns.just_pressed(MouseButton::Right) {
-        if let Some(building) = &state.being_placed_building_type {
-            if inventory.money > building.cost() {
-                if let Some(tile_world_pos) = tile_hover.world_pos {
-                    building.spawn(&mut commands, texture_atlases, asset_server, tile_world_pos);
+        let window = q_window.single();
+        let (camera, camera_transform) = q_camera.single();
 
-                    expend_resource.send(ExpendResource(
-                        ResourceType::CorporationPoints,
-                        building.cost(),
-                    ));
-                    add_building.send(AddBuilding);
-                }
+        // convert viewport pos to worldspace
+        if let Some(world_pos) = window
+            .cursor_position()
+            .and_then(|cursor| camera.viewport_to_world_2d(camera_transform, cursor))
+        {
+            if let Some(building) = &state.being_placed_building_type {
+                building.spawn(
+                    &mut commands,
+                    texture_atlases,
+                    asset_server,
+                    world_pos,
+                    audio_mngr,
+                );
+                expend_resource.send(ExpendResource(
+                    ResourceType::CorporationPoints,
+                    building.cost(),
+                ));
+                add_building.send(AddBuilding);
             }
         }
     }
