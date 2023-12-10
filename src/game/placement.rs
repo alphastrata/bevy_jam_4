@@ -61,8 +61,8 @@ fn spawn_at_click_pos(
     state: Res<PlacementState>,
     mouse_btns: Res<Input<MouseButton>>,
     audio_mngr: EventWriter<AudioRequest>,
-    inventory: Res<Inventory>,
-    tile_hover: Res<CurrentTileHover>,
+    _inventory: Res<Inventory>,
+    _tile_hover: Res<CurrentTileHover>,
 ) {
     if mouse_btns.just_pressed(MouseButton::Right) {
         let window = q_window.single();
