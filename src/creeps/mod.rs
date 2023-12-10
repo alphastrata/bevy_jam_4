@@ -1,6 +1,16 @@
+//! Creeps are the enemy! They are also known as "Tree"s.
+
 use std::ops::ControlFlow;
 
-use crate::{buildings::Building, prelude::*, Range};
+use crate::{
+    buildings::Building,
+    game::{
+        hp_bars::HpBarUISettings,
+        resources::{Harvest, ResourceType},
+    },
+    prelude::*,
+    Range,
+};
 use bevy::{asset::processor::ProcessorTransactionLog, ecs::bundle, prelude::*};
 use rand::Rng;
 
@@ -11,7 +21,7 @@ impl Plugin for CreepPlugin {
         app.add_event::<SpawnCreep>();
 
         app.add_systems(Startup, initial_creep_spawn)
-            .add_systems(Update, (spawn_on_trigger, cleanup_dead));
+            .add_systems(Update, (spawn_on_trigger, cleanup_dead_creeps));
 
         #[cfg(debug_assertions)]
         app.insert_resource(CreepCount(1000)); //TODO: maybe we ensure a certain 'minimum' ammount of creeps at any one time?
@@ -71,7 +81,11 @@ fn spawn_creep(commands: &mut Commands, asset_server: &Res<AssetServer>) {
             Tree,
             AttackSpeed(10), //TODO: multiply out by the tick?, QUESTION: relative to the sprite we load?
             Health(100),     //QUESTION: relative to the sprite we load?
-            Range(300),      //QUESTION: relative to the sprite we load?
+            HpBarUISettings {
+                max: 100,
+                offset: Some(Vec2::new(0.0, -32.0)),
+            },
+            Range(300), //QUESTION: relative to the sprite we load?
             CorpoPoints(rng.gen_range(1.0..50.0) as u32), //QUESTION: relative to the sprite we load?
         ));
     }
@@ -121,10 +135,15 @@ fn attack_towers(
 }
 
 /// System: Update, remove anything with Health 0.
-fn cleanup_dead(mut commands: Commands, q: Query<(Entity, &Health)>) {
+fn cleanup_dead_creeps(
+    mut commands: Commands,
+    mut harvest: EventWriter<Harvest>,
+    q: Query<(Entity, &Health, &CorpoPoints), With<Tree>>,
+) {
     q.iter()
-        .filter(|(_entity, health)| health.0 == 0)
-        .for_each(|(entity, _health)| {
-            commands.entity(entity).despawn();
+        .filter(|(_entity, health, _)| health.0 == 0)
+        .for_each(|(entity, _health, corpo_pts)| {
+            harvest.send(Harvest(ResourceType::CorporationPoints, corpo_pts.0));
+            commands.entity(entity).despawn_recursive();
         });
 }

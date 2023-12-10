@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use std::path::Path;
 
-use crate::Health;
+use crate::{game::hp_bars::HpBarUISettings, Health};
 
 use self::{
     distribution::DistributionTower,
@@ -23,6 +23,7 @@ pub struct Building;
 pub struct MinimalBuilding {
     marker: Building,
     health: Health,
+    hp_bar: HpBarUISettings,
     sprite: SpriteBundle,
 }
 
@@ -54,6 +55,10 @@ pub fn spawn_building<B: BuildingDefinition>(
         .spawn(MinimalBuilding {
             marker: Building,
             health: Health(B::BASE_HEALTH),
+            hp_bar: HpBarUISettings {
+                max: B::BASE_HEALTH,
+                offset: None,
+            },
             sprite: SpriteBundle {
                 texture: sprite_texture,
                 transform: Transform::from_translation(Vec3::new(pos.x, pos.y, 0.10)),
@@ -77,13 +82,21 @@ pub enum BuildingType {
 }
 
 impl BuildingType {
-    pub fn spawn(&self, commands: &mut Commands, asset_server: Res<AssetServer>, pos: Vec2) {
+    pub fn spawn(
+        &self,
+        commands: &mut Commands,
+        texture_atlases: ResMut<Assets<TextureAtlas>>,
+        asset_server: Res<AssetServer>,
+        pos: Vec2,
+    ) {
         match self {
             BuildingType::Radar => spawn_building::<RadarTower>(commands, asset_server, pos),
             BuildingType::Distribution => {
                 spawn_building::<DistributionTower>(commands, asset_server, pos)
             }
-            BuildingType::Drain => spawn_building::<DrainTower>(commands, asset_server, pos),
+            BuildingType::Drain => {
+                DrainTower::custom_spawn(commands, texture_atlases, asset_server, pos)
+            }
         };
     }
 

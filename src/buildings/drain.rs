@@ -10,16 +10,16 @@
 use crate::{
     creeps::SpawnCreep,
     game::power::{AddBuilding, IsPowered, RequiresPower},
-    AppState, Health, Tree,
+    AnimationIndices, AnimationTimer, AppState, Health, Tree,
 };
 use bevy::{prelude::*, tasks::IoTaskPool};
 
-use super::BuildingDefinition;
+use super::{Building, BuildingDefinition};
 
 /// Drain damage applied to trees per tick of [GlobalDrainTick]
-const DRAIN_DPT: u32 = 100;
+const DRAIN_DPT: u32 = 2;
 /// Every *this* many seconds trees get drained
-const DRAIN_TICK_RATE: f32 = 1.5;
+const DRAIN_TICK_RATE: f32 = 0.15;
 
 #[derive(Component)]
 pub struct DrainRadius(f32);
@@ -33,7 +33,7 @@ pub struct DrainTower {
 }
 
 impl BuildingDefinition for DrainTower {
-    const SPRITE_PATH: &'static str = "textures/tower.png";
+    const SPRITE_PATH: &'static str = "textures/sucky-uppy.png";
     const BASE_HEALTH: u32 = 100;
     const COST: u32 = 20;
     const BUILD_TIME: u32 = 5;
@@ -48,6 +48,40 @@ impl BuildingDefinition for DrainTower {
     }
 }
 
+impl DrainTower {
+    /// Manually implement the spawning since it uses SpriteSheetBundle and animatin components
+    /// compared to the simple [MinimalBuilding] Bundle
+    pub fn custom_spawn(
+        commands: &mut Commands,
+        mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+        asset_server: Res<AssetServer>,
+        pos: Vec2,
+    ) -> Entity {
+        let texture_handle = asset_server.load(DrainTower::SPRITE_PATH);
+        let texture_atlas =
+            TextureAtlas::from_grid(texture_handle, Vec2::new(32.0, 64.0), 18, 1, None, None);
+        let texture_atlas_handle = texture_atlases.add(texture_atlas);
+        let succ_anim = AnimationIndices { first: 1, last: 17 };
+        let ent_id = commands
+            .spawn((
+                Building,
+                Health(Self::BASE_HEALTH),
+                SpriteSheetBundle {
+                    texture_atlas: texture_atlas_handle,
+                    sprite: TextureAtlasSprite::new(succ_anim.first),
+                    transform: Transform::from_translation(Vec3::new(pos.x, pos.y, 0.01)),
+                    ..default()
+                },
+                succ_anim,
+                AnimationTimer(Timer::from_seconds(0.07, TimerMode::Repeating)),
+            ))
+            .id();
+
+        Self::add_extra_components(commands, ent_id);
+        ent_id
+    }
+}
+
 pub struct DrainTowerPlugin;
 impl Plugin for DrainTowerPlugin {
     fn build(&self, app: &mut App) {
@@ -59,13 +93,15 @@ impl Plugin for DrainTowerPlugin {
         .add_event::<SpawnCreep>()
         .add_systems(
             Update,
-            (calculate_drainees, drain_closeby_trees).run_if(in_state(AppState::Gameplay)),
+            (animate_sprite, calculate_drainees, drain_closeby_trees)
+                .run_if(in_state(AppState::Gameplay)),
         );
     }
 }
 
 /// We don't want to calculate the trees in range of a tower every single frame or tick
-/// so this system instead calculates them every time new creeps are spawned.
+/// so this system instead calculates them every time new creeps are spawned or a new
+/// tower is built.
 fn calculate_drainees(
     mut tower_spawned: EventReader<AddBuilding>,
     mut creep_spawned: EventReader<SpawnCreep>,
@@ -135,6 +171,29 @@ fn drain_closeby_trees(
                 }
             });
         });
+    }
+}
+
+fn animate_sprite(
+    time: Res<Time>,
+    mut query: Query<
+        (
+            &AnimationIndices,
+            &mut AnimationTimer,
+            &mut TextureAtlasSprite,
+        ),
+        With<DrainTower>,
+    >,
+) {
+    for (indices, mut timer, mut sprite) in &mut query {
+        timer.tick(time.delta());
+        if timer.just_finished() {
+            sprite.index = if sprite.index == indices.last {
+                indices.first
+            } else {
+                sprite.index + 1
+            };
+        }
     }
 }
 

@@ -38,7 +38,6 @@ fn setup(mut cmd: Commands) {
             },
             ..default()
         },
-        main_layer(),
         TransitionComponent,
     ));
 }
