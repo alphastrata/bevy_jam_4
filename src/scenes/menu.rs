@@ -10,6 +10,7 @@ use crate::{
         fade_transition::{transition_to, TransitionState},
         ui_util::{btn, img, txt, GameFont},
     },
+    creeps::initial_creep_spawn,
     game::camera::{main_layer, rt_cam3d, v3d_layer, UiCamera},
     AppState,
 };
@@ -37,8 +38,11 @@ enum Action {
 
 /// Marker component for anything on the Main Menu screen.
 /// Used for despawning all UI nodes when leaving Main Menu screen
-#[derive(Component)]
+#[derive(Component, Default)]
 struct OnMainMenuScreen;
+// impl Default for OnMainMenuScreen {
+//     fn default() -> Self {}
+// }
 
 #[derive(Component, Default)]
 struct DemoCube;
@@ -81,7 +85,7 @@ fn setup(
     font: Res<GameFont>,
     asset_server: Res<AssetServer>,
 ) {
-    let (img_handle, _) = rt_cam3d(
+    let (img_handle, camera) = rt_cam3d(
         &mut commands,
         &mut images,
         Extent3d {
@@ -104,6 +108,8 @@ fn setup(
             ..default()
         },
     );
+    commands.entity(camera).insert(OnMainMenuScreen);
+
     let ui_image = commands
         .spawn((
             ImageBundle {
@@ -132,16 +138,15 @@ fn setup(
 
     // Main pass cube, with material containing the rendered first pass texture.
     commands.spawn((
-        (
-            PbrBundle {
-                mesh: cube_handle,
-                material: cube_material_handle,
-                transform: Transform::from_xyz(0.0, 0.0, 1.5)
-                    .with_rotation(Quat::from_rotation_x(-PI / 5.0)),
-                ..default()
-            },
-            v3d_layer(),
-        ),
+        PbrBundle {
+            mesh: cube_handle,
+            material: cube_material_handle,
+            transform: Transform::from_xyz(0.0, 0.0, 1.5)
+                .with_rotation(Quat::from_rotation_x(-PI / 5.0)),
+            ..default()
+        },
+        v3d_layer(),
+        OnMainMenuScreen,
         DemoCube,
     ));
 
@@ -151,6 +156,7 @@ fn setup(
             ..default()
         },
         v3d_layer(),
+        OnMainMenuScreen,
     ));
 
     let title = img(

@@ -6,7 +6,7 @@ use crate::{
     buildings::Building,
     game::resources::{Harvest, ResourceType},
     prelude::*,
-    Range,
+    AppState, Range,
 };
 use bevy::{asset::processor::ProcessorTransactionLog, ecs::bundle, prelude::*};
 use rand::Rng;
@@ -17,13 +17,19 @@ impl Plugin for CreepPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<SpawnCreep>();
 
-        app.add_systems(Startup, initial_creep_spawn)
-            .add_systems(Update, (spawn_on_trigger, cleanup_dead_creeps));
+        app.add_systems(OnEnter(AppState::Gameplay), setup)
+            .add_systems(
+                Update,
+                (spawn_on_trigger, cleanup_dead_creeps).run_if(in_state(AppState::Gameplay)),
+            );
 
         #[cfg(debug_assertions)]
-        app.insert_resource(CreepCount(1000)); //TODO: maybe we ensure a certain 'minimum' ammount of creeps at any one time?
-                                               // #[cfg(debug_assertions)]
-                                               //app.add_systems(Update, (dbg_send_spawn_creep_on_enter, dbg_count_creeps));
+        app.insert_resource(CreepState {
+            init: true,
+            count: 1000,
+        }); //TODO: maybe we ensure a certain 'minimum' ammount of creeps at any one time?
+            // #[cfg(debug_assertions)]
+            //app.add_systems(Update, (dbg_send_spawn_creep_on_enter, dbg_count_creeps));
     }
 }
 
@@ -32,13 +38,15 @@ pub struct SpawnCreep;
 
 #[cfg(debug_assertions)]
 #[derive(Resource)]
-pub struct CreepCount(pub usize);
+pub struct CreepState {
+    pub init: bool,
+    pub count: usize,
+}
 
 #[cfg(debug_assertions)]
-fn dbg_count_creeps(q: Query<&Transform, With<Tree>>, mut count: ResMut<CreepCount>) {
+fn dbg_count_creeps(q: Query<&Transform, With<Tree>>, mut creeps: ResMut<CreepState>) {
     use crate::Tree;
-
-    (*count) = CreepCount(q.iter().count());
+    (*creeps).count = q.iter().count();
 }
 
 #[cfg(debug_assertions)]
@@ -48,9 +56,29 @@ fn dbg_send_spawn_creep_on_enter(mut spawner: EventWriter<SpawnCreep>, kb: Res<I
     }
 }
 
+pub fn setup(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut creeps: ResMut<CreepState>,
+) {
+    initial_creep_spawn(&mut commands, &asset_server);
+    (*creeps).init = true;
+}
+
+pub fn explicit_teardown(
+    mut commands: Commands,
+    q: Query<(Entity, &Health, &CorpoPoints), With<Tree>>,
+    mut creeps: ResMut<CreepState>,
+) {
+    q.iter().for_each(|(entity, _health, corpo_pts)| {
+        commands.entity(entity).despawn();
+    });
+    (*creeps).init = true;
+}
+
 /// System: Setup
-fn initial_creep_spawn(mut commands: Commands, asset_server: Res<AssetServer>) {
-    (0..10000).for_each(|_| spawn_creep(&mut commands, &asset_server));
+pub fn initial_creep_spawn(commands: &mut Commands, asset_server: &Res<AssetServer>) {
+    (0..10000).for_each(|_| spawn_creep(commands, &asset_server));
 }
 
 /// Helper: for the Systems: [initial_creep_spawn, spawn_on_trigger]
