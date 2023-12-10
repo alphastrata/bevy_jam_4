@@ -121,7 +121,7 @@ fn setup(mut commands: Commands, font: Res<GameFont>) {
 fn teardown(
     nodes: Query<Entity, With<OnMainMenuScreen>>,
     mut commands: Commands,
-    mut state: ResMut<PauseState>,
+    _state: ResMut<PauseState>,
 ) {
     for ent in &nodes {
         commands.entity(ent).despawn_recursive();

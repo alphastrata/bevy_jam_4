@@ -66,7 +66,7 @@ fn periodically_spawn_creep(
 }
 
 pub fn teardown(mut commands: Commands, q: Query<(Entity, &Health, &CorpoPoints), With<Tree>>) {
-    q.iter().for_each(|(entity, _health, corpo_pts)| {
+    q.iter().for_each(|(entity, _health, _corpo_pts)| {
         commands.entity(entity).despawn();
     });
 }

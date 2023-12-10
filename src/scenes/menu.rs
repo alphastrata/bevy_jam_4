@@ -120,7 +120,7 @@ fn setup(
     );
     commands.entity(camera).insert(OnMainMenuScreen);
 
-    let ui_image = commands
+    let _ui_image = commands
         .spawn((
             ImageBundle {
                 style: Style {
