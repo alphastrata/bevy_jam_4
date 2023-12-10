@@ -1,16 +1,15 @@
-use bevy::audio::{AudioBundle, AudioSink, AudioSource, PlaybackMode};
+use bevy::audio::{AudioBundle, AudioSink, AudioSource, PlaybackMode, Volume, VolumeLevel};
 use bevy::ecs::system::SystemParam;
 use bevy::{log, prelude::*};
 
 pub struct EargasmPlugin;
 impl Plugin for EargasmPlugin {
     fn build(&self, app: &mut App) {
-        info!("Adding Eargasm plugin");
         app.add_event::<AudioRequest>()
             .add_systems(Startup, setup)
             .add_systems(Update, play_system);
 
-        info!("Added Eargasm plugin");
+        debug!("Added Eargasm plugin");
     }
 }
 
@@ -52,9 +51,9 @@ pub struct AudioRequest {
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands
         .spawn(AudioBundle {
-            source: asset_server.load("assets/audio/musictrack 1.mp3"),
+            source: asset_server.load("audio/musictrack 1.mp3"),
             settings: PlaybackSettings {
-                mode: bevy::audio::PlaybackMode::Once,
+                mode: bevy::audio::PlaybackMode::Despawn,
                 paused: false,
                 ..default()
             },
@@ -69,6 +68,8 @@ fn play_system(
     asset_server: Res<AssetServer>,
     mut event_reader: EventReader<AudioRequest>,
 ) {
+    let vol = Volume::Relative(VolumeLevel::new(4.0));
+
     for event in event_reader.read() {
         //TODO: if track1 or 2 is already playing -- we want to stop that? (if on track1 and request == 2 and vice versa...)
         info!("Read AudioRequest");
@@ -80,6 +81,8 @@ fn play_system(
                         source: asset_server.load("audio/money.mp3"),
                         settings: PlaybackSettings {
                             mode: PlaybackMode::Once,
+                            paused: false,
+                            volume: vol,
                             ..Default::default()
                         },
                         ..Default::default()
@@ -92,6 +95,8 @@ fn play_system(
                         source: asset_server.load("audio/electric.mp3"),
                         settings: PlaybackSettings {
                             mode: PlaybackMode::Once,
+                            paused: false,
+                            volume: vol,
                             ..Default::default()
                         },
                         ..Default::default()
@@ -105,6 +110,8 @@ fn play_system(
                         source: asset_server.load("audio/radar1.mp3"),
                         settings: PlaybackSettings {
                             mode: PlaybackMode::Once,
+                            paused: false,
+                            volume: vol,
                             ..Default::default()
                         },
                         ..Default::default()
@@ -117,6 +124,8 @@ fn play_system(
                         source: asset_server.load("audio/radar2.mp3"),
                         settings: PlaybackSettings {
                             mode: PlaybackMode::Once,
+                            paused: false,
+                            volume: vol,
                             // Add any other custom settings if needed
                             ..Default::default()
                         },
@@ -130,6 +139,8 @@ fn play_system(
                         source: asset_server.load("audio/thecompanythanksyou.mp3"),
                         settings: PlaybackSettings {
                             mode: PlaybackMode::Once,
+                            paused: false,
+                            volume: vol,
                             ..Default::default()
                         },
                         ..Default::default()
@@ -143,6 +154,8 @@ fn play_system(
                         source: asset_server.load("audio/introductionvoice.mp3"),
                         settings: PlaybackSettings {
                             mode: PlaybackMode::Once,
+                            paused: false,
+                            volume: Volume::Absolute(VolumeLevel::new(0.05)),
                             ..Default::default()
                         },
                         ..Default::default()
@@ -157,6 +170,8 @@ fn play_system(
                         source: asset_server.load("audio/musictrack 1.mp3"),
                         settings: PlaybackSettings {
                             mode: PlaybackMode::Once,
+                            paused: false,
+                            volume: vol,
                             ..Default::default()
                         },
                         ..Default::default()
