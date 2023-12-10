@@ -31,7 +31,7 @@ impl Plugin for GameplayPlugin {
         ))
         .add_systems(OnEnter(AppState::Gameplay), capture_cursor)
         .add_systems(Update, (pause).run_if(in_state(AppState::Gameplay)))
-        .add_systems(OnExit(AppState::Gameplay), teardown_all);
+        .add_systems(OnExit(AppState::Gameplay), (teardown_all, release_cursor));
     }
 }
 

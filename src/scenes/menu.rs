@@ -6,12 +6,12 @@ use bevy::{
 };
 
 use crate::{
-    components::{
+    game::camera::{main_layer, rt_cam3d, v3d_layer, UiCamera},
+    global_systems::{
+        eargasm::{AudioComponent, AudioRequest, IntroVoice, TheCompanyThanksYou},
         fade_transition::{transition_to, TransitionState},
         ui_util::{btn, img, txt, GameFont},
     },
-    eargasm::{AudioComponent, AudioRequest, IntroVoice, TheCompanyThanksYou},
-    game::camera::{main_layer, rt_cam3d, v3d_layer, UiCamera},
     AppState, PauseMenuState,
 };
 

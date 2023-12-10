@@ -4,11 +4,11 @@ use std::{ops::ControlFlow, time::Duration};
 
 use crate::{
     buildings::Building,
-    eargasm::{AudioRequest, Money},
     game::{
         hp_bars::HpBarUISettings,
         resources::{Harvest, ResourceType},
     },
+    global_systems::eargasm::{AudioRequest, Money},
     prelude::*,
     AppState, Range,
 };
@@ -151,7 +151,7 @@ fn cleanup_dead_creeps(
         .for_each(|(entity, _health, corpo_pts)| {
             harvest.send(Harvest(ResourceType::CorporationPoints, corpo_pts.0));
             audio_mngr.send(AudioRequest {
-                component: crate::eargasm::AudioComponent::Money(Money),
+                component: crate::global_systems::eargasm::AudioComponent::Money(Money),
             });
             commands.entity(entity).despawn_recursive();
         });

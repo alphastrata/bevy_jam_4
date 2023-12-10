@@ -2,8 +2,8 @@ use crate::{
     buildings::{
         distribution::DistributionTower, spawn_building, BuildingDefinition, BuildingType,
     },
-    eargasm::AudioRequest,
     game::{camera::CameraState, power::AddBuilding},
+    global_systems::eargasm::AudioRequest,
     AppState,
 };
 use bevy::prelude::*;

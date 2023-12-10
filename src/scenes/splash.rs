@@ -4,8 +4,8 @@ use bevy::{input::keyboard::KeyboardInput, prelude::*, render::view::RenderLayer
 use bevy_tweening::{lens::SpriteColorLens, Animator, Delay, EaseFunction, Tween};
 
 use crate::{
-    components::fade_transition::{transition_to, TransitionState},
     game::camera::main_layer,
+    global_systems::fade_transition::{transition_to, TransitionState},
     AppState,
 };
 
