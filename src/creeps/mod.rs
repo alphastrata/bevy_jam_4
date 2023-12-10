@@ -9,7 +9,7 @@ use crate::{
         resources::{Harvest, ResourceType},
     },
     prelude::*,
-    Range, Teardown,
+    AppState, Range,
 };
 use bevy::{asset::processor::ProcessorTransactionLog, ecs::bundle, prelude::*, time::Stopwatch};
 use rand::Rng;
@@ -20,15 +20,15 @@ impl Plugin for CreepPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<SpawnCreep>();
 
-        app.add_systems(Startup, (initial_creep_spawn, creep_spawning_timer))
-            .add_systems(
-                Update,
-                (
-                    spawn_on_trigger,
-                    cleanup_dead_creeps,
-                    periodically_spawn_creep,
-                ),
-            );
+        app.add_systems(
+            OnEnter(AppState::Gameplay),
+            (initial_creep_spawn, creep_spawning_timer),
+        )
+        .add_systems(OnExit(AppState::Gameplay), teardown)
+        .add_systems(
+            Update,
+            (periodically_spawn_creep, cleanup_dead_creeps).run_if(in_state(AppState::Gameplay)),
+        );
     }
 }
 
@@ -65,6 +65,12 @@ fn periodically_spawn_creep(
     }
 }
 
+pub fn teardown(mut commands: Commands, q: Query<(Entity, &Health, &CorpoPoints), With<Tree>>) {
+    q.iter().for_each(|(entity, _health, corpo_pts)| {
+        commands.entity(entity).despawn();
+    });
+}
+
 /// Helper: for the Systems: [initial_creep_spawn, spawn_on_trigger]
 fn spawn_creep(commands: &mut Commands, asset_server: &Res<AssetServer>) {
     const MAP_LIMIT: f32 = 8192.0;
@@ -87,7 +93,6 @@ fn spawn_creep(commands: &mut Commands, asset_server: &Res<AssetServer>) {
                 //
                 ..default()
             },
-            Teardown,
             Tree,
             AttackSpeed(10), //TODO: multiply out by the tick?, QUESTION: relative to the sprite we load?
             Health(100),     //QUESTION: relative to the sprite we load?
@@ -99,17 +104,6 @@ fn spawn_creep(commands: &mut Commands, asset_server: &Res<AssetServer>) {
             CorpoPoints(rng.gen_range(1.0..50.0) as u32), //QUESTION: relative to the sprite we load?
         ));
     }
-}
-
-/// System: Update, listens for the Event<SpawnCreep>, when it does we'll it'll spawn a creep at a random location
-fn spawn_on_trigger(
-    mut spawner: EventReader<SpawnCreep>,
-    mut commands: Commands,
-    asset_server: Res<AssetServer>,
-) {
-    spawner
-        .read()
-        .for_each(|_| spawn_creep(&mut commands, &asset_server));
 }
 
 /// System: Update 'attack' the closest tower.

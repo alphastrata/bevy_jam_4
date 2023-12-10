@@ -12,13 +12,15 @@ use crate::{
     },
     eargasm::{AudioComponent, AudioRequest, IntroVoice, TheCompanyThanksYou},
     game::camera::{main_layer, rt_cam3d, v3d_layer, UiCamera},
-    AppState,
+    AppState, PauseMenuState,
 };
+
+use super::pause::release_cursor;
 
 pub struct MainMenuPlugin;
 impl Plugin for MainMenuPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(AppState::MainMenu), setup)
+        app.add_systems(OnEnter(AppState::MainMenu), (setup, release_cursor))
             .add_systems(OnExit(AppState::MainMenu), teardown)
             .add_systems(
                 Update,
@@ -38,7 +40,7 @@ enum Action {
 
 /// Marker component for anything on the Main Menu screen.
 /// Used for despawning all UI nodes when leaving Main Menu screen
-#[derive(Component)]
+#[derive(Component, Default)]
 struct OnMainMenuScreen;
 
 #[derive(Component, Default)]
@@ -88,9 +90,12 @@ fn setup(
     mut materials: ResMut<Assets<StandardMaterial>>,
     mut meshes: ResMut<Assets<Mesh>>,
     font: Res<GameFont>,
+    mut paused: ResMut<NextState<PauseMenuState>>,
     asset_server: Res<AssetServer>,
 ) {
-    let (img_handle, _) = rt_cam3d(
+    paused.set(PauseMenuState::Unpaused);
+
+    let (img_handle, camera) = rt_cam3d(
         &mut commands,
         &mut images,
         Extent3d {
@@ -113,7 +118,9 @@ fn setup(
             ..default()
         },
     );
-    let _ui_image = commands
+    commands.entity(camera).insert(OnMainMenuScreen);
+
+    let ui_image = commands
         .spawn((
             ImageBundle {
                 style: Style {
@@ -141,16 +148,15 @@ fn setup(
 
     // Main pass cube, with material containing the rendered first pass texture.
     commands.spawn((
-        (
-            PbrBundle {
-                mesh: cube_handle,
-                material: cube_material_handle,
-                transform: Transform::from_xyz(0.0, 0.0, 1.5)
-                    .with_rotation(Quat::from_rotation_x(-PI / 5.0)),
-                ..default()
-            },
-            v3d_layer(),
-        ),
+        PbrBundle {
+            mesh: cube_handle,
+            material: cube_material_handle,
+            transform: Transform::from_xyz(0.0, 0.0, 1.5)
+                .with_rotation(Quat::from_rotation_x(-PI / 5.0)),
+            ..default()
+        },
+        v3d_layer(),
+        OnMainMenuScreen,
         DemoCube,
     ));
 
@@ -160,6 +166,7 @@ fn setup(
             ..default()
         },
         v3d_layer(),
+        OnMainMenuScreen,
     ));
 
     let title = img(

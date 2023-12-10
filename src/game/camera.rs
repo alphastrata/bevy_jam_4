@@ -18,7 +18,7 @@ use bevy::{
 };
 use bevy_tweening::Lerp;
 
-use crate::AppState;
+use crate::{AppState, PauseMenuState};
 
 use super::keybinds::FloraCommand;
 
@@ -85,8 +85,12 @@ pub struct CameraState3d;
 pub struct GameCameraPlugin;
 impl Plugin for GameCameraPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, setup)
-            .add_systems(Update, (move_camera).run_if(in_state(AppState::Gameplay)));
+        app.add_systems(Startup, setup).add_systems(
+            Update,
+            (move_camera)
+                .run_if(in_state(AppState::Gameplay))
+                .run_if(in_state(PauseMenuState::Unpaused)),
+        );
     }
 }
 

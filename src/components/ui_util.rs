@@ -26,9 +26,9 @@ impl FromWorld for GameFont {
 
 pub mod btn_styles {
     use bevy::prelude::Color;
-    pub(super) const NORMAL: Color = Color::rgb(1.0, 1.0, 01.0);
-    pub(super) const HOVERED: Color = Color::rgb(0.75, 0.75, 0.75);
-    pub(super) const PRESSED: Color = Color::rgb(0.5, 0.5, 0.5);
+    pub(super) const NORMAL: Color = Color::rgb(1.0, 1.0, 1.0);
+    pub(super) const HOVERED: Color = Color::rgb(0.5, 0.5, 0.5);
+    pub(super) const PRESSED: Color = Color::rgb(0.4, 0.4, 0.4);
 }
 
 pub fn img(
@@ -38,37 +38,31 @@ pub fn img(
     height: Option<Val>,
 ) -> Entity {
     commands
-        .spawn((
-            ImageBundle {
-                style: Style {
-                    width: width.unwrap_or_default(),
-                    height: height.unwrap_or_default(),
-                    ..default()
-                },
-                image: UiImage::new(texture),
+        .spawn((ImageBundle {
+            style: Style {
+                width: width.unwrap_or_default(),
+                height: height.unwrap_or_default(),
                 ..default()
             },
-            main_layer(),
-        ))
+            image: UiImage::new(texture),
+            ..default()
+        },))
         .id()
 }
 
 pub fn txt(commands: &mut Commands, font: &Res<GameFont>, text: &str, size: f32) -> Entity {
     commands
-        .spawn((
-            TextBundle {
-                text: Text::from_section(
-                    text,
-                    TextStyle {
-                        font: font.0.clone(),
-                        font_size: size,
-                        color: btn_styles::NORMAL,
-                    },
-                ),
-                ..default()
-            },
-            main_layer(),
-        ))
+        .spawn((TextBundle {
+            text: Text::from_section(
+                text,
+                TextStyle {
+                    font: font.0.clone(),
+                    font_size: size,
+                    color: btn_styles::NORMAL,
+                },
+            ),
+            ..default()
+        },))
         .id()
 }
 
@@ -80,36 +74,30 @@ pub fn btn(
     action: impl Bundle,
 ) -> Entity {
     commands
-        .spawn((
-            ButtonBundle {
-                style: Style {
-                    width: Val::Px(500.0),
-                    height: Val::Px(50.0),
-                    // border: UiRect::all(Val::Px(5.0)),
-                    // horizontally center child text
-                    justify_content: JustifyContent::Center,
-                    // vertically center child text
-                    align_items: AlignItems::Center,
-                    ..default()
-                },
-                // border_color: BorderColor(Color::BLACK),
-                background_color: Color::rgba(0.0, 0.0, 0.0, 0.0).into(),
+        .spawn((ButtonBundle {
+            style: Style {
+                width: Val::Px(500.0),
+                height: Val::Px(50.0),
+                // border: UiRect::all(Val::Px(5.0)),
+                // horizontally center child text
+                justify_content: JustifyContent::Center,
+                // vertically center child text
+                align_items: AlignItems::Center,
                 ..default()
             },
-            main_layer(),
-        ))
+            // border_color: BorderColor(Color::BLACK),
+            background_color: Color::rgba(0.0, 0.0, 0.0, 0.0).into(),
+            ..default()
+        },))
         .with_children(|parent| {
-            parent.spawn((
-                TextBundle::from_section(
-                    text,
-                    TextStyle {
-                        font: font.0.clone(),
-                        font_size: 48.0,
-                        color: btn_styles::NORMAL,
-                    },
-                ),
-                main_layer(),
-            ));
+            parent.spawn((TextBundle::from_section(
+                text,
+                TextStyle {
+                    font: font.0.clone(),
+                    font_size: 48.0,
+                    color: btn_styles::NORMAL,
+                },
+            ),));
         })
         .insert(action)
         .id()
