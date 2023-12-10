@@ -35,7 +35,7 @@ pub struct DrainTower {
 impl BuildingDefinition for DrainTower {
     const SPRITE_PATH: &'static str = "textures/sucky-uppy.png";
     const BASE_HEALTH: u32 = 100;
-    const COST: u32 = 20;
+    const COST: u32 = 300;
     const BUILD_TIME: u32 = 5;
     const NAME: &'static str = "Drain Tower";
     const DESCRIPTION: &'static str = "The Drain Tower slowly drains the health of
@@ -93,7 +93,12 @@ impl Plugin for DrainTowerPlugin {
         .add_event::<SpawnCreep>()
         .add_systems(
             Update,
-            (animate_sprite, calculate_drainees, drain_closeby_trees)
+            (
+                animate_sprite,
+                calculate_drainees,
+                drain_closeby_trees,
+                debug_drain_radii,
+            )
                 .run_if(in_state(AppState::Gameplay)),
         );
     }
@@ -154,7 +159,7 @@ fn calculate_drainees(
 fn drain_closeby_trees(
     mut timer: ResMut<GlobalDrainTick>,
     mut q_trees: Query<(Entity, &mut Health), With<Tree>>,
-    q_towers: Query<&DrainTower>,
+    q_towers: Query<&DrainTower, With<IsPowered>>,
     time: Res<Time>,
 ) {
     if timer.0.tick(time.delta()).just_finished() {
@@ -197,6 +202,9 @@ fn animate_sprite(
     }
 }
 
-fn debug_drain_radii() {
-    // TODO
+fn debug_drain_radii(mut gizmos: Gizmos, q_towers: Query<(&DrainRadius, &Transform)>) {
+    q_towers.iter().for_each(|(radius, transform)| {
+        let pos = Vec2::new(transform.translation.x, transform.translation.y);
+        gizmos.circle_2d(pos, radius.0, Color::CYAN).segments(32);
+    });
 }

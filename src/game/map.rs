@@ -4,7 +4,7 @@ use bevy_ecs_tilemap::prelude::*;
 use lazy_static::lazy_static;
 use rand::{thread_rng, Rng};
 
-use crate::AppState;
+use crate::{AppState, Teardown};
 
 pub struct MapPlugin;
 impl Plugin for MapPlugin {
@@ -99,16 +99,19 @@ pub fn create_initial_map2(mut commands: Commands, asset_server: Res<AssetServer
     let grid_size = tile_size.into();
     let map_type = TilemapType::Square;
 
-    commands.entity(tilemap_entity).insert(TilemapBundle {
-        grid_size,
-        map_type,
-        size: map_size,
-        storage: tile_storage,
-        texture: TilemapTexture::Single(texture),
-        tile_size,
-        transform: get_tilemap_center_transform(&map_size, &grid_size, &map_type, 0.0),
-        ..Default::default()
-    });
+    commands
+        .entity(tilemap_entity)
+        .insert(Teardown)
+        .insert(TilemapBundle {
+            grid_size,
+            map_type,
+            size: map_size,
+            storage: tile_storage,
+            texture: TilemapTexture::Single(texture),
+            tile_size,
+            transform: get_tilemap_center_transform(&map_size, &grid_size, &map_type, 0.0),
+            ..Default::default()
+        });
 }
 
 use image::{GrayImage, Luma};
@@ -212,11 +215,8 @@ fn setup_highlight_tile(mut commands: Commands) {
             ..default()
         },
         TheHighlightRect,
+        Teardown,
     ));
-}
-
-fn teardown_map() {
-    // TODO
 }
 
 #[cfg(test)]

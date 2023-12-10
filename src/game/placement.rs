@@ -12,7 +12,7 @@ use bevy_mod_picking::prelude::*;
 use super::{
     camera::ViewCamera,
     keybinds::FloraCommand,
-    resources::{ExpendResource, ResourceType},
+    resources::{ExpendResource, Inventory, ResourceType},
 };
 
 #[derive(Resource, Default)]
@@ -58,6 +58,7 @@ fn spawn_at_click_pos(
     q_window: Query<&Window, With<PrimaryWindow>>,
     q_camera: Query<(&Camera, &GlobalTransform), (With<CameraState>, With<ViewCamera>)>,
     mouse_btns: Res<Input<MouseButton>>,
+    inventory: Res<Inventory>,
 ) {
     if mouse_btns.just_pressed(MouseButton::Right) {
         let window = q_window.single();
@@ -69,12 +70,15 @@ fn spawn_at_click_pos(
             .and_then(|cursor| camera.viewport_to_world_2d(camera_transform, cursor))
         {
             if let Some(building) = &state.being_placed_building_type {
-                building.spawn(&mut commands, texture_atlases, asset_server, world_pos);
-                expend_resource.send(ExpendResource(
-                    ResourceType::CorporationPoints,
-                    building.cost(),
-                ));
-                add_building.send(AddBuilding);
+                if inventory.money > building.cost() {
+                    building.spawn(&mut commands, texture_atlases, asset_server, world_pos);
+
+                    expend_resource.send(ExpendResource(
+                        ResourceType::CorporationPoints,
+                        building.cost(),
+                    ));
+                    add_building.send(AddBuilding);
+                }
             }
         }
     }
