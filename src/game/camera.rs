@@ -37,7 +37,7 @@ const ACCELERATION: Vec2 = Vec2::splat(100.0);
 // max speed the camera can travel
 const VELOCITY_MAX: Vec2 = Vec2::splat(1000.0);
 // arbitrary value to match zoom and drag
-const DRAG_FACTOR: Vec2 = Vec2::splat(0.5);
+const DRAG_FACTOR: Vec2 = Vec2::splat(1.0);
 
 // how fast to zoom when px value returned from event
 const ZOOM_VELOCITY_PX: f32 = 0.2;
