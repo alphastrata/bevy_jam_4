@@ -93,19 +93,17 @@ impl BuildingType {
         pos: Vec2,
         mut audio_mngr: EventWriter<AudioRequest>,
     ) {
-        let electric = || {
-            audio_mngr.send(AudioRequest {
-                component: crate::eargasm::AudioComponent::Electric(crate::eargasm::Electric),
-            })
-        };
-
         match self {
             BuildingType::Radar => {
-                //TODO: radar
+                audio_mngr.send(AudioRequest {
+                    component: crate::eargasm::AudioComponent::Radar1(crate::eargasm::Radar1),
+                });
                 spawn_building::<RadarTower>(commands, asset_server, pos)
             }
             BuildingType::Distribution => {
-                electric;
+                audio_mngr.send(AudioRequest {
+                    component: crate::eargasm::AudioComponent::Electric(crate::eargasm::Electric),
+                });
                 spawn_building::<DistributionTower>(commands, asset_server, pos)
             }
             BuildingType::Drain => {
