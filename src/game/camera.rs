@@ -42,7 +42,7 @@ const DRAG_FACTOR: Vec2 = Vec2::splat(0.5);
 // how fast to zoom when px value returned from event
 const ZOOM_VELOCITY_PX: f32 = 0.2;
 // how fast to zoom when line value returned from event
-const ZOOM_VELOCITY_LINE: f32 = 2.0;
+const ZOOM_VELOCITY_LINE: f32 = 0.8;
 // how fast to lerp to result
 const ZOOM_FACTOR: f32 = 0.2;
 // how far in are we allowed to zoom

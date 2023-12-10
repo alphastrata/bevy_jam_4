@@ -8,22 +8,9 @@ impl Plugin for EargasmPlugin {
         info!("Adding Eargasm plugin");
         app.add_event::<AudioRequest>()
             .add_systems(Startup, setup)
-            .add_systems(Update, (play_system, once_fire_music_test));
+            .add_systems(Update, play_system);
 
         info!("Added Eargasm plugin");
-    }
-}
-
-fn once_fire_music_test(
-    keyboard_input: Res<Input<KeyCode>>,
-    mut event_writer: EventWriter<AudioRequest>,
-) {
-    if keyboard_input.just_pressed(KeyCode::M) {
-        info!("Starting music");
-        event_writer.send(AudioRequest {
-            component: AudioComponent::Track1(Track1),
-        });
-        info!("Sent event!");
     }
 }
 
@@ -54,31 +41,19 @@ pub struct IntroVoice;
 pub struct AudioRequest {
     pub component: AudioComponent,
 }
+
+/// System: Startup -> inserts & plays the title track with: PlaybackMode::Once, so it will NOT loop.
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let audio_assets = [
-        ("audio/musictrack 1.mp3", AudioComponent::Track1(Track1)),
-        ("audio/musictrack 2.mp3", AudioComponent::Track2(Track2)),
-        // ... other assets ...
-    ];
-
-    for (path, component) in audio_assets {
-        let audio_source = asset_server.load(path);
-        commands
-            .spawn(AudioBundle {
-                source: audio_source,
-                settings: PlaybackSettings {
-                    mode: bevy::audio::PlaybackMode::Once,
-                    // volume: todo!(),
-                    // speed: todo!(),
-                    paused: true,
-                    // spatial: todo!(),
-                    ..default()
-                },
-            })
-            .insert(component);
-
-        info!("Added {}", path);
-    }
+    commands
+        .spawn(AudioBundle {
+            source: asset_server.load("assets/audio/musictrack 1.mp3"),
+            settings: PlaybackSettings {
+                mode: bevy::audio::PlaybackMode::Once,
+                paused: false,
+                ..default()
+            },
+        })
+        .insert(Track1);
 }
 
 /// System: plays sounds from our `assets/audio/*.mp3`, each option there is named for an Event that you can fire with the :
@@ -110,7 +85,7 @@ fn play_system(
                     .spawn(AudioBundle {
                         source: asset_server.load("audio/musictrack 2.mp3"),
                         settings: PlaybackSettings {
-                            mode: PlaybackMode::Once,
+                            mode: PlaybackMode::Loop,
                             // Add any other custom settings if needed
                             ..Default::default()
                         },
@@ -118,9 +93,10 @@ fn play_system(
                     })
                     .insert(Track2);
             }
+
+            // SFX
             AudioComponent::Radar1(_) => {
                 // Similar implementation for Radar1
-
                 commands
                     .spawn(AudioBundle {
                         source: asset_server.load("audio/radar1.mp3"),

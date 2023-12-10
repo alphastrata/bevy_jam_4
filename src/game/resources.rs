@@ -48,7 +48,7 @@ pub struct Harvest(pub ResourceType, pub u32);
 /// System:
 /// Changes the music of the game based on how much money you have.
 fn game_stage_music_choice(inventory: Res<Inventory>, mut audio_mngr: EventWriter<AudioRequest>) {
-    if inventory.money > 1000 {
+    if inventory.money > 1500 {
         audio_mngr.send(AudioRequest {
             component: crate::eargasm::AudioComponent::Track2(Track2),
         })
