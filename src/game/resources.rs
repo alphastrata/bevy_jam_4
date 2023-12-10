@@ -3,7 +3,7 @@ use std::fmt::format;
 use bevy::prelude::*;
 
 use crate::{
-    eargasm::{AudioRequest, Track2},
+    global_systems::eargasm::{AudioRequest, Track2},
     AppState,
 };
 
@@ -50,7 +50,7 @@ pub struct Harvest(pub ResourceType, pub u32);
 fn game_stage_music_choice(inventory: Res<Inventory>, mut audio_mngr: EventWriter<AudioRequest>) {
     if inventory.money > 1500 {
         audio_mngr.send(AudioRequest {
-            component: crate::eargasm::AudioComponent::Track2(Track2),
+            component: crate::global_systems::eargasm::AudioComponent::Track2(Track2),
         })
     }
 }

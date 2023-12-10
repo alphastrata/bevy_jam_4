@@ -3,11 +3,11 @@ use std::{ops::ControlFlow, time::Duration};
 
 use crate::{
     buildings::Building,
-    eargasm::{AudioComponent, AudioRequest, Money},
     game::{
         hp_bars::HpBarUISettings,
         resources::{Harvest, ResourceType},
     },
+    global_systems::eargasm::{AudioComponent, AudioRequest, Money},
     prelude::*,
     Range, Teardown,
 };
@@ -88,25 +88,26 @@ fn spawn_creep(
 
     if direction.length() > 240.0 {
         let atlas_handle = texture_atlas_handle.clone();
-        let sprite_index = rng.gen_range(0..9); // Randomly select one of the 9 sprites
+        let sprite_index = rng.gen_range(0..9);
 
-        commands
-            .spawn(SpriteSheetBundle {
+        commands.spawn((
+            SpriteSheetBundle {
                 texture_atlas: atlas_handle,
                 sprite: TextureAtlasSprite::new(sprite_index),
-                transform: Transform::from_xyz(x.floor(), y.floor(), 0.10),
+                transform: Transform::from_xyz(x, y, 0.10),
                 ..default()
-            })
-            .insert(Teardown)
-            .insert(Tree)
-            .insert(AttackSpeed(10))
-            .insert(Health(100))
-            .insert(HpBarUISettings {
+            },
+            Teardown,
+            Tree,
+            AttackSpeed(10),
+            Health(100),
+            HpBarUISettings {
                 max: 100,
                 offset: Some(Vec2::new(0.0, -32.0)),
-            })
-            .insert(Range(300))
-            .insert(CorpoPoints(rng.gen_range(1.0..50.0) as u32));
+            },
+            Range(300),
+            CorpoPoints(rng.gen_range(1.0..50.0) as u32),
+        ));
     }
 }
 
@@ -156,6 +157,7 @@ fn cleanup_dead_creeps(
             audio_mngr.send(AudioRequest {
                 component: AudioComponent::Money(Money),
             });
+
             commands.entity(entity).despawn_recursive();
         });
 }

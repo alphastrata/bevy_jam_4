@@ -1,11 +1,11 @@
 use bevy::{app::AppExit, prelude::*, window::CursorGrabMode};
 
 use crate::{
-    components::{
+    game::keybinds::FloraCommand,
+    global_systems::{
         fade_transition::{transition_to, TransitionState},
         ui_util::{btn, txt, GameFont},
     },
-    game::keybinds::FloraCommand,
     AppState, PauseMenuState,
 };
 

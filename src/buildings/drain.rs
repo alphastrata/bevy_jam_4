@@ -10,7 +10,7 @@
 use crate::{
     creeps::SpawnCreep,
     game::power::{AddBuilding, IsPowered, RequiresPower},
-    AnimationIndices, AnimationTimer, AppState, Health, Tree,
+    AnimationIndices, AnimationTimer, AppState, Health, Teardown, Tree,
 };
 use bevy::{prelude::*, tasks::IoTaskPool};
 
@@ -65,6 +65,7 @@ impl DrainTower {
         let ent_id = commands
             .spawn((
                 Building,
+                Teardown,
                 Health(Self::BASE_HEALTH),
                 SpriteSheetBundle {
                     texture_atlas: texture_atlas_handle,

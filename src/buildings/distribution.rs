@@ -6,10 +6,10 @@ use crate::{
 use bevy::prelude::*;
 use std::path::Path;
 
-const BUILDING_ANIM: AnimationIndices = AnimationIndices { first: 1, last: 12 };
+const BUILDING_ANIM: AnimationIndices = AnimationIndices { first: 1, last: 11 };
 const ACTIVE_ANIM: AnimationIndices = AnimationIndices {
-    first: 13,
-    last: 24,
+    first: 12,
+    last: 22,
 };
 
 /// Distributes power to other buildings within a radius.
@@ -37,7 +37,7 @@ impl DistributionTower {
     ) -> Entity {
         let texture_handle = asset_server.load(Self::SPRITE_PATH);
         let texture_atlas =
-            TextureAtlas::from_grid(texture_handle, Vec2::new(32.0, 64.0), 25, 1, None, None);
+            TextureAtlas::from_grid(texture_handle, Vec2::new(32.0, 64.0), 23, 1, None, None);
         let texture_atlas_handle = texture_atlases.add(texture_atlas);
 
         let ent_id = commands

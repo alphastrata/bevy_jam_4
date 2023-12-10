@@ -9,10 +9,11 @@ use bevy::{
 use bevy_tweening::TweeningPlugin;
 
 use flora_cause::{
-    components::{fade_transition::TransitionPlugin, ui_util::UIUtilPlugin},
     debug::display_debug::DisplayDebugPlugin,
-    eargasm::EargasmPlugin,
     game::keybinds::KeybindPlugin,
+    global_systems::{
+        eargasm::EargasmPlugin, fade_transition::TransitionPlugin, ui_util::UIUtilPlugin,
+    },
     scenes::{
         gameplay::GameplayPlugin, menu::MainMenuPlugin, pause::PausePlugin, splash::SplashPlugin,
     },

@@ -7,11 +7,10 @@ use bevy::{
 };
 
 pub mod buildings;
-pub mod components;
 pub mod creeps;
 pub mod debug;
-pub mod eargasm;
 pub mod game;
+pub mod global_systems;
 pub mod scenes;
 
 pub mod prelude {
