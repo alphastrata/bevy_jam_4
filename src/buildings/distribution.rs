@@ -16,7 +16,7 @@ const ACTIVE_ANIM: AnimationIndices = AnimationIndices {
 #[derive(Component, Default)]
 pub struct DistributionTower;
 impl BuildingDefinition for DistributionTower {
-    const SPRITE_PATH: &'static str = "textures/tower-spritesheet.png";
+    const SPRITE_PATH: &'static str = "textures/tower.png";
     const BASE_HEALTH: u32 = 100;
     const COST: u32 = 500;
     const BUILD_TIME: u32 = 6;
