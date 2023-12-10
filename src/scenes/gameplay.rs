@@ -6,7 +6,7 @@ use crate::{
         camera::GameCameraPlugin, hp_bars::HealthBarUIPlugin, map::MapPlugin,
         placement::TowerPlacementPlugin, power::PowerPlugin, resources::ResourcePlugin,
     },
-    AppState,
+    AppState, Teardown,
 };
 
 use super::pause::{capture_cursor, release_cursor, toggle_pause, PausePlugin};
@@ -26,6 +26,27 @@ impl Plugin for GameplayPlugin {
         ))
         .add_systems(OnEnter(AppState::Gameplay), capture_cursor)
         .add_systems(OnExit(AppState::Gameplay), release_cursor)
+        .add_systems(
+            OnTransition {
+                from: AppState::Gameplay,
+                to: AppState::MainMenu,
+            },
+            teardown_all,
+        )
+        .add_systems(
+            OnTransition {
+                from: AppState::Paused,
+                to: AppState::MainMenu,
+            },
+            teardown_all,
+        )
         .add_systems(Update, (toggle_pause).run_if(in_state(AppState::Gameplay)));
     }
+}
+
+fn teardown_all(mut commands: Commands, to_teardown: Query<(Entity, &Teardown)>) {
+    info!("Tearing down all gameplay entities!!!");
+    to_teardown.iter().for_each(|(entity, _)| {
+        commands.entity(entity).despawn_recursive();
+    });
 }

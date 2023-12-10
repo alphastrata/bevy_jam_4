@@ -28,6 +28,11 @@ pub enum AppState {
     Paused,
 }
 
+/// Marker component indicating an entity needs to be torn down (destroyed) when going
+/// from [AppState::Gameplay] or [AppState::Paused] back to [AppState::MainMenu]
+#[derive(Component)]
+pub struct Teardown;
+
 #[derive(Component)]
 pub struct Tree;
 
