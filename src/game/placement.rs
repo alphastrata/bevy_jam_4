@@ -52,6 +52,7 @@ fn spawn_at_click_pos(
     mut commands: Commands,
     mut add_building: EventWriter<AddBuilding>,
     mut expend_resource: EventWriter<ExpendResource>,
+    texture_atlases: ResMut<Assets<TextureAtlas>>,
     asset_server: Res<AssetServer>,
     state: Res<PlacementState>,
     q_window: Query<&Window, With<PrimaryWindow>>,
@@ -68,7 +69,7 @@ fn spawn_at_click_pos(
             .and_then(|cursor| camera.viewport_to_world_2d(camera_transform, cursor))
         {
             if let Some(building) = &state.being_placed_building_type {
-                building.spawn(&mut commands, asset_server, world_pos);
+                building.spawn(&mut commands, texture_atlases, asset_server, world_pos);
                 expend_resource.send(ExpendResource(ResourceType::Wood, building.cost()));
                 add_building.send(AddBuilding);
             }
