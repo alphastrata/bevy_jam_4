@@ -83,7 +83,7 @@ fn spawn_creep(commands: &mut Commands, asset_server: &Res<AssetServer>) {
             Health(100),     //QUESTION: relative to the sprite we load?
             HpBarUISettings {
                 max: 100,
-                offset: None,
+                offset: Some(Vec2::new(0.0, -32.0)),
             },
             Range(300), //QUESTION: relative to the sprite we load?
             CorpoPoints(rng.gen_range(1.0..50.0) as u32), //QUESTION: relative to the sprite we load?

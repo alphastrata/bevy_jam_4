@@ -4,8 +4,8 @@ use bevy::{prelude::*, sprite::Anchor};
 
 use crate::{AppState, Health};
 
-const HP_BAR_THICCNESS: f32 = 10.0;
-const HP_BAR_WIDTHNESS: f32 = 120.0;
+const HP_BAR_THICCNESS: f32 = 8.0;
+const HP_BAR_WIDTHNESS: f32 = 80.0;
 
 #[derive(Component)]
 pub struct HpBarUISettings {
