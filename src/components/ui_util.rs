@@ -83,7 +83,7 @@ pub fn btn(
         .spawn((
             ButtonBundle {
                 style: Style {
-                    width: Val::Px(250.0),
+                    width: Val::Px(500.0),
                     height: Val::Px(50.0),
                     // border: UiRect::all(Val::Px(5.0)),
                     // horizontally center child text
