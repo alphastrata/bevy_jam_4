@@ -51,8 +51,6 @@ fn change_current_building(mut state: ResMut<PlacementState>, input: Res<Input<F
 
 #[allow(clippy::too_many_arguments)]
 fn spawn_at_click_pos(
-    q_window: Query<&Window, With<PrimaryWindow>>,
-    q_camera: Query<(&Camera, &GlobalTransform), (With<CameraState>, With<ViewCamera>)>,
     mut commands: Commands,
     mut add_building: EventWriter<AddBuilding>,
     mut expend_resource: EventWriter<ExpendResource>,
@@ -61,24 +59,16 @@ fn spawn_at_click_pos(
     state: Res<PlacementState>,
     mouse_btns: Res<Input<MouseButton>>,
     audio_mngr: EventWriter<AudioRequest>,
-    inventory: Res<Inventory>,
     tile_hover: Res<CurrentTileHover>,
 ) {
     if mouse_btns.just_pressed(MouseButton::Right) {
-        let window = q_window.single();
-        let (camera, camera_transform) = q_camera.single();
-
-        // convert viewport pos to worldspace
-        if let Some(world_pos) = window
-            .cursor_position()
-            .and_then(|cursor| camera.viewport_to_world_2d(camera_transform, cursor))
-        {
-            if let Some(building) = &state.being_placed_building_type {
+        if let Some(building) = &state.being_placed_building_type {
+            if let Some(tile_world_pos) = tile_hover.world_pos {
                 building.spawn(
                     &mut commands,
                     texture_atlases,
                     asset_server,
-                    world_pos,
+                    tile_world_pos,
                     audio_mngr,
                 );
                 expend_resource.send(ExpendResource(
