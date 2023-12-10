@@ -27,8 +27,12 @@ pub struct MinimalBuilding {
     sprite: SpriteBundle,
 }
 
-#[derive(Component)]
-pub struct Experience(u32);
+#[derive(Component, PartialEq)]
+pub enum BuildingState {
+    Building,
+    Active,
+    Inactive,
+}
 
 /// Common definitions needed to have a building
 pub trait BuildingDefinition: Default {
@@ -95,7 +99,7 @@ impl BuildingType {
         match self {
             BuildingType::Radar => spawn_building::<RadarTower>(commands, asset_server, pos),
             BuildingType::Distribution => {
-                spawn_building::<DistributionTower>(commands, asset_server, pos)
+                DistributionTower::custom_spawn(commands, texture_atlases, asset_server, pos)
             }
             BuildingType::Drain => {
                 DrainTower::custom_spawn(commands, texture_atlases, asset_server, pos)
