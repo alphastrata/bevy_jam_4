@@ -1,5 +1,6 @@
 //! Shows how to render simple primitive shapes with a single color.
 use bevy::{
+    asset::AssetMetaCheck,
     diagnostic::FrameTimeDiagnosticsPlugin,
     prelude::*,
     render::texture::ImageSamplerDescriptor,
@@ -26,30 +27,36 @@ use flora_cause::{
 pub struct PlayerState {}
 
 fn main() {
-    App::new()
-        .add_plugins((
-            DefaultPlugins.set(ImagePlugin {
-                default_sampler: ImageSamplerDescriptor::nearest(),
-            }),
-            FrameTimeDiagnosticsPlugin,
-        ))
-        .add_plugins((
-            CreepPlugin,
-            DisplayDebugPlugin,
-            GameplayPlugin,
-            KeybindPlugin,
-            MainMenuPlugin,
-            PausePlugin,
-            SplashPlugin,
-            TilemapPlugin,
-            TransitionPlugin,
-            TweeningPlugin,
-            UIUtilPlugin,
-            EargasmPlugin,
-        ))
-        .add_state::<AppState>()
-        .add_systems(Startup, setup)
-        .run();
+    let mut app = App::new();
+
+    app.add_plugins((
+        DefaultPlugins.set(ImagePlugin {
+            default_sampler: ImageSamplerDescriptor::nearest(),
+        }),
+        FrameTimeDiagnosticsPlugin,
+    ))
+    .add_plugins((
+        CreepPlugin,
+        DisplayDebugPlugin,
+        GameplayPlugin,
+        KeybindPlugin,
+        MainMenuPlugin,
+        PausePlugin,
+        SplashPlugin,
+        TilemapPlugin,
+        TransitionPlugin,
+        TweeningPlugin,
+        UIUtilPlugin,
+        EargasmPlugin,
+    ))
+    .add_state::<AppState>()
+    .add_systems(Startup, setup);
+
+    if cfg!(target_arch = "wasm32") {
+        app.insert_resource(AssetMetaCheck::Never);
+    }
+
+    app.run();
 }
 
 fn setup(_commands: Commands, mut q_window: Query<&mut Window, With<PrimaryWindow>>) {

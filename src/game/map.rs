@@ -156,7 +156,6 @@ fn brightness_map() -> GrayImage {
         });
     });
 
-    img.save("noise_texture.png").unwrap();
     img
 }
 

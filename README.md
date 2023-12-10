@@ -26,7 +26,6 @@ wasm-server-runner path/to/file.wasm
 
 
 ## TODO
-
 * [ ] Map generation
 
 ## Attributions:

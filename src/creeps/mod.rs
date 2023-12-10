@@ -1,6 +1,6 @@
 //! Creeps are the enemy! They are also known as "Tree"s.
 
-use std::ops::ControlFlow;
+use std::{ops::ControlFlow, time::Duration};
 
 use crate::{
     buildings::Building,
@@ -12,7 +12,7 @@ use crate::{
     prelude::*,
     Range, Teardown,
 };
-use bevy::{asset::processor::ProcessorTransactionLog, ecs::bundle, prelude::*};
+use bevy::{asset::processor::ProcessorTransactionLog, ecs::bundle, prelude::*, time::Stopwatch};
 use rand::Rng;
 
 /// Handles the setup, spawning, despawning, attacking of our 'creeps'.
@@ -21,40 +21,49 @@ impl Plugin for CreepPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<SpawnCreep>();
 
-        app.add_systems(Startup, initial_creep_spawn)
-            .add_systems(Update, (spawn_on_trigger, cleanup_dead_creeps));
-
-        #[cfg(debug_assertions)]
-        app.insert_resource(CreepCount(1000)); //TODO: maybe we ensure a certain 'minimum' ammount of creeps at any one time?
-                                               // #[cfg(debug_assertions)]
-                                               //app.add_systems(Update, (dbg_send_spawn_creep_on_enter, dbg_count_creeps));
+        app.add_systems(Startup, (initial_creep_spawn, creep_spawning_timer))
+            .add_systems(
+                Update,
+                (
+                    spawn_on_trigger,
+                    cleanup_dead_creeps,
+                    periodically_spawn_creep,
+                ),
+            );
     }
 }
 
 #[derive(Event)]
 pub struct SpawnCreep;
 
-#[cfg(debug_assertions)]
 #[derive(Resource)]
-pub struct CreepCount(pub usize);
-
-#[cfg(debug_assertions)]
-fn dbg_count_creeps(q: Query<&Transform, With<Tree>>, mut count: ResMut<CreepCount>) {
-    use crate::Tree;
-
-    (*count) = CreepCount(q.iter().count());
-}
-
-#[cfg(debug_assertions)]
-fn dbg_send_spawn_creep_on_enter(mut spawner: EventWriter<SpawnCreep>, kb: Res<Input<KeyCode>>) {
-    if kb.just_released(KeyCode::Return) {
-        spawner.send(SpawnCreep);
-    }
+struct CreepSpawnTimer {
+    timer: Stopwatch,
 }
 
 /// System: Setup
 fn initial_creep_spawn(mut commands: Commands, asset_server: Res<AssetServer>) {
-    (0..10000).for_each(|_| spawn_creep(&mut commands, &asset_server));
+    (0..10_000).for_each(|_| spawn_creep(&mut commands, &asset_server));
+}
+
+fn creep_spawning_timer(mut commands: Commands) {
+    commands.insert_resource(CreepSpawnTimer {
+        timer: Stopwatch::new(),
+    });
+}
+/// System: Update
+/// Does what it says on the can...
+fn periodically_spawn_creep(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    time: Res<Time>,
+    mut creep_timer: ResMut<CreepSpawnTimer>,
+) {
+    creep_timer.timer.tick(time.delta());
+    if creep_timer.timer.elapsed_secs() > 30.0 {
+        (0..500).for_each(|_| spawn_creep(&mut commands, &asset_server));
+        creep_timer.timer.reset()
+    }
 }
 
 /// Helper: for the Systems: [initial_creep_spawn, spawn_on_trigger]
