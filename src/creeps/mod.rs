@@ -4,7 +4,10 @@ use std::ops::ControlFlow;
 
 use crate::{
     buildings::Building,
-    game::resources::{Harvest, ResourceType},
+    game::{
+        hp_bars::HpBarUISettings,
+        resources::{Harvest, ResourceType},
+    },
     prelude::*,
     Range,
 };
@@ -78,7 +81,11 @@ fn spawn_creep(commands: &mut Commands, asset_server: &Res<AssetServer>) {
             Tree,
             AttackSpeed(10), //TODO: multiply out by the tick?, QUESTION: relative to the sprite we load?
             Health(100),     //QUESTION: relative to the sprite we load?
-            Range(300),      //QUESTION: relative to the sprite we load?
+            HpBarUISettings {
+                max: 100,
+                offset: None,
+            },
+            Range(300), //QUESTION: relative to the sprite we load?
             CorpoPoints(rng.gen_range(1.0..50.0) as u32), //QUESTION: relative to the sprite we load?
         ));
     }
@@ -137,6 +144,6 @@ fn cleanup_dead_creeps(
         .filter(|(_entity, health, _)| health.0 == 0)
         .for_each(|(entity, _health, corpo_pts)| {
             harvest.send(Harvest(ResourceType::CorporationPoints, corpo_pts.0));
-            commands.entity(entity).despawn();
+            commands.entity(entity).despawn_recursive();
         });
 }
