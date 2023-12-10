@@ -1,5 +1,6 @@
+use crate::global_systems::eargasm::AudioRequest;
 use crate::Teardown;
-use crate::{game::hp_bars::HpBarUISettings, global_systems::eargasm::AudioRequest, Health};
+use crate::{game::hp_bars::HpBarUISettings, Health};
 use bevy::prelude::*;
 use std::path::Path;
 
