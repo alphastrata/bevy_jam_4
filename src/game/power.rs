@@ -34,7 +34,7 @@ pub struct PowerDebug(pub bool);
 pub struct PowerPlugin;
 impl Plugin for PowerPlugin {
     fn build(&self, app: &mut App) {
-        app.insert_resource(PowerDebug(false));
+        app.insert_resource(PowerDebug(true));
         app.add_event::<AddBuilding>();
         app.add_systems(OnEnter(AppState::Gameplay), create_core);
         app.add_systems(
@@ -48,7 +48,7 @@ impl Plugin for PowerPlugin {
     }
 }
 
-/// Spawn the [buildings::Core] building
+/// Spawn the [buildings::TheCore] building
 fn create_core(mut commands: Commands, asset_server: Res<AssetServer>) {
     spawn_building::<TheCore>(&mut commands, asset_server, Vec2::ZERO);
 }

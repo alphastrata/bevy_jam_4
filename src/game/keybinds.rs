@@ -73,8 +73,8 @@ lazy_static! {
         );
         // Tower selection
         map.insert(FloraCommand::SetPlaceDistributionTower, vec![vec![KeyCode::Key1]]);
-        map.insert(FloraCommand::SetPlaceRadarTower, vec![vec![KeyCode::Key2]]);
-        map.insert(FloraCommand::SetPlaceDrainTower, vec![vec![KeyCode::Key3]]);
+        // map.insert(FloraCommand::SetPlaceRadarTower, vec![vec![KeyCode::Key2]]);
+        map.insert(FloraCommand::SetPlaceDrainTower, vec![vec![KeyCode::Key2]]);
 
         map
     };

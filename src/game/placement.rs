@@ -13,7 +13,8 @@ use bevy_mod_picking::prelude::*;
 use super::{
     camera::ViewCamera,
     keybinds::FloraCommand,
-    resources::{ExpendResource, ResourceType},
+    map::CurrentTileHover,
+    resources::{ExpendResource, Inventory, ResourceType},
 };
 
 #[derive(Resource, Default)]
@@ -50,16 +51,18 @@ fn change_current_building(mut state: ResMut<PlacementState>, input: Res<Input<F
 
 #[allow(clippy::too_many_arguments)]
 fn spawn_at_click_pos(
+    q_window: Query<&Window, With<PrimaryWindow>>,
+    q_camera: Query<(&Camera, &GlobalTransform), (With<CameraState>, With<ViewCamera>)>,
     mut commands: Commands,
     mut add_building: EventWriter<AddBuilding>,
     mut expend_resource: EventWriter<ExpendResource>,
     texture_atlases: ResMut<Assets<TextureAtlas>>,
     asset_server: Res<AssetServer>,
     state: Res<PlacementState>,
-    q_window: Query<&Window, With<PrimaryWindow>>,
-    q_camera: Query<(&Camera, &GlobalTransform), (With<CameraState>, With<ViewCamera>)>,
     mouse_btns: Res<Input<MouseButton>>,
     audio_mngr: EventWriter<AudioRequest>,
+    inventory: Res<Inventory>,
+    tile_hover: Res<CurrentTileHover>,
 ) {
     if mouse_btns.just_pressed(MouseButton::Right) {
         let window = q_window.single();

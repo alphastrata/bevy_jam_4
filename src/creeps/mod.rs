@@ -10,7 +10,7 @@ use crate::{
         resources::{Harvest, ResourceType},
     },
     prelude::*,
-    Range,
+    Range, Teardown,
 };
 use bevy::{asset::processor::ProcessorTransactionLog, ecs::bundle, prelude::*};
 use rand::Rng;
@@ -79,6 +79,7 @@ fn spawn_creep(commands: &mut Commands, asset_server: &Res<AssetServer>) {
                 //
                 ..default()
             },
+            Teardown,
             Tree,
             AttackSpeed(10), //TODO: multiply out by the tick?, QUESTION: relative to the sprite we load?
             Health(100),     //QUESTION: relative to the sprite we load?

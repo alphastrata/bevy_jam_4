@@ -25,11 +25,11 @@ impl Plugin for ResourcePlugin {
 /// What the player currently has in the BANK
 #[derive(Resource, Clone)]
 pub struct Inventory {
-    money: u32,
+    pub money: u32,
 }
 impl Default for Inventory {
     fn default() -> Self {
-        Self { money: 100 }
+        Self { money: 1000 }
     }
 }
 

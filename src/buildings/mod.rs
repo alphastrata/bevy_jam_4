@@ -1,7 +1,7 @@
+use crate::Teardown;
+use crate::{eargasm::AudioRequest, game::hp_bars::HpBarUISettings, Health};
 use bevy::prelude::*;
 use std::path::Path;
-
-use crate::{eargasm::AudioRequest, game::hp_bars::HpBarUISettings, Health};
 
 use self::{
     distribution::DistributionTower,
@@ -52,19 +52,22 @@ pub fn spawn_building<B: BuildingDefinition>(
     let sprite_texture = asset_server.load(B::SPRITE_PATH);
 
     let ent_id = commands
-        .spawn(MinimalBuilding {
-            marker: Building,
-            health: Health(B::BASE_HEALTH),
-            hp_bar: HpBarUISettings {
-                max: B::BASE_HEALTH,
-                offset: None,
+        .spawn((
+            MinimalBuilding {
+                marker: Building,
+                health: Health(B::BASE_HEALTH),
+                hp_bar: HpBarUISettings {
+                    max: B::BASE_HEALTH,
+                    offset: None,
+                },
+                sprite: SpriteBundle {
+                    texture: sprite_texture,
+                    transform: Transform::from_translation(Vec3::new(pos.x, pos.y, 0.10)),
+                    ..default()
+                },
             },
-            sprite: SpriteBundle {
-                texture: sprite_texture,
-                transform: Transform::from_translation(Vec3::new(pos.x, pos.y, 0.10)),
-                ..default()
-            },
-        })
+            Teardown,
+        ))
         .id();
 
     B::add_extra_components(commands, ent_id);
@@ -116,7 +119,7 @@ impl BuildingType {
         match self {
             BuildingType::Distribution => DistributionTower::COST,
             BuildingType::Radar => RadarTower::COST,
-            _ => 0,
+            BuildingType::Drain => RadarTower::COST,
         }
     }
 }
