@@ -5,7 +5,7 @@ use crate::{
     buildings::{distribution::DistributionTowerPlugin, drain::DrainTowerPlugin, Building},
     creeps::CreepPlugin,
     game::{
-        camera::GameCameraPlugin, hp_bars::HealthBarUIPlugin, map::MapPlugin,
+        camera::GameCameraPlugin, hp_bars::HealthBarUIPlugin, hud::HudPlugin, map::MapPlugin,
         placement::TowerPlacementPlugin, power::PowerPlugin, resources::ResourcePlugin,
     },
     AppState, Teardown,
@@ -28,6 +28,7 @@ impl Plugin for GameplayPlugin {
             HealthBarUIPlugin,
             DrainTowerPlugin,
             DistributionTowerPlugin,
+            HudPlugin,
         ))
         .add_systems(OnEnter(AppState::Gameplay), capture_cursor)
         .add_systems(Update, (pause).run_if(in_state(AppState::Gameplay)))
