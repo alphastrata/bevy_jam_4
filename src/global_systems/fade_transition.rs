@@ -1,4 +1,4 @@
-use crate::{game::camera::main_layer, scenes::pause::PauseState, AppState};
+use crate::{game::camera::main_layer, AppState};
 use bevy::{prelude::*, render::view::RenderLayers};
 
 const TRANSITION_DURATION: f32 = 1.0;

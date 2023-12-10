@@ -21,7 +21,7 @@ use super::{
 pub struct PlacementState {
     /// Some indicates current type of building user has selected in the UI or via keybinding
     /// to place; None indicates no placement is in action. TODO: should disable Tile Highlighting as well
-    being_placed_building_type: Option<BuildingType>,
+    pub being_placed_building_type: Option<BuildingType>,
 }
 
 /// Spawn towers when clicked
@@ -30,6 +30,7 @@ impl Plugin for TowerPlacementPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<PlacementState>()
             .add_plugins(DefaultPickingPlugins)
+            .add_event::<PlacementStateChanged>()
             .add_systems(
                 Update,
                 (change_current_building, spawn_at_click_pos).run_if(in_state(AppState::Gameplay)),
@@ -37,15 +38,46 @@ impl Plugin for TowerPlacementPlugin {
     }
 }
 
-fn change_current_building(mut state: ResMut<PlacementState>, input: Res<Input<FloraCommand>>) {
+#[derive(Event)]
+pub struct PlacementStateChanged {
+    pub value: Option<BuildingType>,
+}
+
+fn change_current_building(
+    mut state: ResMut<PlacementState>,
+    input: Res<Input<FloraCommand>>,
+    mut changed: EventWriter<PlacementStateChanged>,
+) {
+    let prev_state = state.being_placed_building_type.clone();
     if input.just_released(FloraCommand::SetPlaceDistributionTower) {
-        state.being_placed_building_type = Some(BuildingType::Distribution);
+        if state
+            .being_placed_building_type
+            .as_ref()
+            .map_or(false, |val| val == &BuildingType::Distribution)
+        {
+            state.being_placed_building_type = None;
+        } else {
+            state.being_placed_building_type = Some(BuildingType::Distribution);
+        }
     }
-    if input.just_released(FloraCommand::SetPlaceRadarTower) {
-        state.being_placed_building_type = Some(BuildingType::Radar);
-    }
+    // if input.just_released(FloraCommand::SetPlaceRadarTower) {
+    //     state.being_placed_building_type = Some(BuildingType::Radar);
+    // }
     if input.just_released(FloraCommand::SetPlaceDrainTower) {
-        state.being_placed_building_type = Some(BuildingType::Drain);
+        if state
+            .being_placed_building_type
+            .as_ref()
+            .map_or(false, |val| val == &BuildingType::Drain)
+        {
+            state.being_placed_building_type = None;
+        } else {
+            state.being_placed_building_type = Some(BuildingType::Drain);
+        }
+    }
+    if prev_state != state.being_placed_building_type {
+        changed.send(PlacementStateChanged {
+            value: state.being_placed_building_type.clone(),
+        });
     }
 }
 
