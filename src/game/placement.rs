@@ -70,7 +70,10 @@ fn spawn_at_click_pos(
         {
             if let Some(building) = &state.being_placed_building_type {
                 building.spawn(&mut commands, texture_atlases, asset_server, world_pos);
-                expend_resource.send(ExpendResource(ResourceType::Wood, building.cost()));
+                expend_resource.send(ExpendResource(
+                    ResourceType::CorporationPoints,
+                    building.cost(),
+                ));
                 add_building.send(AddBuilding);
             }
         }

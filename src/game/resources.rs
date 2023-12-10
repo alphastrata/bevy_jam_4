@@ -23,23 +23,15 @@ impl Plugin for ResourcePlugin {
 #[derive(Resource, Clone)]
 pub struct Inventory {
     money: u32,
-    plant: u32,
-    wood: u32,
 }
 impl Default for Inventory {
     fn default() -> Self {
-        Self {
-            money: 100,
-            plant: 50,
-            wood: 50,
-        }
+        Self { money: 100 }
     }
 }
 
 pub enum ResourceType {
     CorporationPoints,
-    Plant,
-    Wood,
 }
 
 #[derive(Event)]
@@ -55,8 +47,6 @@ fn add_harvest_to_inventory(mut inventory: ResMut<Inventory>, mut harvests: Even
     *inventory = harvests.read().fold(inventory.clone(), |mut inv, harvest| {
         match harvest.0 {
             ResourceType::CorporationPoints => inv.money += harvest.1,
-            ResourceType::Plant => inv.plant += harvest.1,
-            _ => (),
         };
         inv
     });
@@ -66,8 +56,6 @@ fn expend_resource(mut inventory: ResMut<Inventory>, mut expent: EventReader<Exp
     *inventory = expent.read().fold(inventory.clone(), |mut inv, harvest| {
         match harvest.0 {
             ResourceType::CorporationPoints => inv.money = inv.money.saturating_sub(harvest.1),
-            ResourceType::Plant => inv.plant = inv.plant.saturating_sub(harvest.1),
-            ResourceType::Wood => inv.wood = inv.wood.saturating_sub(harvest.1),
         };
         inv
     });
@@ -101,7 +89,8 @@ fn setup_debug_ui(mut commands: Commands) {
                 TextBundle::from_section(
                     "Wood: 0",
                     TextStyle {
-                        font_size: 30.0,
+                        font_size: 42.0,
+                        color: Color::GOLD,
                         ..default()
                     },
                 )
@@ -116,7 +105,7 @@ fn setup_debug_ui(mut commands: Commands) {
 
 fn update_debug_ui(mut q_text: Query<&mut Text, With<WoodNumber>>, inventory: Res<Inventory>) {
     for mut text in &mut q_text {
-        text.sections[0].value = format!("Wood: {}", inventory.wood);
+        text.sections[0].value = format!("Corpo Points: {}", inventory.money);
     }
 }
 
