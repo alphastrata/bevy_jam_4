@@ -23,7 +23,6 @@ impl Plugin for CreepPlugin {
                 (spawn_on_trigger, cleanup_dead_creeps).run_if(in_state(AppState::Gameplay)),
             );
 
-        #[cfg(debug_assertions)]
         app.insert_resource(CreepState {
             init: true,
             count: 1000,

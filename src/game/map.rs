@@ -97,8 +97,12 @@ fn create_initial_map(mut commands: Commands, asset_server: Res<AssetServer>) {
     });
 }
 
-pub fn create_initial_map2(mut commands: Commands, asset_server: Res<AssetServer>) {
-    info!("Create initial tilemap");
+pub fn create_initial_map2(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    app_state: Res<State<AppState>>,
+) {
+    info!("Create initial tilemap {:?}", app_state.get());
 
     // Convert the image to grayscale
     let greyscale_img = brightness_map();

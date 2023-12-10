@@ -98,6 +98,7 @@ fn interact(
 
 /// Runs when we enter [AppState::MainMenu]
 fn setup(mut commands: Commands, font: Res<GameFont>) {
+    info!("am pause");
     let title = txt(&mut commands, &font, "Game Paused!", 64.0);
     let return_btn = btn(&mut commands, &font, "Return to Menu", Action::ReturnToMenu);
     let unpause_btn = btn(&mut commands, &font, "Unpause", Action::Unpause);
