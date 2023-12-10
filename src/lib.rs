@@ -1,3 +1,4 @@
+#![feature(trait_alias)]
 #![allow(clippy::type_complexity)]
 #![allow(unused_imports, dead_code)]
 use bevy::ecs::{component::Component, schedule::States};
@@ -6,6 +7,7 @@ pub mod buildings;
 pub mod components;
 pub mod creeps;
 pub mod debug;
+pub mod eargasm;
 pub mod game;
 pub mod scenes;
 
