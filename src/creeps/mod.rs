@@ -1,10 +1,9 @@
 //! Creeps are the enemy! They are also known as "Tree"s.
-
 use std::{ops::ControlFlow, time::Duration};
 
 use crate::{
     buildings::Building,
-    eargasm::{AudioRequest, Money},
+    eargasm::{AudioComponent, AudioRequest, Money},
     game::{
         hp_bars::HpBarUISettings,
         resources::{Harvest, ResourceType},
@@ -95,7 +94,7 @@ fn spawn_creep(
             .spawn(SpriteSheetBundle {
                 texture_atlas: atlas_handle,
                 sprite: TextureAtlasSprite::new(sprite_index),
-                transform: Transform::from_xyz(x, y, 0.10),
+                transform: Transform::from_xyz(x.floor(), y.floor(), 0.10),
                 ..default()
             })
             .insert(Teardown)
@@ -155,7 +154,7 @@ fn cleanup_dead_creeps(
         .for_each(|(entity, _health, corpo_pts)| {
             harvest.send(Harvest(ResourceType::CorporationPoints, corpo_pts.0));
             audio_mngr.send(AudioRequest {
-                component: crate::eargasm::AudioComponent::Money(Money),
+                component: AudioComponent::Money(Money),
             });
             commands.entity(entity).despawn_recursive();
         });

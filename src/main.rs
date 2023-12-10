@@ -10,16 +10,13 @@ use bevy_tweening::TweeningPlugin;
 
 use flora_cause::{
     components::{fade_transition::TransitionPlugin, ui_util::UIUtilPlugin},
-
     debug::display_debug::DisplayDebugPlugin,
     eargasm::EargasmPlugin,
-    // debug::fps_counter::FPSPlugin,
     game::keybinds::KeybindPlugin,
     scenes::{
         gameplay::GameplayPlugin, menu::MainMenuPlugin, pause::PausePlugin, splash::SplashPlugin,
     },
-    AppState,
-    PauseMenuState,
+    AppState, PauseMenuState,
 };
 
 /// Holding the current selection
