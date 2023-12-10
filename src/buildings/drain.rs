@@ -17,9 +17,9 @@ use bevy::{prelude::*, tasks::IoTaskPool};
 use super::{Building, BuildingDefinition};
 
 /// Drain damage applied to trees per tick of [GlobalDrainTick]
-const DRAIN_DPT: u32 = 20;
+const DRAIN_DPT: u32 = 2;
 /// Every *this* many seconds trees get drained
-const DRAIN_TICK_RATE: f32 = 1.5;
+const DRAIN_TICK_RATE: f32 = 0.15;
 
 #[derive(Component)]
 pub struct DrainRadius(f32);

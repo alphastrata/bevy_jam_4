@@ -3,8 +3,8 @@ use bevy::prelude::*;
 use crate::{
     buildings::drain::DrainTowerPlugin,
     game::{
-        camera::GameCameraPlugin, map::MapPlugin, placement::TowerPlacementPlugin,
-        power::PowerPlugin, resources::ResourcePlugin,
+        camera::GameCameraPlugin, hp_bars::HealthBarUIPlugin, map::MapPlugin,
+        placement::TowerPlacementPlugin, power::PowerPlugin, resources::ResourcePlugin,
     },
     AppState,
 };
@@ -21,6 +21,7 @@ impl Plugin for GameplayPlugin {
             TowerPlacementPlugin,
             PowerPlugin,
             ResourcePlugin,
+            HealthBarUIPlugin,
             DrainTowerPlugin,
         ))
         .add_systems(OnEnter(AppState::Gameplay), capture_cursor)
