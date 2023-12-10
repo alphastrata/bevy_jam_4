@@ -1,9 +1,11 @@
 use bevy::{prelude::*, transform::commands, utils::HashMap, window::PrimaryWindow};
 use bevy_ecs_tilemap::prelude::*;
-
+use image::{GrayImage, ImageFormat, Luma};
 use lazy_static::lazy_static;
+use noise::{NoiseFn, Perlin};
 use rand::{thread_rng, Rng};
 
+use super::camera::ViewCamera;
 use crate::{AppState, Teardown};
 
 pub struct MapPlugin;
@@ -66,6 +68,8 @@ pub fn create_initial_map2(mut commands: Commands, asset_server: Res<AssetServer
     // Convert the image to grayscale
     let greyscale_img = brightness_map();
     let (width, height) = greyscale_img.dimensions();
+    dbg!(width, height, greyscale_img.to_vec().len());
+
     let brightness_map: Vec<Vec<u8>> = (0..height)
         .map(|y| {
             (0..width)
@@ -74,8 +78,13 @@ pub fn create_initial_map2(mut commands: Commands, asset_server: Res<AssetServer
         })
         .collect();
 
+    dbg!(brightness_map.len(), width / 8, height / 8,);
+
     let texture = asset_server.load("textures/terrain.png");
-    let map_size = TilemapSize { x: 512, y: 512 };
+    let map_size = TilemapSize {
+        x: brightness_map.len() as u32,
+        y: brightness_map.first().unwrap().len() as u32,
+    };
     let mut tile_storage = TileStorage::empty(map_size);
     let tilemap_entity = commands.spawn_empty().id();
 
@@ -121,12 +130,16 @@ pub fn create_initial_map2(mut commands: Commands, asset_server: Res<AssetServer
         });
 }
 
-use image::{GrayImage, Luma};
-use noise::{NoiseFn, Perlin};
-
-use super::camera::ViewCamera;
-/// Make a perlin-noise based brightnessmap:
 fn brightness_map() -> GrayImage {
+    let static_map: &[u8] = include_bytes!("../../assets/textures/static-map.png");
+    image::load_from_memory_with_format(static_map, ImageFormat::Png)
+        .expect("Failed to load static-map.png!")
+        .to_luma8()
+}
+
+/// Make a perlin-noise based brightnessmap:
+#[deprecated = "We're using a static map from a known .png embedded into the binary"]
+fn brightness_map2() -> GrayImage {
     let size = 512;
     let mut img = GrayImage::new(size, size);
     let perlin = Perlin::new(1);
