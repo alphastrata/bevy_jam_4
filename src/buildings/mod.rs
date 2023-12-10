@@ -135,4 +135,12 @@ impl BuildingType {
             BuildingType::Drain => RadarTower::COST,
         }
     }
+
+    pub fn sprite(&self) -> &'static str {
+        match self {
+            BuildingType::Radar => "",
+            BuildingType::Distribution => "textures/tower_single.png",
+            BuildingType::Drain => "textures/sucky-uppy-single-frame.png",
+        }
+    }
 }

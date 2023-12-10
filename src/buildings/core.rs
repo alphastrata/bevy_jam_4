@@ -1,4 +1,4 @@
-use crate::game::power::SupplyRadius;
+use crate::game::power::{IsPowered, SupplyRadius};
 use bevy::prelude::*;
 
 use super::BuildingDefinition;
@@ -15,6 +15,8 @@ impl BuildingDefinition for TheCore {
     const DESCRIPTION: &'static str = ""; // TODO
 
     fn add_extra_components(commands: &mut Commands, ent_id: Entity) {
-        commands.entity(ent_id).insert(SupplyRadius(500.0));
+        commands
+            .entity(ent_id)
+            .insert((IsPowered, SupplyRadius(500.0)));
     }
 }
