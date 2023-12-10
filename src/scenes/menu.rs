@@ -10,6 +10,7 @@ use crate::{
         fade_transition::{transition_to, TransitionState},
         ui_util::{btn, img, txt, GameFont},
     },
+    eargasm::{AudioComponent, AudioRequest, IntroVoice, TheCompanyThanksYou},
     game::camera::{main_layer, rt_cam3d, v3d_layer, UiCamera},
     AppState,
 };
@@ -49,18 +50,26 @@ fn interact(
     mut app_exit_events: EventWriter<AppExit>,
     mut app_state: ResMut<NextState<AppState>>,
     mut transition_state: ResMut<TransitionState>,
+    mut audio_mngr: EventWriter<AudioRequest>,
 ) {
     for (interaction, menu_button_action) in &interaction_query {
         if *interaction == Interaction::Pressed {
             match menu_button_action {
                 Action::StartGame => {
                     transition_to(AppState::Gameplay, &mut transition_state);
+                    audio_mngr.send(AudioRequest {
+                        component: AudioComponent::IntroVoice(IntroVoice),
+                    });
                 }
                 Action::DevScene => {
                     app_state.set(AppState::DevScene);
                 }
                 // the game can't quit in browser lmao
                 Action::QuitGame => {
+                    audio_mngr.send(AudioRequest {
+                        component: AudioComponent::TheCompanyThanksYou(TheCompanyThanksYou),
+                    });
+
                     app_exit_events.send(AppExit);
                 }
                 Action::Credits => {
