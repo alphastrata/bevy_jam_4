@@ -17,6 +17,7 @@ impl Plugin for EargasmPlugin {
 pub enum AudioComponent {
     Track1(Track1),
     Track2(Track2),
+    Thump(Thump),
     Radar1(Radar1),
     Radar2(Radar2),
     TheCompanyThanksYou(TheCompanyThanksYou),
@@ -27,6 +28,8 @@ pub enum AudioComponent {
 
 #[derive(Component, Debug)]
 pub struct Money;
+#[derive(Component, Debug)]
+pub struct Thump;
 #[derive(Component, Debug)]
 pub struct Track1;
 #[derive(Component, Debug)]
@@ -75,6 +78,20 @@ fn play_system(
         info!("Read AudioRequest");
         match &event.component {
             // SFX
+            AudioComponent::Thump(_t) => {
+                commands
+                    .spawn(AudioBundle {
+                        source: asset_server.load("audio/thump.mp3"),
+                        settings: PlaybackSettings {
+                            mode: PlaybackMode::Once,
+                            paused: false,
+                            volume: vol,
+                            ..Default::default()
+                        },
+                        ..Default::default()
+                    })
+                    .insert(Thump);
+            }
             AudioComponent::Money(_m) => {
                 commands
                     .spawn(AudioBundle {
@@ -87,7 +104,7 @@ fn play_system(
                         },
                         ..Default::default()
                     })
-                    .insert(Track1);
+                    .insert(Money);
             }
             AudioComponent::Electric(_e) => {
                 commands
@@ -101,7 +118,7 @@ fn play_system(
                         },
                         ..Default::default()
                     })
-                    .insert(Track1);
+                    .insert(Electric);
             }
 
             AudioComponent::Radar1(_) => {
@@ -116,7 +133,7 @@ fn play_system(
                         },
                         ..Default::default()
                     })
-                    .insert(Track2);
+                    .insert(Radar1);
             }
             AudioComponent::Radar2(_) => {
                 commands
@@ -131,7 +148,7 @@ fn play_system(
                         },
                         ..Default::default()
                     })
-                    .insert(Track2);
+                    .insert(Radar2);
             }
             AudioComponent::TheCompanyThanksYou(_) => {
                 commands
@@ -145,7 +162,7 @@ fn play_system(
                         },
                         ..Default::default()
                     })
-                    .insert(Track2);
+                    .insert(TheCompanyThanksYou);
             }
             AudioComponent::IntroVoice(_) => {
                 // Similar implementation for IntroVoice
@@ -160,7 +177,7 @@ fn play_system(
                         },
                         ..Default::default()
                     })
-                    .insert(Track2);
+                    .insert(IntroVoice);
             }
 
             //MUSIC:

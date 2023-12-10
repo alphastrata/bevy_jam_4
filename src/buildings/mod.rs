@@ -107,7 +107,10 @@ impl BuildingType {
                 spawn_building::<DistributionTower>(commands, asset_server, pos)
             }
             BuildingType::Drain => {
-                //TODO: Sound
+                audio_mngr.send(AudioRequest {
+                    component: crate::eargasm::AudioComponent::Thump(crate::eargasm::Thump),
+                });
+
                 DrainTower::custom_spawn(commands, texture_atlases, asset_server, pos)
             }
         };
