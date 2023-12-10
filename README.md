@@ -28,3 +28,7 @@ wasm-server-runner path/to/file.wasm
 ## TODO
 
 * [ ] Map generation
+
+## Attributions:
+_ Stuff NOT made by the team, but from OS/Freely available resources_
+- [electric.mp3, money.mp3] are provided by = www.Zapsplat.com

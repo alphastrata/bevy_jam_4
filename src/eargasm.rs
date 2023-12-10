@@ -23,8 +23,11 @@ pub enum AudioComponent {
     TheCompanyThanksYou(TheCompanyThanksYou),
     IntroVoice(IntroVoice),
     Electric(Electric),
+    Money(Money),
 }
 
+#[derive(Component, Debug)]
+pub struct Money;
 #[derive(Component, Debug)]
 pub struct Track1;
 #[derive(Component, Debug)]
@@ -70,55 +73,38 @@ fn play_system(
         //TODO: if track1 or 2 is already playing -- we want to stop that? (if on track1 and request == 2 and vice versa...)
         info!("Read AudioRequest");
         match &event.component {
+            // SFX
+            AudioComponent::Money(_m) => {
+                commands
+                    .spawn(AudioBundle {
+                        source: asset_server.load("audio/money.mp3"),
+                        settings: PlaybackSettings {
+                            mode: PlaybackMode::Once,
+                            ..Default::default()
+                        },
+                        ..Default::default()
+                    })
+                    .insert(Track1);
+            }
             AudioComponent::Electric(_e) => {
                 commands
                     .spawn(AudioBundle {
                         source: asset_server.load("audio/electric.mp3"),
                         settings: PlaybackSettings {
                             mode: PlaybackMode::Once,
-                            // Add any other custom settings if needed
                             ..Default::default()
                         },
                         ..Default::default()
                     })
                     .insert(Track1);
-            }
-            AudioComponent::Track1(_) => {
-                commands
-                    .spawn(AudioBundle {
-                        source: asset_server.load("audio/musictrack 1.mp3"),
-                        settings: PlaybackSettings {
-                            mode: PlaybackMode::Once,
-                            // Add any other custom settings if needed
-                            ..Default::default()
-                        },
-                        ..Default::default()
-                    })
-                    .insert(Track1);
-            }
-            AudioComponent::Track2(_) => {
-                commands
-                    .spawn(AudioBundle {
-                        source: asset_server.load("audio/musictrack 2.mp3"),
-                        settings: PlaybackSettings {
-                            mode: PlaybackMode::Loop,
-                            // Add any other custom settings if needed
-                            ..Default::default()
-                        },
-                        ..Default::default()
-                    })
-                    .insert(Track2);
             }
 
-            // SFX
             AudioComponent::Radar1(_) => {
-                // Similar implementation for Radar1
                 commands
                     .spawn(AudioBundle {
                         source: asset_server.load("audio/radar1.mp3"),
                         settings: PlaybackSettings {
                             mode: PlaybackMode::Once,
-                            // Add any other custom settings if needed
                             ..Default::default()
                         },
                         ..Default::default()
@@ -126,8 +112,6 @@ fn play_system(
                     .insert(Track2);
             }
             AudioComponent::Radar2(_) => {
-                // Similar implementation for Radar2
-
                 commands
                     .spawn(AudioBundle {
                         source: asset_server.load("audio/radar2.mp3"),
@@ -141,14 +125,11 @@ fn play_system(
                     .insert(Track2);
             }
             AudioComponent::TheCompanyThanksYou(_) => {
-                // Similar implementation for TheCompanyThanksYou
-
                 commands
                     .spawn(AudioBundle {
                         source: asset_server.load("audio/thecompanythanksyou.mp3"),
                         settings: PlaybackSettings {
                             mode: PlaybackMode::Once,
-                            // Add any other custom settings if needed
                             ..Default::default()
                         },
                         ..Default::default()
@@ -162,13 +143,39 @@ fn play_system(
                         source: asset_server.load("audio/introductionvoice.mp3"),
                         settings: PlaybackSettings {
                             mode: PlaybackMode::Once,
-                            // Add any other custom settings if needed
                             ..Default::default()
                         },
                         ..Default::default()
                     })
                     .insert(Track2);
             }
+
+            //MUSIC:
+            AudioComponent::Track1(_) => {
+                commands
+                    .spawn(AudioBundle {
+                        source: asset_server.load("audio/musictrack 1.mp3"),
+                        settings: PlaybackSettings {
+                            mode: PlaybackMode::Once,
+                            ..Default::default()
+                        },
+                        ..Default::default()
+                    })
+                    .insert(Track1);
+            }
+            AudioComponent::Track2(_) => {
+                commands
+                    .spawn(AudioBundle {
+                        source: asset_server.load("audio/musictrack 2.mp3"),
+                        settings: PlaybackSettings {
+                            mode: PlaybackMode::Loop,
+                            ..Default::default()
+                        },
+                        ..Default::default()
+                    })
+                    .insert(Track2);
+            }
+
             _ => error!("Unknown audiosink/source/track pairing!"),
         }
     }
