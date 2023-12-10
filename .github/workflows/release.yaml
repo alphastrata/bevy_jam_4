@@ -33,11 +33,11 @@ jobs:
 
       - name: Prepare package
         run: |
-          wasm-bindgen --no-typescript --out-name bevy_game --out-dir wasm --target web target/wasm32-unknown-unknown/release/${{ env.binary }}.wasm
-          cp -r assets wasm/
+          wasm-bindgen --no-typescript --out-name flora_cause --out-dir out --target web target/wasm32-unknown-unknown/release/${{ env.binary }}.wasm
+          cp -r assets out/
 
       - name: Package as a zip
-        working-directory: ./wasm
+        working-directory: ./out
         run: |
           zip --recurse-paths ../${{ env.binary }}.zip .
 
@@ -45,7 +45,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           path: ${{ env.binary }}.zip
-          name: wasm
+          name: out
           retention-days: 1
 
       - name: Upload binaries to release

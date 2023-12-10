@@ -45,6 +45,8 @@ pub struct IntroVoice;
 #[derive(Component, Debug)]
 pub struct Electric;
 
+/// Event:
+/// This is the main thing you use when you want to trigger some audio.
 #[derive(Event)]
 pub struct AudioRequest {
     pub component: AudioComponent,
