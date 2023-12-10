@@ -77,13 +77,21 @@ pub enum BuildingType {
 }
 
 impl BuildingType {
-    pub fn spawn(&self, commands: &mut Commands, asset_server: Res<AssetServer>, pos: Vec2) {
+    pub fn spawn(
+        &self,
+        commands: &mut Commands,
+        texture_atlases: ResMut<Assets<TextureAtlas>>,
+        asset_server: Res<AssetServer>,
+        pos: Vec2,
+    ) {
         match self {
             BuildingType::Radar => spawn_building::<RadarTower>(commands, asset_server, pos),
             BuildingType::Distribution => {
                 spawn_building::<DistributionTower>(commands, asset_server, pos)
             }
-            BuildingType::Drain => spawn_building::<DrainTower>(commands, asset_server, pos),
+            BuildingType::Drain => {
+                DrainTower::custom_spawn(commands, texture_atlases, asset_server, pos)
+            }
         };
     }
 

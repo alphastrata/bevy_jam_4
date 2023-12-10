@@ -34,7 +34,7 @@ pub struct PowerDebug(pub bool);
 pub struct PowerPlugin;
 impl Plugin for PowerPlugin {
     fn build(&self, app: &mut App) {
-        app.insert_resource(PowerDebug(true));
+        app.insert_resource(PowerDebug(false));
         app.add_event::<AddBuilding>();
         app.add_systems(OnEnter(AppState::Gameplay), create_core);
         app.add_systems(
