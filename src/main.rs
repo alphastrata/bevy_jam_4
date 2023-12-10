@@ -5,12 +5,11 @@ use bevy::{
     render::texture::ImageSamplerDescriptor,
     window::{PresentMode, PrimaryWindow},
 };
-use bevy_ecs_tilemap::TilemapPlugin;
 use bevy_tweening::TweeningPlugin;
 
 use flora_cause::{
     components::{fade_transition::TransitionPlugin, ui_util::UIUtilPlugin},
-    creeps::CreepPlugin,
+
     debug::display_debug::DisplayDebugPlugin,
     // debug::fps_counter::FPSPlugin,
     game::keybinds::KeybindPlugin,
@@ -18,6 +17,7 @@ use flora_cause::{
         gameplay::GameplayPlugin, menu::MainMenuPlugin, pause::PausePlugin, splash::SplashPlugin,
     },
     AppState,
+    PauseMenuState,
 };
 
 /// Holding the current selection
@@ -31,21 +31,13 @@ fn main() {
                 default_sampler: ImageSamplerDescriptor::nearest(),
             }),
             FrameTimeDiagnosticsPlugin,
-        ))
-        .add_plugins((
-            CreepPlugin,
-            DisplayDebugPlugin,
-            GameplayPlugin,
-            KeybindPlugin,
-            MainMenuPlugin,
-            PausePlugin,
-            SplashPlugin,
-            TilemapPlugin,
             TransitionPlugin,
             TweeningPlugin,
-            UIUtilPlugin,
         ))
+        .add_plugins((KeybindPlugin, DisplayDebugPlugin, UIUtilPlugin))
+        .add_plugins((SplashPlugin, GameplayPlugin, MainMenuPlugin, PausePlugin))
         .add_state::<AppState>()
+        .add_state::<PauseMenuState>()
         .add_systems(Startup, setup)
         .run();
 }

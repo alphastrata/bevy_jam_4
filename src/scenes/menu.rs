@@ -15,15 +15,20 @@ use crate::{
     AppState,
 };
 
+use super::pause::{release_cursor, unpause};
+
 pub struct MainMenuPlugin;
 impl Plugin for MainMenuPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(AppState::MainMenu), setup)
-            .add_systems(OnExit(AppState::MainMenu), teardown)
-            .add_systems(
-                Update,
-                (interact, rotator_system).run_if(in_state(AppState::MainMenu)),
-            );
+        app.add_systems(
+            OnEnter(AppState::MainMenu),
+            (setup, release_cursor, unpause),
+        )
+        .add_systems(OnExit(AppState::MainMenu), teardown)
+        .add_systems(
+            Update,
+            (interact, rotator_system).run_if(in_state(AppState::MainMenu)),
+        );
     }
 }
 
@@ -40,9 +45,6 @@ enum Action {
 /// Used for despawning all UI nodes when leaving Main Menu screen
 #[derive(Component, Default)]
 struct OnMainMenuScreen;
-// impl Default for OnMainMenuScreen {
-//     fn default() -> Self {}
-// }
 
 #[derive(Component, Default)]
 struct DemoCube;

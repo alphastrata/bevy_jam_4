@@ -25,6 +25,12 @@ pub enum AppState {
     MainMenu,
     Gameplay,
     DevScene,
+}
+
+#[derive(States, Debug, Clone, Copy, Eq, PartialEq, Hash, Default)]
+pub enum PauseMenuState {
+    #[default]
+    Unpaused,
     Paused,
 }
 

@@ -64,15 +64,22 @@ pub fn setup(
     (*creeps).init = true;
 }
 
-pub fn explicit_teardown(
+pub fn should_teardown(mut creeps: ResMut<CreepState>) {
+    (*creeps).init = false;
+}
+
+pub fn teardown(
     mut commands: Commands,
     q: Query<(Entity, &Health, &CorpoPoints), With<Tree>>,
     mut creeps: ResMut<CreepState>,
 ) {
+    if (*creeps).init {
+        return;
+    }
     q.iter().for_each(|(entity, _health, corpo_pts)| {
         commands.entity(entity).despawn();
     });
-    (*creeps).init = true;
+    (*creeps).init = false;
 }
 
 /// System: Setup

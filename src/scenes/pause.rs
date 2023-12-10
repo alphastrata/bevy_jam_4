@@ -6,18 +6,18 @@ use crate::{
         ui_util::{btn, txt, GameFont},
     },
     game::keybinds::FloraCommand,
-    AppState,
+    AppState, PauseMenuState,
 };
 
 pub struct PausePlugin;
 impl Plugin for PausePlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<PauseState>()
-            .add_systems(OnEnter(AppState::Paused), setup)
-            .add_systems(OnExit(AppState::Paused), teardown)
+            .add_systems(OnEnter(PauseMenuState::Paused), (setup, release_cursor))
+            .add_systems(OnExit(PauseMenuState::Paused), (teardown, capture_cursor))
             .add_systems(
                 Update,
-                (toggle_pause, interact).run_if(in_state(AppState::Paused)),
+                (interact, unpause).run_if(in_state(PauseMenuState::Paused)),
             );
     }
 }
@@ -25,26 +25,17 @@ impl Plugin for PausePlugin {
 #[derive(Resource, Default)]
 pub struct PauseState {
     pub paused: bool,
-    pub previous_state: Option<AppState>,
 }
 
-pub fn toggle_pause(
-    input: Res<Input<FloraCommand>>,
-    mut state: ResMut<PauseState>,
-    app_state: Res<State<AppState>>,
-    mut next_state: ResMut<NextState<AppState>>,
-) {
+pub fn pause(input: Res<Input<FloraCommand>>, mut next_state: ResMut<NextState<PauseMenuState>>) {
     if input.just_pressed(FloraCommand::Pause) {
-        state.paused = !state.paused;
-        if state.paused {
-            state.previous_state = Some(*app_state.get());
-            next_state.set(AppState::Paused);
-        } else {
-            if let Some(next) = &state.previous_state {
-                next_state.set(*next);
-            }
-            state.previous_state = None;
-        }
+        next_state.set(PauseMenuState::Paused);
+    }
+}
+
+pub fn unpause(input: Res<Input<FloraCommand>>, mut next_state: ResMut<NextState<PauseMenuState>>) {
+    if input.just_pressed(FloraCommand::Pause) {
+        next_state.set(PauseMenuState::Unpaused);
     }
 }
 
@@ -73,23 +64,16 @@ struct OnMainMenuScreen;
 /// React to button presses
 fn interact(
     interaction_query: Query<(&Interaction, &Action), (Changed<Interaction>, With<Button>)>,
-    mut state: ResMut<PauseState>,
     mut transition_state: ResMut<TransitionState>,
-    mut next_state: ResMut<NextState<AppState>>,
+    mut next_state_pause: ResMut<NextState<PauseMenuState>>,
 ) {
     for (interaction, menu_button_action) in &interaction_query {
         if *interaction == Interaction::Pressed {
             match menu_button_action {
                 Action::ReturnToMenu => {
                     transition_to(AppState::MainMenu, &mut transition_state);
-                    state.previous_state = None;
                 }
-                Action::Unpause => {
-                    if let Some(next) = &state.previous_state {
-                        next_state.set(*next);
-                    }
-                    state.previous_state = None;
-                }
+                Action::Unpause => next_state_pause.set(PauseMenuState::Unpaused),
                 _ => todo!("Handle volume controls"),
             }
         }
@@ -134,7 +118,11 @@ fn setup(mut commands: Commands, font: Res<GameFont>) {
 }
 
 /// Runs when we exit [AppState::MainMenu]
-fn teardown(nodes: Query<Entity, With<OnMainMenuScreen>>, mut commands: Commands) {
+fn teardown(
+    nodes: Query<Entity, With<OnMainMenuScreen>>,
+    mut commands: Commands,
+    mut state: ResMut<PauseState>,
+) {
     for ent in &nodes {
         commands.entity(ent).despawn_recursive();
     }
