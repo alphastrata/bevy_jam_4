@@ -66,7 +66,6 @@ fn show_splash(mut commands: Commands, asset_server: Res<AssetServer>) {
             texture: splash_handle,
             ..default()
         },
-        main_layer(),
         OnSplashScreen,
     ));
 
@@ -122,7 +121,6 @@ fn show_splash(mut commands: Commands, asset_server: Res<AssetServer>) {
                 ..default()
             },
             animator,
-            main_layer(),
             OnSplashScreen,
         ));
     }

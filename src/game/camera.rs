@@ -187,7 +187,7 @@ fn setup(mut commands: Commands, _images: ResMut<Assets<Image>>) {
                 },
                 ..default()
             },
-            main_layer(),
+            // main_layer(),
             ViewCamera,
             CameraState::default(),
         ))
