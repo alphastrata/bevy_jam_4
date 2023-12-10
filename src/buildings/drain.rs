@@ -49,6 +49,8 @@ impl BuildingDefinition for DrainTower {
 }
 
 impl DrainTower {
+    /// Manually implement the spawning since it uses SpriteSheetBundle and animatin components
+    /// compared to the simple [MinimalBuilding] Bundle
     pub fn custom_spawn(
         commands: &mut Commands,
         mut texture_atlases: ResMut<Assets<TextureAtlas>>,
@@ -98,7 +100,8 @@ impl Plugin for DrainTowerPlugin {
 }
 
 /// We don't want to calculate the trees in range of a tower every single frame or tick
-/// so this system instead calculates them every time new creeps are spawned.
+/// so this system instead calculates them every time new creeps are spawned or a new
+/// tower is built.
 fn calculate_drainees(
     mut tower_spawned: EventReader<AddBuilding>,
     mut creep_spawned: EventReader<SpawnCreep>,
@@ -185,7 +188,6 @@ fn animate_sprite(
     for (indices, mut timer, mut sprite) in &mut query {
         timer.tick(time.delta());
         if timer.just_finished() {
-            info!("next frame");
             sprite.index = if sprite.index == indices.last {
                 indices.first
             } else {
