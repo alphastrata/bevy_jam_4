@@ -27,8 +27,12 @@ pub struct MinimalBuilding {
     sprite: SpriteBundle,
 }
 
-#[derive(Component)]
-pub struct Experience(u32);
+#[derive(Component, PartialEq)]
+pub enum BuildingState {
+    Building,
+    Active,
+    Inactive,
+}
 
 /// Common definitions needed to have a building
 pub trait BuildingDefinition: Default {
@@ -104,7 +108,8 @@ impl BuildingType {
                 audio_mngr.send(AudioRequest {
                     component: crate::eargasm::AudioComponent::Electric(crate::eargasm::Electric),
                 });
-                spawn_building::<DistributionTower>(commands, asset_server, pos)
+
+                DistributionTower::custom_spawn(commands, texture_atlases, asset_server, pos)
             }
             BuildingType::Drain => {
                 audio_mngr.send(AudioRequest {

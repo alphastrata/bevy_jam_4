@@ -1,7 +1,9 @@
 use bevy::prelude::*;
+use bevy_ecs_tilemap::TilemapPlugin;
 
 use crate::{
-    buildings::drain::DrainTowerPlugin,
+    buildings::{distribution::DistributionTowerPlugin, drain::DrainTowerPlugin},
+    creeps::CreepPlugin,
     game::{
         camera::GameCameraPlugin, hp_bars::HealthBarUIPlugin, map::MapPlugin,
         placement::TowerPlacementPlugin, power::PowerPlugin, resources::ResourcePlugin,
@@ -9,13 +11,15 @@ use crate::{
     AppState, Teardown,
 };
 
-use super::pause::{capture_cursor, release_cursor, toggle_pause, PausePlugin};
+use super::pause::{capture_cursor, pause, release_cursor, PausePlugin};
 
 /// Defines systems that should run when in the [AppState::Playing] State
 pub struct GameplayPlugin;
 impl Plugin for GameplayPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
+            TilemapPlugin,
+            CreepPlugin,
             GameCameraPlugin,
             MapPlugin,
             TowerPlacementPlugin,
@@ -23,24 +27,11 @@ impl Plugin for GameplayPlugin {
             ResourcePlugin,
             HealthBarUIPlugin,
             DrainTowerPlugin,
+            DistributionTowerPlugin,
         ))
         .add_systems(OnEnter(AppState::Gameplay), capture_cursor)
-        .add_systems(OnExit(AppState::Gameplay), release_cursor)
-        .add_systems(
-            OnTransition {
-                from: AppState::Gameplay,
-                to: AppState::MainMenu,
-            },
-            teardown_all,
-        )
-        .add_systems(
-            OnTransition {
-                from: AppState::Paused,
-                to: AppState::MainMenu,
-            },
-            teardown_all,
-        )
-        .add_systems(Update, (toggle_pause).run_if(in_state(AppState::Gameplay)));
+        .add_systems(Update, (pause).run_if(in_state(AppState::Gameplay)))
+        .add_systems(OnExit(AppState::Gameplay), teardown_all);
     }
 }
 

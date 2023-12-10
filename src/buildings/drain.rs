@@ -27,7 +27,7 @@ pub struct DrainRadius(f32);
 #[derive(Resource)]
 struct GlobalDrainTick(Timer);
 
-#[derive(Default, Component)]
+#[derive(Component, Default)]
 pub struct DrainTower {
     trees_in_proximity: Vec<Entity>,
 }
@@ -57,7 +57,7 @@ impl DrainTower {
         asset_server: Res<AssetServer>,
         pos: Vec2,
     ) -> Entity {
-        let texture_handle = asset_server.load(DrainTower::SPRITE_PATH);
+        let texture_handle = asset_server.load(Self::SPRITE_PATH);
         let texture_atlas =
             TextureAtlas::from_grid(texture_handle, Vec2::new(32.0, 64.0), 18, 1, None, None);
         let texture_atlas_handle = texture_atlases.add(texture_atlas);
