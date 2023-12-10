@@ -22,6 +22,7 @@ pub enum AudioComponent {
     Radar2(Radar2),
     TheCompanyThanksYou(TheCompanyThanksYou),
     IntroVoice(IntroVoice),
+    Electric(Electric),
 }
 
 #[derive(Component, Debug)]
@@ -36,6 +37,8 @@ pub struct Radar2;
 pub struct TheCompanyThanksYou;
 #[derive(Component, Debug)]
 pub struct IntroVoice;
+#[derive(Component, Debug)]
+pub struct Electric;
 
 #[derive(Event)]
 pub struct AudioRequest {
@@ -67,6 +70,19 @@ fn play_system(
         //TODO: if track1 or 2 is already playing -- we want to stop that? (if on track1 and request == 2 and vice versa...)
         info!("Read AudioRequest");
         match &event.component {
+            AudioComponent::Electric(_e) => {
+                commands
+                    .spawn(AudioBundle {
+                        source: asset_server.load("audio/electric.mp3"),
+                        settings: PlaybackSettings {
+                            mode: PlaybackMode::Once,
+                            // Add any other custom settings if needed
+                            ..Default::default()
+                        },
+                        ..Default::default()
+                    })
+                    .insert(Track1);
+            }
             AudioComponent::Track1(_) => {
                 commands
                     .spawn(AudioBundle {
