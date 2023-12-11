@@ -12,6 +12,8 @@ use crate::{
 
 use super::hud::PIXEL;
 
+const DEFAULT_PURSE_SIZE: u32 = 1000;
+
 pub struct ResourcePlugin;
 impl Plugin for ResourcePlugin {
     fn build(&self, app: &mut App) {
@@ -19,7 +21,7 @@ impl Plugin for ResourcePlugin {
             .add_event::<ExpendResource>()
             .add_event::<Harvest>()
             .add_systems(OnEnter(AppState::Gameplay), setup_debug_ui)
-            .add_systems(OnExit(AppState::Gameplay), teardown_debug_ui)
+            .add_systems(OnExit(AppState::Gameplay), (teardown_debug_ui, reset_money))
             .add_systems(
                 Update,
                 (update_debug_ui, add_harvest_to_inventory, expend_resource),
@@ -34,7 +36,9 @@ pub struct Inventory {
 }
 impl Default for Inventory {
     fn default() -> Self {
-        Self { money: 1000 }
+        Self {
+            money: DEFAULT_PURSE_SIZE,
+        }
     }
 }
 
@@ -127,6 +131,10 @@ fn update_debug_ui(mut q_text: Query<&mut Text, With<WoodNumber>>, inventory: Re
     for mut text in &mut q_text {
         text.sections[0].value = format!("Corpo Points: {}", inventory.money);
     }
+}
+
+fn reset_money(mut inv: ResMut<Inventory>) {
+    inv.money = DEFAULT_PURSE_SIZE;
 }
 
 fn teardown_debug_ui(mut commands: Commands, nodes: Query<Entity, With<InventoryDebugUI>>) {

@@ -39,7 +39,7 @@ pub struct DrainTower {
 impl BuildingDefinition for DrainTower {
     const SPRITE_PATH: &'static str = "textures/sucky-uppy.png";
     const BASE_HEALTH: u32 = 100;
-    const COST: u32 = 300;
+    const COST: u32 = 200;
     const BUILD_TIME: u32 = 5;
     const NAME: &'static str = "Drain Tower";
     const DESCRIPTION: &'static str = "The Drain Tower slowly drains the health of
@@ -73,7 +73,8 @@ impl DrainTower {
             .spawn(MaterialMesh2dBundle {
                 mesh: meshes.add(shape::Circle::new(400.).into()).into(),
                 material: materials.add(TowerRadiusMaterial {
-                    color: Color::rgb(0.23046875, 0.6875, 0.1015625),
+                    // color: Color::rgb(0.23046875, 0.6875, 0.1015625),
+                    color: Color::ORANGE,
                 }),
                 transform: Transform::from_translation(Vec3::new(0.0, 0.0, 0.1)),
                 ..default()
@@ -128,9 +129,9 @@ impl Plugin for DrainTowerPlugin {
 /// so this system instead calculates them every time new creeps are spawned or a new
 /// tower is built.
 fn calculate_drainees(
+    mut q_towers: Query<(&mut DrainTower, &Transform, &DrainRadius)>,
     tower_spawned: EventReader<AddBuilding>,
     creep_spawned: EventReader<SpawnCreep>,
-    mut q_towers: Query<(&mut DrainTower, &Transform, &DrainRadius)>,
     creep_died: EventReader<CreepDie>,
     q_trees: Query<(Entity, &Transform), With<Tree>>,
 ) {
