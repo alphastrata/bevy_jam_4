@@ -9,11 +9,19 @@ fn fragment(in: VertexOutput) -> @location(0) vec4<f32> {
     var col = colour;
     let time = globals.time;
     let mask = sdCircle(uv, 0.91);
+    let circleRadius = 0.84;
+    let distanceFromCenter = sdCircle(uv, circleRadius);
 
-    col *= smoothstep(0.0, 0.09, mask);
-    return col;
+    var baseColor = colour;
+    baseColor.a *= 0.01;
+
+    let additionalOpacity = clamp(1.0 - (distanceFromCenter) / circleRadius, 0.0, 0.7);
+
+    baseColor.a += additionalOpacity * (1.0 - baseColor.a);
+
+    return baseColor;
 }    
 
-fn sdCircle(p: vec2f, r: f32) -> f32 {
+fn sdCircle(p: vec2<f32>, r: f32) -> f32 {
     return length(p) - r;
 }
