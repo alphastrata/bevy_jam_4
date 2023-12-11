@@ -77,9 +77,6 @@ pub fn create_initial_map2(mut commands: Commands, asset_server: Res<AssetServer
         })
         .collect();
 
-    dbg!(brightness_map.len());
-    dbg!(brightness_map[0].len());
-
     let texture = asset_server.load("textures/terrain.png");
     let map_size = TilemapSize {
         y: brightness_map.first().unwrap().len() as u32,
