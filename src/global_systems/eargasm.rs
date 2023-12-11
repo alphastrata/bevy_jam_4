@@ -73,7 +73,9 @@ fn play_system(
     asset_server: Res<AssetServer>,
     mut event_reader: EventReader<AudioRequest>,
 ) {
-    let vol = Volume::Relative(VolumeLevel::new(4.0));
+    // let global_vol = GlobalVolume::new(1.0);
+    let vol = Volume::Absolute(VolumeLevel::new(1.0));
+    let sfx_vol = Volume::Absolute(VolumeLevel::new(0.30));
 
     for event in event_reader.read() {
         //TODO: if track1 or 2 is already playing -- we want to stop that? (if on track1 and request == 2 and vice versa...)
@@ -87,7 +89,7 @@ fn play_system(
                         settings: PlaybackSettings {
                             mode: PlaybackMode::Once,
                             paused: false,
-                            volume: vol,
+                            volume: sfx_vol,
                             ..Default::default()
                         },
                         ..Default::default()
@@ -97,11 +99,11 @@ fn play_system(
             AudioComponent::Money(_m) => {
                 commands
                     .spawn(AudioBundle {
-                        source: asset_server.load("audio/money.mp3"),
+                        source: asset_server.load("audio/kaching.mp3"),
                         settings: PlaybackSettings {
                             mode: PlaybackMode::Once,
                             paused: false,
-                            volume: vol,
+                            volume: Volume::Absolute(VolumeLevel::new(0.002)),
                             ..Default::default()
                         },
                         ..Default::default()
@@ -115,7 +117,7 @@ fn play_system(
                         settings: PlaybackSettings {
                             mode: PlaybackMode::Once,
                             paused: false,
-                            volume: vol,
+                            volume: sfx_vol,
                             ..Default::default()
                         },
                         ..Default::default()
@@ -130,7 +132,7 @@ fn play_system(
                         settings: PlaybackSettings {
                             mode: PlaybackMode::Once,
                             paused: false,
-                            volume: vol,
+                            volume: sfx_vol,
                             ..Default::default()
                         },
                         ..Default::default()
@@ -144,7 +146,7 @@ fn play_system(
                         settings: PlaybackSettings {
                             mode: PlaybackMode::Once,
                             paused: false,
-                            volume: vol,
+                            volume: sfx_vol,
                             // Add any other custom settings if needed
                             ..Default::default()
                         },
@@ -159,7 +161,7 @@ fn play_system(
                         settings: PlaybackSettings {
                             mode: PlaybackMode::Once,
                             paused: false,
-                            volume: vol,
+                            volume: sfx_vol,
                             ..Default::default()
                         },
                         ..Default::default()
@@ -174,7 +176,7 @@ fn play_system(
                         settings: PlaybackSettings {
                             mode: PlaybackMode::Once,
                             paused: false,
-                            volume: Volume::Absolute(VolumeLevel::new(0.05)),
+                            volume: sfx_vol,
                             ..Default::default()
                         },
                         ..Default::default()
