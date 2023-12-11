@@ -73,7 +73,7 @@ impl DrainTower {
             .spawn(MaterialMesh2dBundle {
                 mesh: meshes.add(shape::Circle::new(400.).into()).into(),
                 material: materials.add(TowerRadiusMaterial {
-                    color: Color::PURPLE,
+                    color: Color::rgb(0.23046875, 0.6875, 0.1015625),
                 }),
                 transform: Transform::from_translation(Vec3::new(0.0, 0.0, 0.1)),
                 ..default()
