@@ -152,7 +152,7 @@ fn calculate_drainees(
 
                 dt.trees_in_proximity = close_trees;
             });
-        info!("Recalculated trees within range of Drain Towers (tower build)\n {} trees are being sucked", total_trees);
+        // info!("Recalculated trees within range of Drain Towers (tower build)\n {} trees are being sucked", total_trees);
     }
 }
 
