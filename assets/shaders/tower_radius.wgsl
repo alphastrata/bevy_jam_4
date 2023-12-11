@@ -1,4 +1,3 @@
-#import bevy_sprite::mesh2d_view_bindings::globals 
 #import bevy_pbr::forward_io::VertexOutput;
 
 @group(1) @binding(0) var<uniform> colour: vec4<f32>;
@@ -7,20 +6,12 @@
 fn fragment(in: VertexOutput) -> @location(0) vec4<f32> {
     var uv = (in.uv * 2.0) - 1.0;
     var col = colour;
-    let time = globals.time;
     let mask = sdCircle(uv, 0.91);
-    let circleRadius = 0.84;
-    let distanceFromCenter = sdCircle(uv, circleRadius);
 
-    var baseColor = colour;
-    baseColor.a = 0.01;
+    // Calculate the flashing effect using a sine wave and time
+    col *= smoothstep(0.0, 0.09, mask);
 
-    let additionalOpacity = clamp(1.0 - (distanceFromCenter) / circleRadius, 0.0, 0.7);
-
-    //baseColor.a += additionalOpacity * (0.52);
-    baseColor.a += clamp(0.1, 0.7, additionalOpacity * (0.4*sin(time) + 1.0));
-
-    return baseColor;
+    return col;
 }    
 
 fn sdCircle(p: vec2<f32>, r: f32) -> f32 {
