@@ -71,14 +71,15 @@ fn create_core(
     );
 }
 
-/// Updates the set of towers that are powered or unpowered
-fn update_powered_unpowered(
+pub fn update_powered_unpowered(
     mut commands: Commands,
-    mut update_trigger: EventReader<AddBuilding>,
+    tower_spawned: EventReader<AddBuilding>,
+    creep_spawned: EventReader<SpawnCreep>,
+    creep_died: EventReader<CreepDie>,
     building_query: Query<(Entity, &Transform), With<RequiresPower>>,
     supply_query: Query<(Entity, &SupplyRadius, &Transform), With<IsPowered>>,
 ) {
-    if update_trigger.read().last().is_some() {
+    if !(creep_spawned.is_empty() && tower_spawned.is_empty() && creep_died.is_empty()) {
         // TODO: IF PERFORMANCE DIE, QUADTREE GO HERE.
 
         // for every building check that its powered by at least one building
@@ -119,7 +120,7 @@ fn update_powered_unpowered(
     }
 }
 /// Updates the set of towers that are powered or unpowered
-fn update_powered_unpowered2(
+pub fn update_powered_unpowered2(
     mut commands: Commands,
     tower_spawned: EventReader<AddBuilding>,
     creep_spawned: EventReader<SpawnCreep>,

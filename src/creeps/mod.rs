@@ -42,8 +42,16 @@ fn initial_creep_spawn(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+    mut spawn_ev: EventWriter<SpawnCreep>,
 ) {
-    (0..10_000).for_each(|_| spawn_creep(&mut commands, &asset_server, &mut texture_atlases));
+    (0..10_000).for_each(|_| {
+        spawn_creep(
+            &mut commands,
+            &asset_server,
+            &mut texture_atlases,
+            &mut spawn_ev,
+        )
+    });
 }
 
 fn creep_spawning_timer(mut commands: Commands) {
@@ -59,10 +67,18 @@ fn periodically_spawn_creep(
     time: Res<Time>,
     mut creep_timer: ResMut<CreepSpawnTimer>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+    mut spawn_ev: EventWriter<SpawnCreep>,
 ) {
     creep_timer.timer.tick(time.delta());
     if creep_timer.timer.elapsed_secs() > 2.3 {
-        (0..80).for_each(|_| spawn_creep(&mut commands, &asset_server, &mut texture_atlases));
+        (0..80).for_each(|_| {
+            spawn_creep(
+                &mut commands,
+                &asset_server,
+                &mut texture_atlases,
+                &mut spawn_ev,
+            )
+        });
         creep_timer.timer.reset()
     }
 }
@@ -71,6 +87,7 @@ fn spawn_creep(
     commands: &mut Commands,
     asset_server: &Res<AssetServer>,
     texture_atlases: &mut ResMut<Assets<TextureAtlas>>,
+    spawn_ev: &mut EventWriter<SpawnCreep>,
 ) {
     const MAP_LIMIT: f32 = 8192.0;
 
@@ -109,6 +126,7 @@ fn spawn_creep(
             Range(300),
             CorpoPoints(rng.gen_range(1.0..50.0) as u32),
         ));
+        spawn_ev.send(SpawnCreep);
     }
 }
 

@@ -9,7 +9,7 @@
 
 use crate::{
     creeps::{CreepDie, SpawnCreep},
-    game::power::{AddBuilding, IsPowered, RequiresPower},
+    game::power::{update_powered_unpowered, AddBuilding, IsPowered, RequiresPower},
     AnimationIndices, AnimationTimer, AppState, Health, Teardown, Tree, BUILDING_Z, SHADER_Z,
 };
 use bevy::{
@@ -114,13 +114,14 @@ impl Plugin for DrainTowerPlugin {
         .add_event::<SpawnCreep>()
         .add_systems(
             Update,
-            (
-                animate_sprite,
-                calculate_drainees,
-                drain_closeby_trees,
-                debug_drain_radii,
-            )
+            (animate_sprite, drain_closeby_trees, debug_drain_radii)
                 .run_if(in_state(AppState::Gameplay)),
+        )
+        .add_systems(
+            PostUpdate,
+            (calculate_drainees)
+                .run_if(in_state(AppState::Gameplay))
+                .after(update_powered_unpowered),
         );
     }
 }
@@ -151,7 +152,7 @@ fn calculate_drainees(
 
                 dt.trees_in_proximity = close_trees;
             });
-        trace!("Recalculated trees within range of Drain Towers (tower build)\n {} trees are being sucked", total_trees);
+        info!("Recalculated trees within range of Drain Towers (tower build)\n {} trees are being sucked", total_trees);
     }
 }
 
