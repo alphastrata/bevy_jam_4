@@ -113,8 +113,8 @@ fn setup(mut commands: Commands, font: Res<GameFont>) {
                 ..default()
             });
             cb.add_child(title);
-            cb.add_child(return_btn);
             cb.add_child(unpause_btn);
+            cb.add_child(return_btn);
         });
 }
 

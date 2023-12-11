@@ -50,7 +50,7 @@ struct DemoCube;
 fn interact(
     interaction_query: Query<(&Interaction, &Action), (Changed<Interaction>, With<Button>)>,
     mut app_exit_events: EventWriter<AppExit>,
-    mut app_state: ResMut<NextState<AppState>>,
+    // mut app_state: ResMut<NextState<AppState>>,
     mut transition_state: ResMut<TransitionState>,
     mut audio_mngr: EventWriter<AudioRequest>,
 ) {
@@ -64,7 +64,7 @@ fn interact(
                     });
                 }
                 Action::DevScene => {
-                    app_state.set(AppState::DevScene);
+                    // app_state.set(AppState::DevScene);
                 }
                 // the game can't quit in browser lmao
                 Action::QuitGame => {
@@ -176,7 +176,7 @@ fn setup(
         None,
     );
     let start_button = btn(&mut commands, &font, "Start Game", Action::StartGame);
-    let gpu_test = btn(&mut commands, &font, "Dev Scene", Action::DevScene);
+    // let gpu_test = btn(&mut commands, &font, "Dev Scene", Action::DevScene);
 
     #[cfg(not(target_arch = "wasm32"))]
     let quit_button = btn(&mut commands, &font, "Quit Game", Action::QuitGame);
@@ -204,9 +204,8 @@ fn setup(
                 },
                 ..default()
             });
-            cb.add_child(title)
-                .add_child(start_button)
-                .add_child(gpu_test);
+            cb.add_child(title).add_child(start_button);
+            // .add_child(gpu_test);
 
             #[cfg(not(target_arch = "wasm32"))]
             {
