@@ -7,9 +7,6 @@ use bevy::{
     window::{PresentMode, PrimaryWindow},
 };
 
-#[cfg(not(target_arch = "wasm32"))]
-use bevy::asset::AssetMetaCheck;
-
 use bevy_tweening::TweeningPlugin;
 
 use flora_cause::{
@@ -28,7 +25,7 @@ fn main() {
     let mut app = App::new();
 
     if cfg!(target_arch = "wasm32") {
-        app.insert_resource(AssetMetaCheck::Never);
+        app.insert_resource(bevy::asset::AssetMetaCheck::Never);
     }
 
     #[cfg(target_arch = "wasm32")]
