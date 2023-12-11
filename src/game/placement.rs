@@ -154,7 +154,7 @@ fn spawn_at_click_pos(
     inventory: Res<Inventory>,
     tile_hover: Res<CurrentTileHover>,
 ) {
-    if mouse_btns.just_pressed(MouseButton::Right) {
+    if mouse_btns.just_pressed(MouseButton::Left) {
         if let Some(building) = &state.being_placed_building_type {
             if let Some(tile_world_pos) = tile_hover.world_pos {
                 if inventory.money > building.cost() {
