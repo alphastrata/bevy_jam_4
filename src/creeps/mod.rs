@@ -1,5 +1,5 @@
 //! Creeps are the enemy! They are also known as "Tree"s.
-use std::{ops::ControlFlow, time::Duration};
+use std::{any, ops::ControlFlow, time::Duration};
 
 use crate::{
     buildings::Building,
@@ -11,7 +11,11 @@ use crate::{
     prelude::*,
     Range, Teardown,
 };
-use bevy::{asset::processor::ProcessorTransactionLog, ecs::bundle, prelude::*, time::Stopwatch};
+use bevy::{
+    asset::processor::ProcessorTransactionLog, ecs::bundle, prelude::*, sprite::Mesh2dHandle,
+    time::Stopwatch,
+};
+use bevy_hanabi::prelude::*;
 use rand::Rng;
 
 /// Handles the setup, spawning, despawning, attacking of our 'creeps'.
@@ -22,7 +26,14 @@ impl Plugin for CreepPlugin {
         app.add_event::<CreepDie>();
 
         app.add_systems(Startup, (initial_creep_spawn, creep_spawning_timer))
-            .add_systems(Update, (cleanup_dead_creeps, periodically_spawn_creep));
+            .add_systems(
+                Update,
+                (
+                    cleanup_dead_creeps,
+                    periodically_spawn_creep,
+                    periodically_add_particle,
+                ),
+            );
     }
 }
 
@@ -31,6 +42,11 @@ pub struct SpawnCreep;
 
 #[derive(Resource)]
 struct CreepSpawnTimer {
+    timer: Stopwatch,
+}
+
+#[derive(Resource)]
+struct ParticleTimer {
     timer: Stopwatch,
 }
 
@@ -46,11 +62,15 @@ fn initial_creep_spawn(
     (0..10_000).for_each(|_| spawn_creep(&mut commands, &asset_server, &mut texture_atlases));
 }
 
-fn creep_spawning_timer(mut commands: Commands) {
+fn creep_spawning_timer(mut commands: Commands, mut effects: ResMut<Assets<EffectAsset>>) {
     commands.insert_resource(CreepSpawnTimer {
         timer: Stopwatch::new(),
     });
+    commands.insert_resource(ParticleTimer {
+        timer: Stopwatch::new(),
+    });
 }
+
 /// System: Update
 /// Does what it says on the can...
 fn periodically_spawn_creep(
@@ -64,6 +84,67 @@ fn periodically_spawn_creep(
     if creep_timer.timer.elapsed_secs() > 2.3 {
         (0..80).for_each(|_| spawn_creep(&mut commands, &asset_server, &mut texture_atlases));
         creep_timer.timer.reset()
+    }
+}
+
+fn periodically_add_particle(
+    mut commands: Commands,
+    time: Res<Time>,
+    mut particle_timer: ResMut<ParticleTimer>,
+    mut effects: ResMut<Assets<EffectAsset>>,
+) {
+    particle_timer.timer.tick(time.delta());
+    if particle_timer.timer.elapsed_secs() > 1.0 {
+        // Create a color gradient for the particles
+        let mut gradient = Gradient::new();
+        gradient.add_key(0.0, Vec4::new(0.5, 0.5, 1.0, 1.0));
+        gradient.add_key(1.0, Vec4::new(0.5, 0.5, 1.0, 0.0));
+
+        let writer = ExprWriter::new();
+
+        let age = writer.lit(0.).expr();
+        let init_age = SetAttributeModifier::new(Attribute::AGE, age);
+
+        let lifetime = writer.lit(5.).expr();
+        let init_lifetime = SetAttributeModifier::new(Attribute::LIFETIME, lifetime);
+
+        let init_pos = SetPositionCircleModifier {
+            center: writer.lit(Vec3::ZERO).expr(),
+            axis: writer.lit(Vec3::Z).expr(),
+            radius: writer.lit(0.05).expr(),
+            dimension: ShapeDimension::Surface,
+        };
+
+        let init_vel = SetVelocityCircleModifier {
+            center: writer.lit(Vec3::ZERO).expr(),
+            axis: writer.lit(Vec3::Z).expr(),
+            speed: writer.lit(0.1).expr(),
+        };
+
+        let spawner = Spawner::rate(100.0.into());
+        let effect = effects.add(
+            EffectAsset::new(4096, spawner, writer.finish())
+                .with_name("2d")
+                .init(init_pos)
+                .init(init_vel)
+                .init(init_age)
+                .init(init_lifetime)
+                .render(SizeOverLifetimeModifier {
+                    gradient: Gradient::constant(Vec2::splat(0.02)),
+                    screen_space_size: false,
+                })
+                .render(ColorOverLifetimeModifier { gradient }),
+        );
+
+        commands
+            .spawn(ParticleEffectBundle {
+                effect: ParticleEffect::new(effect).with_z_layer_2d(Some(1.0)),
+                ..default()
+            })
+            .insert(Name::new("effect:2d"));
+
+        info!("Added Particle");
+        particle_timer.timer.reset();
     }
 }
 

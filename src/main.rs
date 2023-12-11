@@ -9,6 +9,7 @@ use bevy::{
 #[cfg(not(target_arch = "wasm32"))]
 use bevy::asset::AssetMetaCheck;
 
+use bevy_hanabi::HanabiPlugin;
 use bevy_tweening::TweeningPlugin;
 
 use flora_cause::{
@@ -57,6 +58,7 @@ fn main() {
         DisplayDebugPlugin,
         UIUtilPlugin,
         EargasmPlugin,
+        HanabiPlugin
     ))
     .add_plugins((SplashPlugin, GameplayPlugin, MainMenuPlugin, PausePlugin))
     .add_state::<AppState>()

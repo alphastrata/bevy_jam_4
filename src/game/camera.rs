@@ -7,7 +7,7 @@ use bevy::{
     log,
     prelude::*,
     render::{
-        camera::RenderTarget,
+        camera::{RenderTarget, ScalingMode},
         render_resource::{
             Extent3d, TextureDescriptor, TextureDimension, TextureFormat, TextureUsages,
         },
@@ -189,6 +189,12 @@ fn setup(mut commands: Commands, _images: ResMut<Assets<Image>>) {
                     target: RenderTarget::Window(WindowRef::Primary),
                     ..default()
                 },
+                //Uncommenting this shows particles, but no textures
+                //projection: OrthographicProjection {
+                //    scale: 1.0,
+                //    scaling_mode: ScalingMode::FixedVertical(1.),
+                //    ..default()
+                //},
                 ..default()
             },
             // main_layer(),
