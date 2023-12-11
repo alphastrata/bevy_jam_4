@@ -60,8 +60,8 @@ fn periodically_spawn_creep(
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {
     creep_timer.timer.tick(time.delta());
-    if creep_timer.timer.elapsed_secs() > 30.0 {
-        (0..500).for_each(|_| spawn_creep(&mut commands, &asset_server, &mut texture_atlases));
+    if creep_timer.timer.elapsed_secs() > 2.3 {
+        (0..80).for_each(|_| spawn_creep(&mut commands, &asset_server, &mut texture_atlases));
         creep_timer.timer.reset()
     }
 }
