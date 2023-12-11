@@ -8,9 +8,7 @@ fn fragment(in: VertexOutput) -> @location(0) vec4<f32> {
     var uv = (in.uv * 2.0) - 1.0;
     var col = colour;
     let time = globals.time;
-    let mask = sdCircle(uv, 0.91);
-    let circleRadius = 0.84;
-    let distanceFromCenter = sdCircle(uv, circleRadius);
+    let mask = sdCircle(uv, 0.89);
 
     var baseColor = colour;
     baseColor.a *= 0.01;
