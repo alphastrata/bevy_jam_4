@@ -92,7 +92,6 @@ fn play_system(
                             volume: sfx_vol,
                             ..Default::default()
                         },
-                        ..Default::default()
                     })
                     .insert(Thump);
             }
@@ -106,7 +105,6 @@ fn play_system(
                             volume: Volume::Absolute(VolumeLevel::new(0.002)),
                             ..Default::default()
                         },
-                        ..Default::default()
                     })
                     .insert(Money);
             }
@@ -120,7 +118,6 @@ fn play_system(
                             volume: sfx_vol,
                             ..Default::default()
                         },
-                        ..Default::default()
                     })
                     .insert(Electric);
             }
@@ -135,7 +132,6 @@ fn play_system(
                             volume: sfx_vol,
                             ..Default::default()
                         },
-                        ..Default::default()
                     })
                     .insert(Radar1);
             }
@@ -150,7 +146,6 @@ fn play_system(
                             // Add any other custom settings if needed
                             ..Default::default()
                         },
-                        ..Default::default()
                     })
                     .insert(Radar2);
             }
@@ -164,7 +159,6 @@ fn play_system(
                             volume: sfx_vol,
                             ..Default::default()
                         },
-                        ..Default::default()
                     })
                     .insert(TheCompanyThanksYou);
             }
@@ -179,7 +173,6 @@ fn play_system(
                             volume: sfx_vol,
                             ..Default::default()
                         },
-                        ..Default::default()
                     })
                     .insert(IntroVoice);
             }
@@ -195,7 +188,6 @@ fn play_system(
                             volume: vol,
                             ..Default::default()
                         },
-                        ..Default::default()
                     })
                     .insert(Track1);
             }
@@ -207,7 +199,6 @@ fn play_system(
                             mode: PlaybackMode::Loop,
                             ..Default::default()
                         },
-                        ..Default::default()
                     })
                     .insert(Track2);
             }

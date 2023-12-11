@@ -111,6 +111,7 @@ pub enum BuildingType {
 }
 
 impl BuildingType {
+    #[allow(clippy::too_many_arguments)]
     pub fn spawn(
         &self,
         commands: &mut Commands,

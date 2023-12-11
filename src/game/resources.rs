@@ -111,7 +111,6 @@ fn setup_debug_ui(mut commands: Commands, font: Res<GameFont>) {
                         font_size: 42.0,
                         font: font.0.clone(),
                         color: Color::WHITE,
-                        ..default()
                     },
                 )
                 .with_style(Style {
