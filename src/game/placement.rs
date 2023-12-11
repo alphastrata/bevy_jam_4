@@ -8,7 +8,6 @@ use crate::{
 };
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
-use bevy_mod_picking::prelude::*;
 
 use super::{
     camera::ViewCamera,
@@ -29,7 +28,6 @@ pub struct TowerPlacementPlugin;
 impl Plugin for TowerPlacementPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<PlacementState>()
-            .add_plugins(DefaultPickingPlugins)
             .add_systems(OnEnter(AppState::Gameplay), setup_ghost_tower)
             .add_event::<PlacementStateChanged>()
             .add_systems(

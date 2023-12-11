@@ -1,7 +1,6 @@
 use bevy::{prelude::*, transform::commands, utils::HashMap, window::PrimaryWindow};
 use bevy_ecs_tilemap::prelude::*;
 use image::{GrayImage, ImageFormat, Luma};
-use noise::{NoiseFn, Perlin};
 
 use lazy_static::lazy_static;
 use rand::{thread_rng, Rng};
@@ -138,40 +137,42 @@ fn brightness_map() -> GrayImage {
         .to_luma8()
 }
 
-/// Make a perlin-noise based brightnessmap:
-#[deprecated = "We're using a static map from a known .png embedded into the binary"]
-fn brightness_map2() -> GrayImage {
-    let size = 512;
-    let mut img = GrayImage::new(size, size);
-    let perlin = Perlin::new(1);
+// NOTE: this code was cool so I left it here for us to admire :)
 
-    let center = (size as f32 / 2.0, size as f32 / 2.0);
-    let radius = size as f32 / 64.0; // Adjust radius as needed
-
-    (0..size).for_each(|x| {
-        (0..size).for_each(|y| {
-            let nx = x as f32 / size as f32 - 0.5;
-            let ny = y as f32 / size as f32 - 0.5;
-
-            let noise_value = perlin.get([nx as f64, ny as f64, 0.0]) as f32;
-            let pixel_value = ((noise_value + 1.0) / 2.0 * 255.0) as u8;
-
-            // Apply a circular mask
-            let dist_from_center =
-                ((x as f32 - center.0).powi(2) + (y as f32 - center.1).powi(2)).sqrt();
-
-            let masked_value = if dist_from_center < radius {
-                6
-            } else {
-                pixel_value
-            };
-
-            img.put_pixel(x, y, Luma([masked_value]));
-        });
-    });
-
-    img
-}
+// /// Make a perlin-noise based brightnessmap:
+// #[deprecated = "We're using a static map from a known .png embedded into the binary"]
+// fn brightness_map2() -> GrayImage {
+// let size = 512;
+// let mut img = GrayImage::new(size, size);
+// let perlin = Perlin::new(1);
+//
+// let center = (size as f32 / 2.0, size as f32 / 2.0);
+// let radius = size as f32 / 64.0; // Adjust radius as needed
+//
+// (0..size).for_each(|x| {
+//     (0..size).for_each(|y| {
+//         let nx = x as f32 / size as f32 - 0.5;
+//         let ny = y as f32 / size as f32 - 0.5;
+//
+//         let noise_value = perlin.get([nx as f64, ny as f64, 0.0]) as f32;
+//         let pixel_value = ((noise_value + 1.0) / 2.0 * 255.0) as u8;
+//
+//         // Apply a circular mask
+//         let dist_from_center =
+//             ((x as f32 - center.0).powi(2) + (y as f32 - center.1).powi(2)).sqrt();
+//
+//         let masked_value = if dist_from_center < radius {
+//             6
+//         } else {
+//             pixel_value
+//         };
+//
+//         img.put_pixel(x, y, Luma([masked_value]));
+//     });
+// });
+//
+// img
+// }
 
 /// Highlight visualisation on tile hover
 fn highlight_tile_labels(
@@ -247,30 +248,4 @@ fn setup_highlight_tile(mut commands: Commands) {
         TheHighlightRect,
         Teardown,
     ));
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use noise::utils::{
-        ColorGradient, ImageRenderer, NoiseImage, NoiseMap, NoiseMapBuilder, PlaneMapBuilder,
-        SphereMapBuilder,
-    };
-    use noise::*;
-
-    #[test]
-    fn noise_tex_output() {
-        // This is pretty fucking baller:
-        use noise::utils::{NoiseMapBuilder, PlaneMapBuilder};
-        use noise::{Fbm, Perlin};
-
-        let fbm = Fbm::<Perlin>::new(112356);
-
-        PlaneMapBuilder::<_, 2>::new(&fbm)
-            .set_size(512, 512)
-            .set_x_bounds(-5.0, 5.0)
-            .set_y_bounds(-5.0, 5.0)
-            .build()
-            .write_to_file("fbm.png");
-    }
 }
