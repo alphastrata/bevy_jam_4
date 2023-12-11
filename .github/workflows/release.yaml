@@ -8,7 +8,7 @@ on:
 env:
   # update with the name of the main binary
   binary: flora_cause
-  add_binaries_to_github_release: true
+  add_binaries_to_github_release: false
   # update with your itch.io username/game_name
   itch_target: alphastrata/flora-cause
 
