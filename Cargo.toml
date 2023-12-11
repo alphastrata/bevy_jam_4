@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-bevy = { version = "0.12.1" }
+bevy = { version = "0.12.1", features = ["jpeg", "mp3"] }
 bevy_ecs_tilemap = { git = "https://github.com/divark/bevy_ecs_tilemap", branch = "0.12-fixes", features = [
   "atlas",
 ] }
@@ -21,8 +21,3 @@ opt-level = 3
 [profile.dev]
 opt-level = 1
 
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies.bevy]
-features = ["file_watcher", "mp3", "dynamic_linking", "jpeg"]
-
-[target.'cfg(target_arch = "wasm32")'.dependencies.bevy]
-features = ["jpeg", "mp3"]

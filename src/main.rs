@@ -28,26 +28,10 @@ fn main() {
         app.insert_resource(bevy::asset::AssetMetaCheck::Never);
     }
 
-    #[cfg(target_arch = "wasm32")]
     app.add_plugins((
-        DefaultPlugins
-            .set(ImagePlugin {
-                default_sampler: ImageSamplerDescriptor::nearest(),
-            })
-            .disable::<LogPlugin>()
-            .disable::<ScreenSpaceAmbientOcclusionPlugin>(),
-        FrameTimeDiagnosticsPlugin,
-        TransitionPlugin,
-        TweeningPlugin,
-    ));
-
-    #[cfg(not(target_arch = "wasm32"))]
-    app.add_plugins((
-        DefaultPlugins
-            .set(ImagePlugin {
-                default_sampler: ImageSamplerDescriptor::nearest(),
-            })
-            .disable::<LogPlugin>(),
+        DefaultPlugins.set(ImagePlugin {
+            default_sampler: ImageSamplerDescriptor::nearest(),
+        }),
         FrameTimeDiagnosticsPlugin,
         TransitionPlugin,
         TweeningPlugin,

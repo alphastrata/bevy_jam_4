@@ -31,9 +31,6 @@ git tag -a "flora_cause-0.0.N" -m "comments go here"
 git push --tags
 ````
 
-## TODO
-* [ ] Map generation
-
 ## Attributions:
 _ Stuff NOT made by the team, but from OS/Freely available resources_
 - [electric.mp3, thump.mp3, kaching.mp3, money.mp3] are provided by = www.Zapsplat.com
