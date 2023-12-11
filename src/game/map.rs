@@ -80,8 +80,8 @@ pub fn create_initial_map2(mut commands: Commands, asset_server: Res<AssetServer
 
     let texture = asset_server.load("textures/terrain.png");
     let map_size = TilemapSize {
-        x: brightness_map.len() as u32,
         y: brightness_map.first().unwrap().len() as u32,
+        x: brightness_map.len() as u32,
     };
     let mut tile_storage = TileStorage::empty(map_size);
     let tilemap_entity = commands.spawn_empty().id();
