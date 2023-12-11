@@ -1,6 +1,10 @@
 use bevy::prelude::*;
 
-use crate::{buildings::Building, AppState, GameOver};
+use crate::{
+    buildings::Building,
+    global_systems::fade_transition::{transition_to, TransitionState},
+    AppState, GameOver,
+};
 
 use super::resources::Inventory;
 
@@ -25,6 +29,7 @@ fn deplete_your_bank_account(
     mut game_over: EventWriter<GameOver>,
     q_all_buildings: Query<(Entity, &Building)>,
     time: Res<Time>,
+    mut transition_state: ResMut<TransitionState>,
 ) {
     if timer.0.tick(time.delta()).just_finished() {
         info!("Depleting player's corpo points");
@@ -33,8 +38,9 @@ fn deplete_your_bank_account(
         let to_subtract = multiplier * num_buildings as f32;
 
         if to_subtract as u32 > inventory.money {
-            game_over.send(GameOver);
             info!("GAME OVER");
+            game_over.send(GameOver);
+            transition_to(AppState::GameOver, &mut transition_state);
         } else {
             inventory.money -= to_subtract as u32;
         }

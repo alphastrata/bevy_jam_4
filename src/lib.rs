@@ -25,6 +25,7 @@ pub enum AppState {
     MainMenu,
     Gameplay,
     DevScene,
+    GameOver,
 }
 
 #[derive(States, Debug, Clone, Copy, Eq, PartialEq, Hash, Default)]

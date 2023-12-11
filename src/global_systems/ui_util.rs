@@ -42,6 +42,7 @@ pub fn img(
             style: Style {
                 width: width.unwrap_or_default(),
                 height: height.unwrap_or_default(),
+                margin: UiRect::new(Val::Px(0.0), Val::Px(0.0), Val::Px(20.0), Val::Px(20.0)),
                 ..default()
             },
             image: UiImage::new(texture),

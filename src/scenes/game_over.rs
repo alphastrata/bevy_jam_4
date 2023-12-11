@@ -4,39 +4,17 @@ use crate::{
     game::keybinds::FloraCommand,
     global_systems::{
         fade_transition::{transition_to, TransitionState},
-        ui_util::{btn, txt, GameFont},
+        ui_util::{btn, img, txt, GameFont},
     },
     AppState, PauseMenuState,
 };
 
-pub struct PausePlugin;
-impl Plugin for PausePlugin {
+pub struct GameOverPlugin;
+impl Plugin for GameOverPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(PauseMenuState::Paused), (setup, release_cursor))
-            .add_systems(OnExit(PauseMenuState::Paused), (teardown, capture_cursor))
-            .add_systems(
-                Update,
-                (interact, check_for_keyboard_unpause).run_if(in_state(PauseMenuState::Paused)),
-            );
-    }
-}
-
-pub fn check_for_keyboard_pause(
-    input: Res<Input<FloraCommand>>,
-    mut next_state: ResMut<NextState<PauseMenuState>>,
-) {
-    if input.just_pressed(FloraCommand::Pause) {
-        next_state.set(PauseMenuState::Paused);
-    }
-}
-
-pub fn check_for_keyboard_unpause(
-    input: Res<Input<FloraCommand>>,
-    mut next_state: ResMut<NextState<PauseMenuState>>,
-) {
-    if input.just_pressed(FloraCommand::Pause) {
-        info!("unpause");
-        next_state.set(PauseMenuState::Unpaused);
+        app.add_systems(OnEnter(AppState::GameOver), (setup, release_cursor))
+            .add_systems(OnExit(AppState::GameOver), (teardown, capture_cursor))
+            .add_systems(Update, (interact).run_if(in_state(AppState::GameOver)));
     }
 }
 
@@ -53,20 +31,15 @@ pub fn release_cursor(mut windows: Query<&mut Window>) {
 #[derive(Component)]
 enum Action {
     ReturnToMenu,
-    Unpause,
-    Volume,
 }
 
-/// Marker component for anything on the Main Menu screen.
-/// Used for despawning all UI nodes when leaving Main Menu screen
 #[derive(Component)]
-struct OnMainMenuScreen;
+struct OnGameOverScreen;
 
 /// React to button presses
 fn interact(
     interaction_query: Query<(&Interaction, &Action), (Changed<Interaction>, With<Button>)>,
     mut transition_state: ResMut<TransitionState>,
-    mut next_state_pause: ResMut<NextState<PauseMenuState>>,
 ) {
     for (interaction, menu_button_action) in &interaction_query {
         if *interaction == Interaction::Pressed {
@@ -74,18 +47,27 @@ fn interact(
                 Action::ReturnToMenu => {
                     transition_to(AppState::MainMenu, &mut transition_state);
                 }
-                Action::Unpause => next_state_pause.set(PauseMenuState::Unpaused),
-                _ => todo!("Handle volume controls"),
             }
         }
     }
 }
 
-fn setup(mut commands: Commands, font: Res<GameFont>) {
-    info!("am pause");
-    let title = txt(&mut commands, &font, "Game Paused!", 64.0);
-    let return_btn = btn(&mut commands, &font, "Return to Menu", Action::ReturnToMenu);
-    let unpause_btn = btn(&mut commands, &font, "Unpause", Action::Unpause);
+fn setup(mut commands: Commands, asset_server: Res<AssetServer>, font: Res<GameFont>) {
+    info!("am dead");
+    let tex = asset_server.load("textures/fired.png");
+    let title = txt(&mut commands, &font, "GAME OVER", 64.0);
+    let fired = img(
+        &mut commands,
+        tex,
+        Some(Val::Px(117.0 * 3.0)),
+        Some(Val::Px(75.0 * 3.0)),
+    );
+    let return_btn = btn(
+        &mut commands,
+        &font,
+        "Return to Main Menu",
+        Action::ReturnToMenu,
+    );
 
     commands
         .spawn((
@@ -100,7 +82,7 @@ fn setup(mut commands: Commands, font: Res<GameFont>) {
                 background_color: Color::rgba(0.0, 0.0, 0.0, 0.4).into(),
                 ..default()
             },
-            OnMainMenuScreen,
+            OnGameOverScreen,
         ))
         .with_children(|parent| {
             let mut cb = parent.spawn(NodeBundle {
@@ -112,12 +94,12 @@ fn setup(mut commands: Commands, font: Res<GameFont>) {
                 ..default()
             });
             cb.add_child(title);
-            cb.add_child(unpause_btn);
+            cb.add_child(fired);
             cb.add_child(return_btn);
         });
 }
 
-fn teardown(nodes: Query<Entity, With<OnMainMenuScreen>>, mut commands: Commands) {
+fn teardown(nodes: Query<Entity, With<OnGameOverScreen>>, mut commands: Commands) {
     for ent in &nodes {
         commands.entity(ent).despawn_recursive();
     }

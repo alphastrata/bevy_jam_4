@@ -1,7 +1,6 @@
 //! Shows how to render simple primitive shapes with a single color.
 use bevy::{
     diagnostic::FrameTimeDiagnosticsPlugin,
-    log::LogPlugin,
     prelude::*,
     render::texture::ImageSamplerDescriptor,
     window::{PresentMode, PrimaryWindow},
@@ -16,7 +15,8 @@ use flora_cause::{
         eargasm::EargasmPlugin, fade_transition::TransitionPlugin, ui_util::UIUtilPlugin,
     },
     scenes::{
-        gameplay::GameplayPlugin, menu::MainMenuPlugin, pause::PausePlugin, splash::SplashPlugin,
+        game_over::GameOverPlugin, gameplay::GameplayPlugin, menu::MainMenuPlugin,
+        pause::PausePlugin, splash::SplashPlugin,
     },
     AppState, PauseMenuState,
 };
@@ -43,7 +43,13 @@ fn main() {
         UIUtilPlugin,
         EargasmPlugin,
     ))
-    .add_plugins((SplashPlugin, GameplayPlugin, MainMenuPlugin, PausePlugin))
+    .add_plugins((
+        SplashPlugin,
+        GameplayPlugin,
+        MainMenuPlugin,
+        PausePlugin,
+        GameOverPlugin,
+    ))
     .add_state::<AppState>()
     .add_state::<PauseMenuState>()
     .add_systems(Startup, setup);
