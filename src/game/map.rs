@@ -33,29 +33,26 @@ pub struct CurrentTileHover {
 }
 
 enum TerrainTileType {
+    Dirt,
+    Grass,
     Rock,
-    Swamp,
-    ShallowWater,
-    DeepWater,
     Sand,
-    LightGrass,
-    HeavyGrass,
 }
 
 lazy_static! {
     static ref TERRAIN_TILE_TYPE_TO_INDICIE_MAP: HashMap<usize, TerrainTileType> = {
         let mut m = HashMap::new();
         m.insert(0usize, TerrainTileType::Sand);
-        m.insert(1usize, TerrainTileType::LightGrass);
+        m.insert(1usize, TerrainTileType::Sand);
 
-        m.insert(2usize, TerrainTileType::HeavyGrass);
-        m.insert(3usize, TerrainTileType::LightGrass);
+        m.insert(2usize, TerrainTileType::Dirt);
+        m.insert(3usize, TerrainTileType::Dirt);
 
-        m.insert(4usize, TerrainTileType::LightGrass);
-        m.insert(5usize, TerrainTileType::HeavyGrass);
+        m.insert(4usize, TerrainTileType::Grass);
+        m.insert(5usize, TerrainTileType::Grass);
 
-        m.insert(6usize, TerrainTileType::Rock);
-        m.insert(7usize, TerrainTileType::Rock);
+        m.insert(6usize, TerrainTileType::Grass);
+        m.insert(7usize, TerrainTileType::Dirt);
         m.insert(8usize, TerrainTileType::Rock);
 
         m
@@ -99,7 +96,17 @@ pub fn create_initial_map2(mut commands: Commands, asset_server: Res<AssetServer
                     .spawn(TileBundle {
                         position: tile_pos,
                         tilemap_id: TilemapId(tilemap_entity),
-                        texture_index: TileTextureIndex((*brightness % 8u8) as u32),
+                        texture_index: TileTextureIndex(match *brightness % 8u8 {
+                            0 => 6,
+                            1 => 6,
+                            2 => 5,
+                            3 => 4,
+                            4 => 4,
+                            5 => 4,
+                            6 => 3,
+                            7 => 5,
+                            _ => 0,
+                        } as u32),
                         ..Default::default()
                     })
                     .id();
