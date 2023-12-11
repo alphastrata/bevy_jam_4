@@ -99,7 +99,7 @@ fn setup_ghost_tower(mut commands: Commands) {
                 ..default()
             },
             transform: Transform::from_translation(Vec3::ZERO),
-            visibility: Visibility::Visible, // invisible by default
+            visibility: Visibility::Hidden, // invisible by default
             ..default()
         },
         GhostTower,
@@ -116,12 +116,13 @@ fn update_ghost_tower(
         Entity,
         &mut Sprite,
         &mut Handle<Image>,
+        &mut Visibility,
         &GhostTower,
         &mut Transform,
     )>,
     hover_tile: Res<CurrentTileHover>,
 ) {
-    let (_, mut sprite, mut texture, _, mut transform) = q_ghost.single_mut();
+    let (_, mut sprite, mut texture, mut vis, _, mut transform) = q_ghost.single_mut();
 
     // update position
     if let Some(tile_world_pos) = hover_tile.world_pos {
@@ -135,6 +136,7 @@ fn update_ghost_tower(
                 sprite.custom_size = Some(Vec2::new(32.0, 64.0));
                 let tex: Handle<Image> = asset_server.load(building_type.sprite());
                 *texture = tex;
+                *vis = Visibility::Visible;
             }
             None => {}
         }
