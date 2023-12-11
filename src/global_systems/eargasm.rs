@@ -212,7 +212,7 @@ fn play_system(
                     .insert(Track2);
             }
 
-            #[allow(unreachable_code)]
+            #[allow(unreachable_patterns)]
             _ => error!("Unknown audiosink/source/track pairing!"),
         }
     }

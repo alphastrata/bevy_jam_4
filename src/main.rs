@@ -1,11 +1,14 @@
 //! Shows how to render simple primitive shapes with a single color.
 use bevy::{
-    asset::AssetMetaCheck,
     diagnostic::FrameTimeDiagnosticsPlugin,
     prelude::*,
     render::texture::ImageSamplerDescriptor,
     window::{PresentMode, PrimaryWindow},
 };
+
+#[cfg(not(target_arch = "wasm32"))]
+use bevy::asset::AssetMetaCheck;
+
 use bevy_tweening::TweeningPlugin;
 
 use flora_cause::{
@@ -20,10 +23,6 @@ use flora_cause::{
     AppState, PauseMenuState,
 };
 
-/// Holding the current selection
-#[derive(States, Debug, Clone, Eq, PartialEq, Hash, Default)]
-pub struct PlayerState {}
-
 fn main() {
     let mut app = App::new();
 
@@ -31,6 +30,19 @@ fn main() {
         app.insert_resource(AssetMetaCheck::Never);
     }
 
+    #[cfg(target_arch = "wasm32")]
+    app.add_plugins((
+        DefaultPlugins
+            .set(ImagePlugin {
+                default_sampler: ImageSamplerDescriptor::nearest(),
+            })
+            .disable::<ScreenSpaceAmbientOcclusionPlugin>(),
+        FrameTimeDiagnosticsPlugin,
+        TransitionPlugin,
+        TweeningPlugin,
+    ));
+
+    #[cfg(not(target_arch = "wasm32"))]
     app.add_plugins((
         DefaultPlugins.set(ImagePlugin {
             default_sampler: ImageSamplerDescriptor::nearest(),
@@ -38,8 +50,9 @@ fn main() {
         FrameTimeDiagnosticsPlugin,
         TransitionPlugin,
         TweeningPlugin,
-    ))
-    .add_plugins((
+    ));
+
+    app.add_plugins((
         KeybindPlugin,
         DisplayDebugPlugin,
         UIUtilPlugin,
