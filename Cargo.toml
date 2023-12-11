@@ -5,12 +5,14 @@ edition = "2021"
 
 [dependencies]
 bevy = { version = "0.12.1" }
-bevy_ecs_tilemap = {git="https://github.com/divark/bevy_ecs_tilemap", branch ="0.12-fixes", features = ["atlas"]}
+bevy_ecs_tilemap = { git = "https://github.com/divark/bevy_ecs_tilemap", branch = "0.12-fixes", features = [
+  "atlas",
+] }
 bevy_tweening = "0.9.0"
 image = "0.24.7"
 lazy_static = "1.4.0"
 rand = "0.8.5"
- 
+
 # Enable max optimizations for dependencies, but not for our code:
 [profile.dev.package."*"]
 opt-level = 3
@@ -18,7 +20,6 @@ opt-level = 3
 # Enable only a small amount of optimization in debug mode
 [profile.dev]
 opt-level = 1
-
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies.bevy]
 features = ["file_watcher", "dynamic_linking", "jpeg"]

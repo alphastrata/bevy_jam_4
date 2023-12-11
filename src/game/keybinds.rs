@@ -9,6 +9,7 @@ use bevy::{
         Input,
     },
     log::info,
+    prelude::*,
     reflect::Reflect,
     time::Time,
 };
@@ -33,18 +34,18 @@ impl Plugin for KeybindPlugin {
 )]
 #[repr(u32)]
 pub enum FloraCommand {
-    Pause,
-    Left,
-    Right,
-    Up,
-    Down,
     Copy,
-    Paste,
     Debug,
+    Down,
+    Left,
+    Paste,
+    Pause,
     ResetCamera,
+    Right,
     SetPlaceDistributionTower,
-    SetPlaceRadarTower,
     SetPlaceDrainTower,
+    SetPlaceRadarTower,
+    Up,
 }
 
 lazy_static! {
