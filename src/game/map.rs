@@ -128,7 +128,7 @@ pub fn create_initial_map2(mut commands: Commands, asset_server: Res<AssetServer
 }
 
 fn brightness_map() -> GrayImage {
-    let static_map: &[u8] = include_bytes!("../../assets/textures/static-map.png");
+    let static_map: &[u8] = include_bytes!("../../assets/textures/noise3.png");
     image::load_from_memory_with_format(static_map, ImageFormat::Png)
         .expect("Failed to load static-map.png!")
         .to_luma8()
