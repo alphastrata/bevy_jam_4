@@ -12,7 +12,7 @@ use crate::{
     game::power::{AddBuilding, IsPowered, RequiresPower},
     AnimationIndices, AnimationTimer, AppState, Health, Teardown, Tree,
 };
-use bevy::{prelude::*, tasks::IoTaskPool};
+use bevy::{prelude::*, sprite::MaterialMesh2dBundle, tasks::IoTaskPool};
 
 use super::{Building, BuildingDefinition};
 
@@ -54,6 +54,8 @@ impl DrainTower {
     pub fn custom_spawn(
         commands: &mut Commands,
         mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+        mut meshes: ResMut<Assets<Mesh>>,
+        mut materials: ResMut<Assets<ColorMaterial>>,
         asset_server: Res<AssetServer>,
         pos: Vec2,
     ) -> Entity {
@@ -62,6 +64,16 @@ impl DrainTower {
             TextureAtlas::from_grid(texture_handle, Vec2::new(32.0, 64.0), 18, 1, None, None);
         let texture_atlas_handle = texture_atlases.add(texture_atlas);
         let succ_anim = AnimationIndices { first: 1, last: 17 };
+
+        let radius_display = commands
+            .spawn(MaterialMesh2dBundle {
+                mesh: meshes.add(shape::Circle::new(50.).into()).into(),
+                material: materials.add(ColorMaterial::from(Color::PURPLE)),
+                transform: Transform::from_translation(Vec3::ZERO),
+                ..default()
+            })
+            .id();
+
         let ent_id = commands
             .spawn((
                 Building,
@@ -76,6 +88,7 @@ impl DrainTower {
                 succ_anim,
                 AnimationTimer(Timer::from_seconds(0.07, TimerMode::Repeating)),
             ))
+            .add_child(radius_display)
             .id();
 
         Self::add_extra_components(commands, ent_id);

@@ -147,6 +147,8 @@ fn spawn_at_click_pos(
     mut add_building: EventWriter<AddBuilding>,
     mut expend_resource: EventWriter<ExpendResource>,
     texture_atlases: ResMut<Assets<TextureAtlas>>,
+    meshes: ResMut<Assets<Mesh>>,
+    materials: ResMut<Assets<ColorMaterial>>,
     asset_server: Res<AssetServer>,
     state: Res<PlacementState>,
     mouse_btns: Res<Input<MouseButton>>,
@@ -161,6 +163,8 @@ fn spawn_at_click_pos(
                     building.spawn(
                         &mut commands,
                         texture_atlases,
+                        meshes,
+                        materials,
                         asset_server,
                         tile_world_pos,
                         audio_mngr,

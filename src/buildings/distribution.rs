@@ -3,7 +3,7 @@ use crate::{
     game::power::{IsPowered, RequiresPower, SupplyRadius},
     AnimationIndices, AnimationTimer, AppState, Health, Teardown,
 };
-use bevy::prelude::*;
+use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
 use std::path::Path;
 
 const BUILDING_ANIM: AnimationIndices = AnimationIndices { first: 1, last: 11 };
@@ -32,6 +32,8 @@ impl DistributionTower {
     pub fn custom_spawn(
         commands: &mut Commands,
         mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+        mut meshes: ResMut<Assets<Mesh>>,
+        mut materials: ResMut<Assets<ColorMaterial>>,
         asset_server: Res<AssetServer>,
         pos: Vec2,
     ) -> Entity {
@@ -39,6 +41,15 @@ impl DistributionTower {
         let texture_atlas =
             TextureAtlas::from_grid(texture_handle, Vec2::new(32.0, 64.0), 23, 1, None, None);
         let texture_atlas_handle = texture_atlases.add(texture_atlas);
+
+        let radius_display = commands
+            .spawn(MaterialMesh2dBundle {
+                mesh: meshes.add(shape::Circle::new(50.).into()).into(),
+                material: materials.add(ColorMaterial::from(Color::CYAN)),
+                transform: Transform::from_translation(Vec3::ZERO),
+                ..default()
+            })
+            .id();
 
         let ent_id = commands
             .spawn((
@@ -57,8 +68,10 @@ impl DistributionTower {
                 BUILDING_ANIM,
                 AnimationTimer(Timer::from_seconds(0.1, TimerMode::Repeating)),
             ))
+            .add_child(radius_display)
             .id();
         Self::add_extra_components(commands, ent_id);
+
         ent_id
     }
 }

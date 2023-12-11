@@ -114,6 +114,8 @@ impl BuildingType {
         &self,
         commands: &mut Commands,
         texture_atlases: ResMut<Assets<TextureAtlas>>,
+        meshes: ResMut<Assets<Mesh>>,
+        materials: ResMut<Assets<ColorMaterial>>,
         asset_server: Res<AssetServer>,
         pos: Vec2,
         mut audio_mngr: EventWriter<AudioRequest>,
@@ -134,7 +136,14 @@ impl BuildingType {
                     ),
                 });
 
-                DistributionTower::custom_spawn(commands, texture_atlases, asset_server, pos)
+                DistributionTower::custom_spawn(
+                    commands,
+                    texture_atlases,
+                    meshes,
+                    materials,
+                    asset_server,
+                    pos,
+                )
             }
             BuildingType::Drain => {
                 audio_mngr.send(AudioRequest {
@@ -143,7 +152,14 @@ impl BuildingType {
                     ),
                 });
 
-                DrainTower::custom_spawn(commands, texture_atlases, asset_server, pos)
+                DrainTower::custom_spawn(
+                    commands,
+                    texture_atlases,
+                    meshes,
+                    materials,
+                    asset_server,
+                    pos,
+                )
             }
         };
     }

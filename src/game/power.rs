@@ -158,31 +158,31 @@ fn update_powered_unpowered2(
 
 /// Render all the circles of power as transparent yellow circles
 fn debug_power_map_ui(
-    mut gizmos: Gizmos,
-    q_supply: Query<(&SupplyRadius, &Transform)>,
-    mut q_powered_buildings: Query<(&Transform, &mut TextureAtlasSprite), With<IsPowered>>,
+    _gizmos: Gizmos,
+    _q_supply: Query<(&SupplyRadius, &Transform)>,
+    _q_powered_buildings: Query<(&Transform, &mut TextureAtlasSprite), With<IsPowered>>,
     // mut q_unpowered_sprite_buildings: Query<(&Building, &Transform, &mut Sprite), Without<IsPowered>>,
-    mut q_unpowered_spritesheet_buildings: Query<
+    _q_unpowered_spritesheet_buildings: Query<
         (&Building, &Transform, &mut TextureAtlasSprite),
         Without<IsPowered>,
     >,
 ) {
-    q_supply.iter().for_each(|(radius, transform)| {
-        let pos = Vec2::new(transform.translation.x, transform.translation.y);
-        gizmos.circle_2d(pos, radius.0, Color::YELLOW).segments(32);
-    });
-    q_powered_buildings
-        .iter_mut()
-        .for_each(|(transform, mut sprite)| {
-            let pos = Vec2::new(transform.translation.x, transform.translation.y + 26.0);
-            gizmos.circle_2d(pos, 7.0, Color::GREEN).segments(16);
-            sprite.color = Color::rgba(1.0, 1.0, 1.0, 1.0);
-        });
-    q_unpowered_spritesheet_buildings
-        .iter_mut()
-        .for_each(|(_, transform, mut sprite)| {
-            let pos = Vec2::new(transform.translation.x, transform.translation.y + 26.0);
-            gizmos.circle_2d(pos, 7.0, Color::GRAY).segments(16);
-            sprite.color = Color::rgba(0.5, 0.5, 0.5, 1.0);
-        });
+    // q_supply.iter().for_each(|(radius, transform)| {
+    //     let pos = Vec2::new(transform.translation.x, transform.translation.y);
+    //     gizmos.circle_2d(pos, radius.0, Color::YELLOW).segments(32);
+    // });
+    // q_powered_buildings
+    //     .iter_mut()
+    //     .for_each(|(transform, mut sprite)| {
+    //         let pos = Vec2::new(transform.translation.x, transform.translation.y + 26.0);
+    //         gizmos.circle_2d(pos, 7.0, Color::GREEN).segments(16);
+    //         sprite.color = Color::rgba(1.0, 1.0, 1.0, 1.0);
+    //     });
+    // q_unpowered_spritesheet_buildings
+    //     .iter_mut()
+    //     .for_each(|(_, transform, mut sprite)| {
+    //         let pos = Vec2::new(transform.translation.x, transform.translation.y + 26.0);
+    //         gizmos.circle_2d(pos, 7.0, Color::GRAY).segments(16);
+    //         sprite.color = Color::rgba(0.5, 0.5, 0.5, 1.0);
+    //     });
 }
