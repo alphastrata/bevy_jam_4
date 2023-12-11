@@ -7,7 +7,7 @@
 fn fragment(in: VertexOutput) -> @location(0) vec4<f32> {
     var uv = (in.uv * 2.0) - 1.0;
     var col = colour;
-    let mask = sdCircle(uv, 0.90);
+    let mask = sdCircle(uv, 0.84);
 
     col *= smoothstep(0.0, 0.09, mask);
     return col;
