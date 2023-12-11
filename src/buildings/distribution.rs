@@ -47,9 +47,9 @@ impl DistributionTower {
 
         let radius_display = commands
             .spawn(MaterialMesh2dBundle {
-                mesh: meshes.add(shape::Circle::new(50.).into()).into(),
+                mesh: meshes.add(shape::Circle::new(300.).into()).into(),
                 material: materials.add(TowerRadiusMaterial { color: Color::CYAN }),
-                transform: Transform::from_translation(Vec3::ZERO),
+                transform: Transform::from_translation(Vec3::new(0.0, 0.0, 0.1)),
                 ..default()
             })
             .id();

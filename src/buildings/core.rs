@@ -2,9 +2,9 @@ use crate::{
     game::power::{IsPowered, SupplyRadius},
     AnimationIndices, AnimationTimer, AppState, Health, Teardown,
 };
-use bevy::prelude::*;
+use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
 
-use super::{Building, BuildingDefinition};
+use super::{twr_custom_mats::TowerRadiusMaterial, Building, BuildingDefinition};
 
 /// Core building that the player starts with
 #[derive(Component, Default)]
@@ -28,6 +28,8 @@ impl TheCore {
     pub fn custom_spawn(
         commands: &mut Commands,
         mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+        mut meshes: ResMut<Assets<Mesh>>,
+        mut materials: ResMut<Assets<TowerRadiusMaterial>>,
         asset_server: Res<AssetServer>,
         pos: Vec2,
     ) -> Entity {
@@ -36,6 +38,18 @@ impl TheCore {
             TextureAtlas::from_grid(texture_handle, Vec2::new(64.0, 96.0), 8, 1, None, None);
         let texture_atlas_handle = texture_atlases.add(texture_atlas);
         let core_anim = AnimationIndices { first: 0, last: 7 };
+
+        let radius_display = commands
+            .spawn(MaterialMesh2dBundle {
+                mesh: meshes.add(shape::Circle::new(550.).into()).into(),
+                material: materials.add(TowerRadiusMaterial {
+                    color: Color::PURPLE,
+                }),
+                transform: Transform::from_translation(Vec3::new(0.0, 0.0, 0.1)),
+                ..default()
+            })
+            .id();
+
         let ent_id = commands
             .spawn((
                 Building,
@@ -50,6 +64,7 @@ impl TheCore {
                 core_anim,
                 AnimationTimer(Timer::from_seconds(0.07, TimerMode::Repeating)),
             ))
+            .add_child(radius_display)
             .id();
 
         Self::add_extra_components(commands, ent_id);

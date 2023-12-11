@@ -71,11 +71,11 @@ impl DrainTower {
 
         let radius_display = commands
             .spawn(MaterialMesh2dBundle {
-                mesh: meshes.add(shape::Circle::new(50.).into()).into(),
+                mesh: meshes.add(shape::Circle::new(400.).into()).into(),
                 material: materials.add(TowerRadiusMaterial {
                     color: Color::PURPLE,
                 }),
-                transform: Transform::from_translation(Vec3::ZERO),
+                transform: Transform::from_translation(Vec3::new(0.0, 0.0, 0.1)),
                 ..default()
             })
             .id();
@@ -204,9 +204,9 @@ fn animate_sprite(
     }
 }
 
-fn debug_drain_radii(mut gizmos: Gizmos, q_towers: Query<(&DrainRadius, &Transform)>) {
-    q_towers.iter().for_each(|(radius, transform)| {
-        let pos = Vec2::new(transform.translation.x, transform.translation.y);
-        gizmos.circle_2d(pos, radius.0, Color::CYAN).segments(32);
-    });
+fn debug_drain_radii(_gizmos: Gizmos, _q_towers: Query<(&DrainRadius, &Transform)>) {
+    // q_towers.iter().for_each(|(radius, transform)| {
+    //     let pos = Vec2::new(transform.translation.x, transform.translation.y);
+    //     gizmos.circle_2d(pos, radius.0, Color::CYAN).segments(32);
+    // });
 }

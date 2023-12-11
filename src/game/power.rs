@@ -5,7 +5,7 @@ use std::ops::ControlFlow;
 use bevy::prelude::*;
 
 use crate::{
-    buildings::{core::TheCore, spawn_building, Building},
+    buildings::{core::TheCore, spawn_building, twr_custom_mats::TowerRadiusMaterial, Building},
     AppState,
 };
 
@@ -56,9 +56,18 @@ impl Plugin for PowerPlugin {
 fn create_core(
     mut commands: Commands,
     texture_atlases: ResMut<Assets<TextureAtlas>>,
+    meshes: ResMut<Assets<Mesh>>,
+    materials: ResMut<Assets<TowerRadiusMaterial>>,
     asset_server: Res<AssetServer>,
 ) {
-    TheCore::custom_spawn(&mut commands, texture_atlases, asset_server, Vec2::ZERO);
+    TheCore::custom_spawn(
+        &mut commands,
+        texture_atlases,
+        meshes,
+        materials,
+        asset_server,
+        Vec2::ZERO,
+    );
 }
 
 /// Updates the set of towers that are powered or unpowered
