@@ -15,9 +15,9 @@ pub mod distribution;
 pub mod twr_custom_mats {
 
     use bevy::{
-        pbr::{ExtendedMaterial, MaterialExtension},
         prelude::*,
         render::render_resource::{AsBindGroup, ShaderRef},
+        sprite::Material2d,
     };
 
     #[derive(Asset, TypePath, AsBindGroup, Debug, Clone)]
@@ -26,7 +26,7 @@ pub mod twr_custom_mats {
         color: Color,
     }
 
-    impl Material for TowerRadiusMaterial {
+    impl Material2d for TowerRadiusMaterial {
         fn vertex_shader() -> ShaderRef {
             "shaders/tower_radius.wgsl".into()
         }
