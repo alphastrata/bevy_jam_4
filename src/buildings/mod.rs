@@ -21,7 +21,7 @@ pub mod twr_custom_mats {
         sprite::Material2d,
     };
 
-    #[derive(Asset, TypePath, AsBindGroup, Debug, Clone)]
+    #[derive(Asset, TypePath, AsBindGroup, Debug, Clone, Default)]
     pub struct TowerRadiusMaterial {
         #[uniform(0)]
         pub color: Color,

@@ -55,16 +55,16 @@ fn change_current_building(
 ) {
     let prev_state = state.being_placed_building_type.clone();
     if input.just_released(FloraCommand::SetPlaceDistributionTower) {
-        if state
+        state.being_placed_building_type = match state
             .being_placed_building_type
             .as_ref()
             .map_or(false, |val| val == &BuildingType::Distribution)
         {
-            state.being_placed_building_type = None;
-        } else {
-            state.being_placed_building_type = Some(BuildingType::Distribution);
+            true => None,
+            false => Some(BuildingType::Distribution),
         }
     }
+
     // if input.just_released(FloraCommand::SetPlaceRadarTower) {
     //     state.being_placed_building_type = Some(BuildingType::Radar);
     // }
