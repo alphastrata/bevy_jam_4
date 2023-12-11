@@ -43,11 +43,9 @@ fn main() {
 
     #[cfg(not(target_arch = "wasm32"))]
     app.add_plugins((
-        DefaultPlugins
-            .set(ImagePlugin {
-                default_sampler: ImageSamplerDescriptor::nearest(),
-            })
-            .disable::<LogPlugin>(),
+        DefaultPlugins.set(ImagePlugin {
+            default_sampler: ImageSamplerDescriptor::nearest(),
+        }), // .disable::<LogPlugin>()
         FrameTimeDiagnosticsPlugin,
         TransitionPlugin,
         TweeningPlugin,
