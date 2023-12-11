@@ -1,6 +1,3 @@
-use crate::global_systems::eargasm::AudioRequest;
-use crate::Teardown;
-use crate::{game::hp_bars::HpBarUISettings, Health};
 use bevy::prelude::*;
 use std::path::Path;
 
@@ -10,6 +7,9 @@ use self::{
     drain::{DrainTower, DrainTowerPlugin},
     radar::RadarTower,
 };
+use crate::global_systems::eargasm::AudioRequest;
+use crate::Teardown;
+use crate::{game::hp_bars::HpBarUISettings, Health};
 
 pub mod core;
 pub mod distribution;
@@ -28,7 +28,7 @@ pub mod twr_custom_mats {
     }
 
     impl Material2d for TowerRadiusMaterial {
-        fn vertex_shader() -> ShaderRef {
+        fn fragment_shader() -> ShaderRef {
             "shaders/tower_radius.wgsl".into()
         }
     }

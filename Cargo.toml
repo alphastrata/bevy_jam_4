@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-bevy = { version = "0.12.1", features = ["mp3"] }
+bevy = { version = "0.12.1", features = ["mp3", "file_watcher", "dynamic_linking"] }
 bevy_ecs_tilemap = {git="https://github.com/divark/bevy_ecs_tilemap", branch ="0.12-fixes", features = ["atlas"]}
 bevy_tweening = "0.9.0"
 image = "0.24.7"
