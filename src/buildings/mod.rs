@@ -26,7 +26,7 @@ pub mod twr_custom_mats {
         color: Color,
     }
 
-    impl MaterialExtension for TowerRadiusMaterial {
+    impl Material for TowerRadiusMaterial {
         fn vertex_shader() -> ShaderRef {
             "shaders/tower_radius.wgsl".into()
         }
