@@ -1,6 +1,7 @@
 //! Shows how to render simple primitive shapes with a single color.
 use bevy::{
     diagnostic::FrameTimeDiagnosticsPlugin,
+    log::LogPlugin,
     prelude::*,
     render::texture::ImageSamplerDescriptor,
     window::{PresentMode, PrimaryWindow},
@@ -36,6 +37,7 @@ fn main() {
             .set(ImagePlugin {
                 default_sampler: ImageSamplerDescriptor::nearest(),
             })
+            .disable::<LogPlugin>()
             .disable::<ScreenSpaceAmbientOcclusionPlugin>(),
         FrameTimeDiagnosticsPlugin,
         TransitionPlugin,
@@ -44,9 +46,11 @@ fn main() {
 
     #[cfg(not(target_arch = "wasm32"))]
     app.add_plugins((
-        DefaultPlugins.set(ImagePlugin {
-            default_sampler: ImageSamplerDescriptor::nearest(),
-        }),
+        DefaultPlugins
+            .set(ImagePlugin {
+                default_sampler: ImageSamplerDescriptor::nearest(),
+            })
+            .disable::<LogPlugin>(),
         FrameTimeDiagnosticsPlugin,
         TransitionPlugin,
         TweeningPlugin,
