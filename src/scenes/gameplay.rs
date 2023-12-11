@@ -2,7 +2,10 @@ use bevy::prelude::*;
 use bevy_ecs_tilemap::TilemapPlugin;
 
 use crate::{
-    buildings::{distribution::DistributionTowerPlugin, drain::DrainTowerPlugin, Building},
+    buildings::{
+        core::TheCorePlugin, distribution::DistributionTowerPlugin, drain::DrainTowerPlugin,
+        Building,
+    },
     creeps::CreepPlugin,
     game::{
         camera::GameCameraPlugin, hp_bars::HealthBarUIPlugin, hud::HudPlugin, map::MapPlugin,
@@ -26,6 +29,7 @@ impl Plugin for GameplayPlugin {
             PowerPlugin,
             ResourcePlugin,
             HealthBarUIPlugin,
+            TheCorePlugin,
             DrainTowerPlugin,
             DistributionTowerPlugin,
             HudPlugin,

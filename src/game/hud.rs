@@ -246,6 +246,6 @@ fn set_button_state(
     }
 }
 
-fn teardown(mut commands: Commands, mut q_elements: Query<Entity, With<HudElement>>) {
+fn teardown(mut commands: Commands, q_elements: Query<Entity, With<HudElement>>) {
     q_elements.for_each(|element| commands.entity(element).despawn_recursive());
 }
