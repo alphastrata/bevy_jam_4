@@ -9,7 +9,7 @@ use crate::{
     },
     global_systems::eargasm::{AudioComponent, AudioRequest, Money},
     prelude::*,
-    Range, Teardown,
+    Range, Teardown, CREEP_Z,
 };
 use bevy::{asset::processor::ProcessorTransactionLog, ecs::bundle, prelude::*, time::Stopwatch};
 use rand::Rng;
@@ -112,7 +112,7 @@ fn spawn_creep(
             SpriteSheetBundle {
                 texture_atlas: atlas_handle,
                 sprite: TextureAtlasSprite::new(sprite_index),
-                transform: Transform::from_xyz(x, y, 0.10),
+                transform: Transform::from_xyz(x, y, CREEP_Z),
                 ..default()
             },
             Teardown,

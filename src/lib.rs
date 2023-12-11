@@ -35,9 +35,9 @@ pub enum PauseMenuState {
 }
 
 const TERRAIN_Z: f32 = 0.1;
-const SHADER_Z: f32 = 0.2;
+const SHADER_Z: f32 = -0.05;
 const BUILDING_Z: f32 = 0.3;
-const CREEP_Z: f32 = 0.3;
+const CREEP_Z: f32 = 9.0;
 const HP_BAR_Z: f32 = 0.4;
 const PLACEMENT_Z: f32 = 0.5;
 

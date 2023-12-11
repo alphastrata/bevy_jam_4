@@ -17,7 +17,8 @@ fn fragment(in: VertexOutput) -> @location(0) vec4<f32> {
 
     let additionalOpacity = clamp(1.0 - (distanceFromCenter) / circleRadius, 0.0, 0.7);
 
-    baseColor.a += additionalOpacity * (0.72);
+    //baseColor.a += additionalOpacity * (0.52);
+    baseColor.a += clamp(0.1, 0.7, additionalOpacity * (0.4*sin(time) + 1.0));
 
     return baseColor;
 }    
