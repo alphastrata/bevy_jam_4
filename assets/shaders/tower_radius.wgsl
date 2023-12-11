@@ -13,11 +13,11 @@ fn fragment(in: VertexOutput) -> @location(0) vec4<f32> {
     let distanceFromCenter = sdCircle(uv, circleRadius);
 
     var baseColor = colour;
-    baseColor.a *= 0.01;
+    baseColor.a = 0.01;
 
     let additionalOpacity = clamp(1.0 - (distanceFromCenter) / circleRadius, 0.0, 0.7);
 
-    baseColor.a += additionalOpacity * (1.0 - baseColor.a);
+    baseColor.a += additionalOpacity * (0.72);
 
     return baseColor;
 }    
