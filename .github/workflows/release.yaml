@@ -6,15 +6,12 @@ on:
       - '*'
 
 env:
+  # update with the name of the main binary
   binary: flora_cause
-<<<<<<< HEAD
-||||||| 19d4138
   add_binaries_to_github_release: true
-  itch_target: alphastrata/flora-cause
-=======
-  add_binaries_to_github_release: true
-  itch_target: alphastrata/flora_cause
->>>>>>> main
+  # update with your itch.io username/game_name
+  itch_target: itch.io-alphastrata/flora_cause
+
 
 jobs:
 
@@ -23,14 +20,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: little-core-labs/get-git-tag@v3.0.1
+      - uses: olegtarasov/get-tag@v2.1.2
         id: get_version
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
-          target: wasm32-unknown-unknown
-          override: true
+          targets: wasm32-unknown-unknown
       - name: install wasm-bindgen-cli
         run: |
           cargo install wasm-bindgen-cli
@@ -41,16 +36,8 @@ jobs:
 
       - name: Prepare package
         run: |
-<<<<<<< HEAD
-          wasm-bindgen --no-typescript --out-name flora_cause --out-dir wasm --target web target/wasm32-unknown-unknown/release/${{ env.binary }}.wasm
-          cp -r assets wasm/
-||||||| 19d4138
-          wasm-bindgen --no-typescript --out-name flora_cause --out-dir out --target web target/wasm32-unknown-unknown/release/${{ env.binary }}.wasm
-          cp -r assets out/
-=======
           wasm-bindgen --no-typescript --out-name bevy_game --out-dir wasm --target web target/wasm32-unknown-unknown/release/${{ env.binary }}.wasm
           cp -r assets wasm/
->>>>>>> main
 
       - name: Package as a zip
         working-directory: ./wasm
@@ -64,8 +51,8 @@ jobs:
           name: wasm
           retention-days: 1
 
-
       - name: Upload binaries to release
+        if: ${{ env.add_binaries_to_github_release == 'true' }}
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
@@ -79,14 +66,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: little-core-labs/get-git-tag@v3.0.1
+      - uses: olegtarasov/get-tag@v2.1.2
         id: get_version
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
-          target: x86_64-unknown-linux-gnu
-          override: true
+          targets: x86_64-unknown-linux-gnu
       - name: install dependencies
         run: |
           sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev
@@ -100,13 +85,21 @@ jobs:
           mkdir linux
           cp target/x86_64-unknown-linux-gnu/release/${{ env.binary }} linux/
           cp -r assets linux/
+
       - name: Package as a zip
-        uses: vimtor/action-zip@v1
+        working-directory: ./linux
+        run: |
+          zip --recurse-paths ../${{ env.binary }}.zip .
+
+      - name: Upload binaries to artifacts
+        uses: actions/upload-artifact@v3
         with:
-          files: linux
-          dest: ${{ env.binary }}.zip
+          path: ${{ env.binary }}.zip
+          name: linux
+          retention-days: 1
 
       - name: Upload binaries to release
+        if: ${{ env.add_binaries_to_github_release == 'true' }}
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
@@ -120,14 +113,12 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: little-core-labs/get-git-tag@v3.0.1
+      - uses: olegtarasov/get-tag@v2.1.2
         id: get_version
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
-          target: x86_64-pc-windows-msvc
-          override: true
+          targets: x86_64-pc-windows-msvc
 
       - name: Build
         run: |
@@ -138,13 +129,20 @@ jobs:
           mkdir windows
           cp target/x86_64-pc-windows-msvc/release/${{ env.binary }}.exe windows/
           cp -r assets windows/
+
       - name: Package as a zip
-        uses: vimtor/action-zip@v1
+        run: |
+          Compress-Archive -Path windows/* -DestinationPath ${{ env.binary }}.zip
+
+      - name: Upload binaries to artifacts
+        uses: actions/upload-artifact@v3
         with:
-          files: windows
-          dest: ${{ env.binary }}.zip
+          path: ${{ env.binary }}.zip
+          name: windows
+          retention-days: 1
 
       - name: Upload binaries to release
+        if: ${{ env.add_binaries_to_github_release == 'true' }}
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
@@ -153,19 +151,17 @@ jobs:
           tag: ${{ github.ref }}
           overwrite: true
 
-  # Build for macOS
-  release-macos:
+  # Build for MacOS x86_64
+  release-macOS-intel:
     runs-on: macOS-latest
 
     steps:
-      - uses: little-core-labs/get-git-tag@v3.0.1
+      - uses: olegtarasov/get-tag@v2.1.2
         id: get_version
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
-          target: x86_64-apple-darwin
-          override: true
+          targets: x86_64-apple-darwin
       - name: Environment Setup
         run: |
           export CFLAGS="-fno-stack-check"
@@ -180,14 +176,22 @@ jobs:
           mkdir -p ${{ env.binary }}.app/Contents/MacOS
           cp target/x86_64-apple-darwin/release/${{ env.binary }} ${{ env.binary }}.app/Contents/MacOS/
           cp -r assets ${{ env.binary }}.app/Contents/MacOS/
-          hdiutil create -fs HFS+ -volname "${{ env.binary }}" -srcfolder ${{ env.binary }}.app ${{ env.binary }}.dmg
+          hdiutil create -fs HFS+ -volname "${{ env.binary }}" -srcfolder ${{ env.binary }}.app ${{ env.binary }}-macOS-intel.dmg
+
+      - name: Upload binaries to artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          path: ${{ env.binary }}-macOS-intel.dmg
+          name: macOS-intel
+          retention-days: 1
 
       - name: Upload binaries to release
+        if: ${{ env.add_binaries_to_github_release == 'true' }}
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ env.binary }}.dmg
-          asset_name: ${{ env.binary }}-macos-${{ steps.get_version.outputs.tag }}.dmg
+          file:  ${{ env.binary }}-macOS-intel.dmg
+          asset_name: ${{ env.binary }}-macOS-intel-${{ steps.get_version.outputs.tag }}.dmg
           tag: ${{ github.ref }}
           overwrite: true
 
@@ -202,7 +206,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: aarch64-apple-darwin
-      - name: Environment
+      - name: Environment 
         # macOS 11 was the first version to support ARM
         run: |
           export MACOSX_DEPLOYMENT_TARGET="11"
@@ -284,4 +288,3 @@ jobs:
                 builds/$channel/* \
                 ${{ env.itch_target }}:$channel
           done
-
