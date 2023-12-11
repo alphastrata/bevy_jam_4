@@ -239,18 +239,18 @@ jobs:
 #           tag: ${{ github.ref }}
 #           overwrite: true
 
-#   check-if-upload-to-itch-is-configured:
-#     runs-on: ubuntu-latest
-#     outputs:
-#       should-upload: ${{ steps.check-env.outputs.has-itch-target }}
-#     steps:
-#       - id: check-env
-#         run: |
-#           if [[ -z "$itch_target" ]]; then
-#             echo "has-itch-target=no" >> $GITHUB_OUTPUT
-#           else
-#             echo "has-itch-target=yes" >> $GITHUB_OUTPUT
-#           fi
+  check-if-upload-to-itch-is-configured:
+    runs-on: ubuntu-latest
+    outputs:
+      should-upload: ${{ steps.check-env.outputs.has-itch-target }}
+    steps:
+      - id: check-env
+        run: |
+          if [[ -z "$itch_target" ]]; then
+            echo "has-itch-target=no" >> $GITHUB_OUTPUT
+          else
+            echo "has-itch-target=yes" >> $GITHUB_OUTPUT
+          fi
 
   upload-to-itch:
     runs-on: ubuntu-latest
