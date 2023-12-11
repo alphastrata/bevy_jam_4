@@ -12,6 +12,26 @@ use self::{
 
 pub mod core;
 pub mod distribution;
+pub mod twr_custom_mats {
+
+    use bevy::{
+        pbr::{ExtendedMaterial, MaterialExtension},
+        prelude::*,
+        render::render_resource::{AsBindGroup, ShaderRef},
+    };
+
+    #[derive(Asset, TypePath, AsBindGroup, Debug, Clone)]
+    pub struct TowerRadiusMaterial {
+        #[uniform(0)]
+        color: Color,
+    }
+
+    impl MaterialExtension for TowerRadiusMaterial {
+        fn vertex_shader() -> ShaderRef {
+            "shaders/tower_radius.wgsl".into()
+        }
+    }
+}
 pub mod drain;
 pub mod radar;
 
