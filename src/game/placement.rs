@@ -5,7 +5,7 @@ use crate::{
     },
     game::{camera::CameraState, power::AddBuilding},
     global_systems::eargasm::AudioRequest,
-    AppState, Teardown,
+    AppState, Teardown, PLACEMENT_Z,
 };
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
@@ -125,7 +125,7 @@ fn update_ghost_tower(
 
     // update position
     if let Some(tile_world_pos) = hover_tile.world_pos {
-        transform.translation = Vec3::new(tile_world_pos.x, tile_world_pos.y, 0.4);
+        transform.translation = Vec3::new(tile_world_pos.x, tile_world_pos.y, PLACEMENT_Z);
     }
 
     // update what its showing

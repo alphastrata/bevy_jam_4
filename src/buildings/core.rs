@@ -1,6 +1,6 @@
 use crate::{
     game::power::{IsPowered, SupplyRadius},
-    AnimationIndices, AnimationTimer, AppState, Health, Teardown,
+    AnimationIndices, AnimationTimer, AppState, Health, Teardown, BUILDING_Z, SHADER_Z,
 };
 use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
 
@@ -45,7 +45,7 @@ impl TheCore {
                 material: materials.add(TowerRadiusMaterial {
                     color: Color::PURPLE,
                 }),
-                transform: Transform::from_translation(Vec3::new(0.0, 0.0, 0.1)),
+                transform: Transform::from_translation(Vec3::new(0.0, 0.0, SHADER_Z)),
                 ..default()
             })
             .id();
@@ -58,7 +58,7 @@ impl TheCore {
                 SpriteSheetBundle {
                     texture_atlas: texture_atlas_handle,
                     sprite: TextureAtlasSprite::new(core_anim.first),
-                    transform: Transform::from_translation(Vec3::new(pos.x, pos.y, 0.01)),
+                    transform: Transform::from_translation(Vec3::new(pos.x, pos.y, BUILDING_Z)),
                     ..default()
                 },
                 core_anim,

@@ -1,7 +1,7 @@
 use super::{twr_custom_mats::TowerRadiusMaterial, Building, BuildingDefinition, BuildingState};
 use crate::{
     game::power::{IsPowered, RequiresPower, SupplyRadius},
-    AnimationIndices, AnimationTimer, AppState, Health, Teardown,
+    AnimationIndices, AnimationTimer, AppState, Health, Teardown, BUILDING_Z, SHADER_Z,
 };
 use bevy::{
     prelude::*,
@@ -51,7 +51,7 @@ impl DistributionTower {
                 material: materials.add(TowerRadiusMaterial {
                     color: Color::rgb(0.9453125, 0.0, 0.0625),
                 }),
-                transform: Transform::from_translation(Vec3::new(0.0, 0.0, 0.1)),
+                transform: Transform::from_translation(Vec3::new(0.0, 0.0, SHADER_Z)),
                 ..default()
             })
             .id();
@@ -67,7 +67,7 @@ impl DistributionTower {
                 SpriteSheetBundle {
                     texture_atlas: texture_atlas_handle,
                     sprite: TextureAtlasSprite::new(BUILDING_ANIM.first),
-                    transform: Transform::from_translation(Vec3::new(pos.x, pos.y, 0.01)),
+                    transform: Transform::from_translation(Vec3::new(pos.x, pos.y, BUILDING_Z)),
                     ..default()
                 },
                 BUILDING_ANIM,

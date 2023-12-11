@@ -8,8 +8,8 @@ use self::{
     radar::RadarTower,
 };
 use crate::global_systems::eargasm::AudioRequest;
-use crate::Teardown;
 use crate::{game::hp_bars::HpBarUISettings, Health};
+use crate::{Teardown, BUILDING_Z};
 
 pub mod core;
 pub mod distribution;
@@ -88,7 +88,7 @@ pub fn spawn_building<B: BuildingDefinition>(
                 },
                 sprite: SpriteBundle {
                     texture: sprite_texture,
-                    transform: Transform::from_translation(Vec3::new(pos.x, pos.y, 0.10)),
+                    transform: Transform::from_translation(Vec3::new(pos.x, pos.y, BUILDING_Z)),
                     ..default()
                 },
             },

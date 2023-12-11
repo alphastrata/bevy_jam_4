@@ -2,7 +2,7 @@
 
 use bevy::{prelude::*, sprite::Anchor};
 
-use crate::{AppState, Health};
+use crate::{AppState, Health, HP_BAR_Z};
 
 const HP_BAR_THICCNESS: f32 = 8.0;
 const HP_BAR_WIDTHNESS: f32 = 80.0;
@@ -49,7 +49,7 @@ fn spawn_new_hp_bar(
                         anchor: Anchor::BottomCenter,
                         ..default()
                     },
-                    transform: Transform::from_translation(Vec3::new(offset.x, offset.y, 0.29)),
+                    transform: Transform::from_translation(Vec3::new(offset.x, offset.y, HP_BAR_Z)),
                     ..default()
                 },
                 HpBarRed,
@@ -65,7 +65,11 @@ fn spawn_new_hp_bar(
                         anchor: Anchor::BottomCenter,
                         ..default()
                     },
-                    transform: Transform::from_translation(Vec3::new(offset.x, offset.y, 0.3)),
+                    transform: Transform::from_translation(Vec3::new(
+                        offset.x,
+                        offset.y,
+                        HP_BAR_Z + 0.05,
+                    )),
                     ..default()
                 },
                 HpBarGreen,
@@ -97,6 +101,7 @@ fn update_bars(
         let x_offset = (1.0 - percent) * HP_BAR_WIDTHNESS;
         green_sprite.custom_size = Some(Vec2::new(HP_BAR_WIDTHNESS * percent, HP_BAR_THICCNESS));
         let offset = settings.offset.unwrap_or(Vec2::new(0.0, -64.0));
-        *green_tf = Transform::from_translation(Vec3::new(-x_offset / 2.0, offset.y, 0.3));
+        *green_tf =
+            Transform::from_translation(Vec3::new(-x_offset / 2.0, offset.y, HP_BAR_Z + 0.05));
     });
 }

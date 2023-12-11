@@ -10,7 +10,7 @@
 use crate::{
     creeps::{CreepDie, SpawnCreep},
     game::power::{AddBuilding, IsPowered, RequiresPower},
-    AnimationIndices, AnimationTimer, AppState, Health, Teardown, Tree,
+    AnimationIndices, AnimationTimer, AppState, Health, Teardown, Tree, BUILDING_Z, SHADER_Z,
 };
 use bevy::{
     prelude::*,
@@ -76,7 +76,7 @@ impl DrainTower {
                     // color: Color::rgb(0.23046875, 0.6875, 0.1015625),
                     color: Color::ORANGE,
                 }),
-                transform: Transform::from_translation(Vec3::new(0.0, 0.0, 0.1)),
+                transform: Transform::from_translation(Vec3::new(0.0, 0.0, SHADER_Z)),
                 ..default()
             })
             .id();
@@ -89,7 +89,7 @@ impl DrainTower {
                 SpriteSheetBundle {
                     texture_atlas: texture_atlas_handle,
                     sprite: TextureAtlasSprite::new(succ_anim.first),
-                    transform: Transform::from_translation(Vec3::new(pos.x, pos.y, 0.01)),
+                    transform: Transform::from_translation(Vec3::new(pos.x, pos.y, BUILDING_Z)),
                     ..default()
                 },
                 succ_anim,
