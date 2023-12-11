@@ -8,8 +8,9 @@ use crate::{
     },
     creeps::CreepPlugin,
     game::{
-        camera::GameCameraPlugin, hp_bars::HealthBarUIPlugin, hud::HudPlugin, map::MapPlugin,
-        placement::TowerPlacementPlugin, power::PowerPlugin, resources::ResourcePlugin,
+        camera::GameCameraPlugin, depletion::DepletionPlugin, hp_bars::HealthBarUIPlugin,
+        hud::HudPlugin, map::MapPlugin, placement::TowerPlacementPlugin, power::PowerPlugin,
+        resources::ResourcePlugin,
     },
     AppState, Teardown,
 };
@@ -21,6 +22,7 @@ pub struct GameplayPlugin;
 impl Plugin for GameplayPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
+            DepletionPlugin,
             TilemapPlugin,
             CreepPlugin,
             GameCameraPlugin,
