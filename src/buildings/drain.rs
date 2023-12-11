@@ -8,7 +8,7 @@
 //! Every frame we try and drain a tree
 
 use crate::{
-    creeps::SpawnCreep,
+    creeps::{CreepDie, SpawnCreep},
     game::power::{AddBuilding, IsPowered, RequiresPower},
     AnimationIndices, AnimationTimer, AppState, Health, Teardown, Tree,
 };
@@ -109,13 +109,14 @@ impl Plugin for DrainTowerPlugin {
 /// so this system instead calculates them every time new creeps are spawned or a new
 /// tower is built.
 fn calculate_drainees(
-    mut tower_spawned: EventReader<AddBuilding>,
-    mut creep_spawned: EventReader<SpawnCreep>,
+    tower_spawned: EventReader<AddBuilding>,
+    creep_spawned: EventReader<SpawnCreep>,
     mut q_towers: Query<(&mut DrainTower, &Transform, &DrainRadius)>,
+    creep_died: EventReader<CreepDie>,
     q_trees: Query<(Entity, &Transform), With<Tree>>,
 ) {
     let mut total_trees = 0;
-    creep_spawned.read().for_each(|_| {
+    if !(creep_spawned.is_empty() && tower_spawned.is_empty() && creep_died.is_empty()) {
         q_towers
             .iter_mut()
             .for_each(|(mut dt, tower_tf, tower_radius)| {
@@ -130,25 +131,6 @@ fn calculate_drainees(
 
                 dt.trees_in_proximity = close_trees;
             });
-    });
-    // Yes, I duplicated it. curse you, this is a game jam, let me be pasta-y!
-    tower_spawned.read().for_each(|_| {
-        q_towers
-            .iter_mut()
-            .for_each(|(mut dt, tower_tf, tower_radius)| {
-                let close_trees: Vec<_> = q_trees
-                    .iter()
-                    .filter(|(_, tree_tf): &(Entity, &Transform)| {
-                        tree_tf.translation.distance(tower_tf.translation) < tower_radius.0
-                    })
-                    .map(|(tree, _)| tree)
-                    .collect();
-                total_trees += close_trees.len();
-
-                dt.trees_in_proximity = close_trees;
-            });
-    });
-    if !(creep_spawned.is_empty() && tower_spawned.is_empty()) {
         trace!("Recalculated trees within range of Drain Towers (tower build)\n {} trees are being sucked", total_trees);
     }
 }

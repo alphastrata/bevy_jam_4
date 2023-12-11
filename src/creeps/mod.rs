@@ -19,6 +19,7 @@ pub struct CreepPlugin;
 impl Plugin for CreepPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<SpawnCreep>();
+        app.add_event::<CreepDie>();
 
         app.add_systems(Startup, (initial_creep_spawn, creep_spawning_timer))
             .add_systems(Update, (cleanup_dead_creeps, periodically_spawn_creep));
@@ -143,12 +144,16 @@ fn attack_towers(
         });
 }
 
+#[derive(Event)]
+pub struct CreepDie;
+
 /// System: Update, remove anything with Health 0.
 fn cleanup_dead_creeps(
     mut commands: Commands,
     mut harvest: EventWriter<Harvest>,
     q: Query<(Entity, &Health, &CorpoPoints), With<Tree>>,
     mut audio_mngr: EventWriter<AudioRequest>,
+    mut creep_die: EventWriter<CreepDie>,
 ) {
     q.iter()
         .filter(|(_entity, health, _)| health.0 == 0)
@@ -157,6 +162,7 @@ fn cleanup_dead_creeps(
             audio_mngr.send(AudioRequest {
                 component: AudioComponent::Money(Money),
             });
+            creep_die.send(CreepDie);
 
             commands.entity(entity).despawn_recursive();
         });
