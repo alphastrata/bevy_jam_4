@@ -3,7 +3,7 @@ use bevy::prelude::*;
 use crate::game::camera::main_layer;
 
 #[derive(Resource)]
-pub struct GameFont(Handle<Font>);
+pub struct GameFont(pub Handle<Font>);
 
 pub struct UIUtilPlugin;
 impl Plugin for UIUtilPlugin {

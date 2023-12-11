@@ -7,7 +7,7 @@ use super::placement::{PlacementState, PlacementStateChanged};
 #[derive(Component, Default)]
 struct HudElement;
 
-const PIXEL: f32 = 4.0;
+pub const PIXEL: f32 = 4.0;
 
 pub struct HudPlugin;
 impl Plugin for HudPlugin {
@@ -42,7 +42,7 @@ fn setup(
                     align_items: AlignItems::End,
                     ..default()
                 },
-                z_index: ZIndex::Global(i32::MAX - 1),
+                z_index: ZIndex::Global(i32::MAX - 2),
                 ..default()
             },
             HudElement,
@@ -78,6 +78,10 @@ fn setup(
                     });
                     parent.spawn(ImageBundle {
                         image: UiImage::new(asset_server.load("textures/ui-bar-mid-screen.png")),
+                        style: Style {
+                            width: Val::Px(90.0 * PIXEL),
+                            ..default()
+                        },
                         ..default()
                     });
                     parent.spawn(ImageBundle {

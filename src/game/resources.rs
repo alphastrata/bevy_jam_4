@@ -3,9 +3,14 @@ use std::fmt::format;
 use bevy::prelude::*;
 
 use crate::{
-    global_systems::eargasm::{AudioRequest, Track2},
+    global_systems::{
+        eargasm::{AudioRequest, Track2},
+        ui_util::GameFont,
+    },
     AppState,
 };
+
+use super::hud::PIXEL;
 
 pub struct ResourcePlugin;
 impl Plugin for ResourcePlugin {
@@ -82,7 +87,7 @@ struct InventoryDebugUI;
 struct WoodNumber;
 
 /// Ugly UI for temporarily showing inventory. Will be beautified later!
-fn setup_debug_ui(mut commands: Commands) {
+fn setup_debug_ui(mut commands: Commands, font: Res<GameFont>) {
     commands
         .spawn((
             NodeBundle {
@@ -93,6 +98,7 @@ fn setup_debug_ui(mut commands: Commands) {
                     justify_content: JustifyContent::FlexEnd,
                     ..default()
                 },
+                z_index: ZIndex::Global(i32::MAX - 1),
                 ..default()
             },
             InventoryDebugUI,
@@ -103,11 +109,13 @@ fn setup_debug_ui(mut commands: Commands) {
                     "Wood: 0",
                     TextStyle {
                         font_size: 42.0,
-                        color: Color::GOLD,
+                        font: font.0.clone(),
+                        color: Color::WHITE,
                         ..default()
                     },
                 )
                 .with_style(Style {
+                    width: Val::Px(102.0 * PIXEL),
                     margin: UiRect::all(Val::Px(15.)),
                     ..default()
                 }),
