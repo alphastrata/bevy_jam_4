@@ -22,7 +22,7 @@ opt-level = 3
 opt-level = 1
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies.bevy]
-features = ["file_watcher", "dynamic_linking", "jpeg"]
+features = ["file_watcher", "mp3", "dynamic_linking", "jpeg"]
 
 [target.'cfg(target_arch = "wasm32")'.dependencies.bevy]
-features = ["jpeg"]
+features = ["jpeg", "mp3"]
