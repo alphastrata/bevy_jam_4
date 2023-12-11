@@ -1,11 +1,12 @@
 use bevy::{prelude::*, transform::commands, utils::HashMap, window::PrimaryWindow};
 use bevy_ecs_tilemap::prelude::*;
 use image::{GrayImage, ImageFormat, Luma};
-use lazy_static::lazy_static;
 use noise::{NoiseFn, Perlin};
+
+use lazy_static::lazy_static;
 use rand::{thread_rng, Rng};
 
-use super::camera::ViewCamera;
+use super::{camera::ViewCamera, placement::PlacementState};
 use crate::{AppState, Teardown};
 
 pub struct MapPlugin;
@@ -171,7 +172,8 @@ fn brightness_map2() -> GrayImage {
 
 /// Highlight visualisation on tile hover
 fn highlight_tile_labels(
-    _commands: Commands,
+    mut highlight_rect: Query<(Entity, &mut Transform, &mut Visibility), With<TheHighlightRect>>,
+    mut tile_hover: ResMut<CurrentTileHover>,
     primary_window: Query<&Window, With<PrimaryWindow>>,
     q_camera: Query<(&GlobalTransform, &Camera), With<ViewCamera>>,
     q_tilemap: Query<
@@ -184,8 +186,7 @@ fn highlight_tile_labels(
         ),
         Without<TheHighlightRect>,
     >,
-    mut highlight_rect: Query<(Entity, &mut Transform), With<TheHighlightRect>>,
-    mut tile_hover: ResMut<CurrentTileHover>,
+    _placement: Res<PlacementState>,
 ) {
     let window = primary_window.single();
     let (cam_tf, cam) = q_camera.single();
@@ -201,7 +202,7 @@ fn highlight_tile_labels(
         })
         .and_then(|map_pos| TilePos::from_world_pos(&map_pos, map_size, grid_size, map_type));
 
-    let (_, mut hr) = highlight_rect.single_mut();
+    let (_, mut hr, mut _rect_vis) = highlight_rect.single_mut();
 
     if let Some(tile_pos) = cursor_world_space_pos {
         if let Some(tile_entity) = tile_storage.get(&tile_pos) {
@@ -237,6 +238,7 @@ fn setup_highlight_tile(mut commands: Commands) {
                 ..default()
             },
             transform: Transform::default(),
+            visibility: Visibility::Hidden, // Temp
             ..default()
         },
         TheHighlightRect,

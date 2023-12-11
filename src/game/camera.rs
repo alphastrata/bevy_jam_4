@@ -23,7 +23,7 @@ use crate::{AppState, PauseMenuState};
 use super::keybinds::FloraCommand;
 
 // how close to the edges of the screen before camera moves
-const PAN_THRESHOLD: Vec2 = Vec2::splat(64.0);
+const PAN_THRESHOLD: Vec2 = Vec2::splat(2.0);
 
 // loops camera when x value is met, stops camera from progressing when y value is met
 const CAMERA_BOUNDS_MIN: Vec2 = Vec2::new(-2000.0, -2000.0);

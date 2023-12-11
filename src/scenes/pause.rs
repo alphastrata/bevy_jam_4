@@ -12,29 +12,30 @@ use crate::{
 pub struct PausePlugin;
 impl Plugin for PausePlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<PauseState>()
-            .add_systems(OnEnter(PauseMenuState::Paused), (setup, release_cursor))
+        app.add_systems(OnEnter(PauseMenuState::Paused), (setup, release_cursor))
             .add_systems(OnExit(PauseMenuState::Paused), (teardown, capture_cursor))
             .add_systems(
                 Update,
-                (interact, unpause).run_if(in_state(PauseMenuState::Paused)),
+                (interact, check_for_keyboard_unpause).run_if(in_state(PauseMenuState::Paused)),
             );
     }
 }
 
-#[derive(Resource, Default)]
-pub struct PauseState {
-    pub paused: bool,
-}
-
-pub fn pause(input: Res<Input<FloraCommand>>, mut next_state: ResMut<NextState<PauseMenuState>>) {
+pub fn check_for_keyboard_pause(
+    input: Res<Input<FloraCommand>>,
+    mut next_state: ResMut<NextState<PauseMenuState>>,
+) {
     if input.just_pressed(FloraCommand::Pause) {
         next_state.set(PauseMenuState::Paused);
     }
 }
 
-pub fn unpause(input: Res<Input<FloraCommand>>, mut next_state: ResMut<NextState<PauseMenuState>>) {
+pub fn check_for_keyboard_unpause(
+    input: Res<Input<FloraCommand>>,
+    mut next_state: ResMut<NextState<PauseMenuState>>,
+) {
     if input.just_pressed(FloraCommand::Pause) {
+        info!("unpause");
         next_state.set(PauseMenuState::Unpaused);
     }
 }
@@ -118,11 +119,7 @@ fn setup(mut commands: Commands, font: Res<GameFont>) {
 }
 
 /// Runs when we exit [AppState::MainMenu]
-fn teardown(
-    nodes: Query<Entity, With<OnMainMenuScreen>>,
-    mut commands: Commands,
-    _state: ResMut<PauseState>,
-) {
+fn teardown(nodes: Query<Entity, With<OnMainMenuScreen>>, mut commands: Commands) {
     for ent in &nodes {
         commands.entity(ent).despawn_recursive();
     }

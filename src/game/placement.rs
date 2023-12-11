@@ -4,7 +4,7 @@ use crate::{
     },
     game::{camera::CameraState, power::AddBuilding},
     global_systems::eargasm::AudioRequest,
-    AppState,
+    AppState, Teardown,
 };
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
@@ -21,7 +21,7 @@ use super::{
 pub struct PlacementState {
     /// Some indicates current type of building user has selected in the UI or via keybinding
     /// to place; None indicates no placement is in action. TODO: should disable Tile Highlighting as well
-    being_placed_building_type: Option<BuildingType>,
+    pub being_placed_building_type: Option<BuildingType>,
 }
 
 /// Spawn towers when clicked
@@ -30,22 +30,114 @@ impl Plugin for TowerPlacementPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<PlacementState>()
             .add_plugins(DefaultPickingPlugins)
+            .add_systems(OnEnter(AppState::Gameplay), setup_ghost_tower)
+            .add_event::<PlacementStateChanged>()
             .add_systems(
                 Update,
-                (change_current_building, spawn_at_click_pos).run_if(in_state(AppState::Gameplay)),
+                (
+                    change_current_building,
+                    spawn_at_click_pos,
+                    update_ghost_tower,
+                )
+                    .run_if(in_state(AppState::Gameplay)),
             );
     }
 }
 
-fn change_current_building(mut state: ResMut<PlacementState>, input: Res<Input<FloraCommand>>) {
+#[derive(Event)]
+pub struct PlacementStateChanged {
+    pub value: Option<BuildingType>,
+}
+
+fn change_current_building(
+    mut state: ResMut<PlacementState>,
+    input: Res<Input<FloraCommand>>,
+    mut changed: EventWriter<PlacementStateChanged>,
+) {
+    let prev_state = state.being_placed_building_type.clone();
     if input.just_released(FloraCommand::SetPlaceDistributionTower) {
-        state.being_placed_building_type = Some(BuildingType::Distribution);
+        if state
+            .being_placed_building_type
+            .as_ref()
+            .map_or(false, |val| val == &BuildingType::Distribution)
+        {
+            state.being_placed_building_type = None;
+        } else {
+            state.being_placed_building_type = Some(BuildingType::Distribution);
+        }
     }
-    if input.just_released(FloraCommand::SetPlaceRadarTower) {
-        state.being_placed_building_type = Some(BuildingType::Radar);
-    }
+    // if input.just_released(FloraCommand::SetPlaceRadarTower) {
+    //     state.being_placed_building_type = Some(BuildingType::Radar);
+    // }
     if input.just_released(FloraCommand::SetPlaceDrainTower) {
-        state.being_placed_building_type = Some(BuildingType::Drain);
+        if state
+            .being_placed_building_type
+            .as_ref()
+            .map_or(false, |val| val == &BuildingType::Drain)
+        {
+            state.being_placed_building_type = None;
+        } else {
+            state.being_placed_building_type = Some(BuildingType::Drain);
+        }
+    }
+    if prev_state != state.being_placed_building_type {
+        changed.send(PlacementStateChanged {
+            value: state.being_placed_building_type.clone(),
+        });
+    }
+}
+
+#[derive(Component)]
+pub struct GhostTower;
+
+fn setup_ghost_tower(mut commands: Commands) {
+    commands.spawn((
+        SpriteBundle {
+            sprite: Sprite {
+                color: Color::WHITE,
+                custom_size: Some(Vec2::new(50.0, 50.0)),
+                ..default()
+            },
+            transform: Transform::from_translation(Vec3::ZERO),
+            visibility: Visibility::Visible, // invisible by default
+            ..default()
+        },
+        GhostTower,
+        Teardown,
+    ));
+}
+
+/// Slightly transparent version of the tower sprite the player is placing
+fn update_ghost_tower(
+    _commands: Commands,
+    placement: Res<PlacementState>,
+    asset_server: Res<AssetServer>,
+    mut q_ghost: Query<(
+        Entity,
+        &mut Sprite,
+        &mut Handle<Image>,
+        &GhostTower,
+        &mut Transform,
+    )>,
+    hover_tile: Res<CurrentTileHover>,
+) {
+    let (_, mut sprite, mut texture, _, mut transform) = q_ghost.single_mut();
+
+    // update position
+    if let Some(tile_world_pos) = hover_tile.world_pos {
+        transform.translation = Vec3::new(tile_world_pos.x, tile_world_pos.y, 0.4);
+    }
+
+    // update what its showing
+    if placement.is_changed() {
+        match &placement.being_placed_building_type {
+            Some(building_type) => {
+                sprite.custom_size = Some(Vec2::new(32.0, 64.0));
+                let tex: Handle<Image> = asset_server.load(building_type.sprite());
+                *texture = tex;
+            }
+            None => {}
+        }
     }
 }
 
@@ -59,24 +151,27 @@ fn spawn_at_click_pos(
     state: Res<PlacementState>,
     mouse_btns: Res<Input<MouseButton>>,
     audio_mngr: EventWriter<AudioRequest>,
-    _inventory: Res<Inventory>,
+    inventory: Res<Inventory>,
     tile_hover: Res<CurrentTileHover>,
 ) {
     if mouse_btns.just_pressed(MouseButton::Right) {
         if let Some(building) = &state.being_placed_building_type {
             if let Some(tile_world_pos) = tile_hover.world_pos {
-                building.spawn(
-                    &mut commands,
-                    texture_atlases,
-                    asset_server,
-                    tile_world_pos,
-                    audio_mngr,
-                );
-                expend_resource.send(ExpendResource(
-                    ResourceType::CorporationPoints,
-                    building.cost(),
-                ));
-                add_building.send(AddBuilding);
+                if inventory.money > building.cost() {
+                    building.spawn(
+                        &mut commands,
+                        texture_atlases,
+                        asset_server,
+                        tile_world_pos,
+                        audio_mngr,
+                    );
+
+                    expend_resource.send(ExpendResource(
+                        ResourceType::CorporationPoints,
+                        building.cost(),
+                    ));
+                    add_building.send(AddBuilding);
+                }
             }
         }
     }

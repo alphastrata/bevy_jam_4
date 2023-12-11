@@ -7,6 +7,14 @@ on:
 
 env:
   binary: flora_cause
+<<<<<<< HEAD
+||||||| 19d4138
+  add_binaries_to_github_release: true
+  itch_target: alphastrata/flora-cause
+=======
+  add_binaries_to_github_release: true
+  itch_target: alphastrata/flora_cause
+>>>>>>> main
 
 jobs:
 
@@ -33,8 +41,16 @@ jobs:
 
       - name: Prepare package
         run: |
+<<<<<<< HEAD
           wasm-bindgen --no-typescript --out-name flora_cause --out-dir wasm --target web target/wasm32-unknown-unknown/release/${{ env.binary }}.wasm
           cp -r assets wasm/
+||||||| 19d4138
+          wasm-bindgen --no-typescript --out-name flora_cause --out-dir out --target web target/wasm32-unknown-unknown/release/${{ env.binary }}.wasm
+          cp -r assets out/
+=======
+          wasm-bindgen --no-typescript --out-name bevy_game --out-dir wasm --target web target/wasm32-unknown-unknown/release/${{ env.binary }}.wasm
+          cp -r assets wasm/
+>>>>>>> main
 
       - name: Package as a zip
         working-directory: ./wasm

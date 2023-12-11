@@ -5,13 +5,13 @@ use crate::{
     buildings::{distribution::DistributionTowerPlugin, drain::DrainTowerPlugin, Building},
     creeps::CreepPlugin,
     game::{
-        camera::GameCameraPlugin, hp_bars::HealthBarUIPlugin, map::MapPlugin,
+        camera::GameCameraPlugin, hp_bars::HealthBarUIPlugin, hud::HudPlugin, map::MapPlugin,
         placement::TowerPlacementPlugin, power::PowerPlugin, resources::ResourcePlugin,
     },
     AppState, Teardown,
 };
 
-use super::pause::{capture_cursor, pause, release_cursor, PausePlugin};
+use super::pause::{capture_cursor, check_for_keyboard_pause, release_cursor, PausePlugin};
 
 /// Defines systems that should run when in the [AppState::Playing] State
 pub struct GameplayPlugin;
@@ -28,9 +28,13 @@ impl Plugin for GameplayPlugin {
             HealthBarUIPlugin,
             DrainTowerPlugin,
             DistributionTowerPlugin,
+            HudPlugin,
         ))
         .add_systems(OnEnter(AppState::Gameplay), capture_cursor)
-        .add_systems(Update, (pause).run_if(in_state(AppState::Gameplay)))
+        .add_systems(
+            Update,
+            (check_for_keyboard_pause).run_if(in_state(AppState::Gameplay)),
+        )
         .add_systems(OnExit(AppState::Gameplay), (teardown_all, release_cursor));
     }
 }
