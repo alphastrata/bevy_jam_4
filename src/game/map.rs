@@ -68,7 +68,6 @@ pub fn create_initial_map2(mut commands: Commands, asset_server: Res<AssetServer
     // Convert the image to grayscale
     let greyscale_img = brightness_map();
     let (width, height) = greyscale_img.dimensions();
-    dbg!(width, height, greyscale_img.to_vec().len());
 
     let brightness_map: Vec<Vec<u8>> = (0..height)
         .map(|y| {
@@ -77,8 +76,6 @@ pub fn create_initial_map2(mut commands: Commands, asset_server: Res<AssetServer
                 .collect()
         })
         .collect();
-
-    dbg!(brightness_map.len(), width / 8, height / 8,);
 
     let texture = asset_server.load("textures/terrain.png");
     let map_size = TilemapSize {

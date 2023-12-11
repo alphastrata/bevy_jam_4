@@ -25,9 +25,15 @@ wasm-server-runner path/to/file.wasm
 `./git/hooks` folder and it will run whenever you make commits, failing them if any of the jobs that would run in the CI pipe fail locally. (This is a much, much faster workflow than using GH's runners)
 
 
+## Release:
+```shell
+git tag -a "flora_cause-0.0.N" -m "comments go here"
+git push --tags
+````
+
 ## TODO
 * [ ] Map generation
 
 ## Attributions:
 _ Stuff NOT made by the team, but from OS/Freely available resources_
-- [electric.mp3, money.mp3] are provided by = www.Zapsplat.com
+- [electric.mp3, thump.mp3, kaching.mp3, money.mp3] are provided by = www.Zapsplat.com
