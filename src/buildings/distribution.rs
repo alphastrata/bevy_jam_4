@@ -18,7 +18,7 @@ pub struct DistributionTower;
 impl BuildingDefinition for DistributionTower {
     const SPRITE_PATH: &'static str = "textures/tower.png";
     const BASE_HEALTH: u32 = 100;
-    const COST: u32 = 500;
+    const COST: u32 = 400;
     const BUILD_TIME: u32 = 6;
     const NAME: &'static str = "Distribution Tower";
     const DESCRIPTION: &'static str = "";
