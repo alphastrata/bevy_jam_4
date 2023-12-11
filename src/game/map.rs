@@ -45,11 +45,11 @@ enum TerrainTileType {
 lazy_static! {
     static ref TERRAIN_TILE_TYPE_TO_INDICIE_MAP: HashMap<usize, TerrainTileType> = {
         let mut m = HashMap::new();
-        m.insert(0usize, TerrainTileType::DeepWater);
-        m.insert(1usize, TerrainTileType::ShallowWater);
+        m.insert(0usize, TerrainTileType::Sand);
+        m.insert(1usize, TerrainTileType::LightGrass);
 
-        m.insert(2usize, TerrainTileType::Swamp);
-        m.insert(3usize, TerrainTileType::Sand);
+        m.insert(2usize, TerrainTileType::HeavyGrass);
+        m.insert(3usize, TerrainTileType::LightGrass);
 
         m.insert(4usize, TerrainTileType::LightGrass);
         m.insert(5usize, TerrainTileType::HeavyGrass);
