@@ -1,6 +1,7 @@
 use crate::{
     buildings::{
-        distribution::DistributionTower, spawn_building, BuildingDefinition, BuildingType,
+        distribution::DistributionTower, spawn_building, twr_custom_mats::TowerRadiusMaterial,
+        BuildingDefinition, BuildingType,
     },
     game::{camera::CameraState, power::AddBuilding},
     global_systems::eargasm::AudioRequest,
@@ -148,7 +149,7 @@ fn spawn_at_click_pos(
     mut expend_resource: EventWriter<ExpendResource>,
     texture_atlases: ResMut<Assets<TextureAtlas>>,
     meshes: ResMut<Assets<Mesh>>,
-    materials: ResMut<Assets<ColorMaterial>>,
+    materials: ResMut<Assets<TowerRadiusMaterial>>,
     asset_server: Res<AssetServer>,
     state: Res<PlacementState>,
     mouse_btns: Res<Input<MouseButton>>,

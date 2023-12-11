@@ -1,10 +1,10 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, sprite::Material2dPlugin};
 use bevy_ecs_tilemap::TilemapPlugin;
 
 use crate::{
     buildings::{
         core::TheCorePlugin, distribution::DistributionTowerPlugin, drain::DrainTowerPlugin,
-        Building,
+        twr_custom_mats::TowerRadiusMaterial, Building,
     },
     creeps::CreepPlugin,
     game::{
@@ -33,6 +33,7 @@ impl Plugin for GameplayPlugin {
             DrainTowerPlugin,
             DistributionTowerPlugin,
             HudPlugin,
+            Material2dPlugin::<TowerRadiusMaterial>::default(),
         ))
         .add_systems(OnEnter(AppState::Gameplay), capture_cursor)
         .add_systems(

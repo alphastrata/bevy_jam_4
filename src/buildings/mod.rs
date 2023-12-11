@@ -4,6 +4,7 @@ use crate::{game::hp_bars::HpBarUISettings, Health};
 use bevy::prelude::*;
 use std::path::Path;
 
+use self::twr_custom_mats::TowerRadiusMaterial;
 use self::{
     distribution::DistributionTower,
     drain::{DrainTower, DrainTowerPlugin},
@@ -23,7 +24,7 @@ pub mod twr_custom_mats {
     #[derive(Asset, TypePath, AsBindGroup, Debug, Clone)]
     pub struct TowerRadiusMaterial {
         #[uniform(0)]
-        color: Color,
+        pub color: Color,
     }
 
     impl Material2d for TowerRadiusMaterial {
@@ -115,7 +116,7 @@ impl BuildingType {
         commands: &mut Commands,
         texture_atlases: ResMut<Assets<TextureAtlas>>,
         meshes: ResMut<Assets<Mesh>>,
-        materials: ResMut<Assets<ColorMaterial>>,
+        materials: ResMut<Assets<TowerRadiusMaterial>>,
         asset_server: Res<AssetServer>,
         pos: Vec2,
         mut audio_mngr: EventWriter<AudioRequest>,

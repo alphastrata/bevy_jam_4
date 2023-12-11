@@ -12,9 +12,13 @@ use crate::{
     game::power::{AddBuilding, IsPowered, RequiresPower},
     AnimationIndices, AnimationTimer, AppState, Health, Teardown, Tree,
 };
-use bevy::{prelude::*, sprite::MaterialMesh2dBundle, tasks::IoTaskPool};
+use bevy::{
+    prelude::*,
+    sprite::{Material2dPlugin, MaterialMesh2dBundle},
+    tasks::IoTaskPool,
+};
 
-use super::{Building, BuildingDefinition};
+use super::{twr_custom_mats::TowerRadiusMaterial, Building, BuildingDefinition};
 
 /// Drain damage applied to trees per tick of [GlobalDrainTick]
 const DRAIN_DPT: u32 = 2;
@@ -55,7 +59,7 @@ impl DrainTower {
         commands: &mut Commands,
         mut texture_atlases: ResMut<Assets<TextureAtlas>>,
         mut meshes: ResMut<Assets<Mesh>>,
-        mut materials: ResMut<Assets<ColorMaterial>>,
+        mut materials: ResMut<Assets<TowerRadiusMaterial>>,
         asset_server: Res<AssetServer>,
         pos: Vec2,
     ) -> Entity {
@@ -68,7 +72,9 @@ impl DrainTower {
         let radius_display = commands
             .spawn(MaterialMesh2dBundle {
                 mesh: meshes.add(shape::Circle::new(50.).into()).into(),
-                material: materials.add(ColorMaterial::from(Color::PURPLE)),
+                material: materials.add(TowerRadiusMaterial {
+                    color: Color::PURPLE,
+                }),
                 transform: Transform::from_translation(Vec3::ZERO),
                 ..default()
             })

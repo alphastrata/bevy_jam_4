@@ -1,9 +1,12 @@
-use super::{Building, BuildingDefinition, BuildingState};
+use super::{twr_custom_mats::TowerRadiusMaterial, Building, BuildingDefinition, BuildingState};
 use crate::{
     game::power::{IsPowered, RequiresPower, SupplyRadius},
     AnimationIndices, AnimationTimer, AppState, Health, Teardown,
 };
-use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
+use bevy::{
+    prelude::*,
+    sprite::{Material2dPlugin, MaterialMesh2dBundle},
+};
 use std::path::Path;
 
 const BUILDING_ANIM: AnimationIndices = AnimationIndices { first: 1, last: 11 };
@@ -33,7 +36,7 @@ impl DistributionTower {
         commands: &mut Commands,
         mut texture_atlases: ResMut<Assets<TextureAtlas>>,
         mut meshes: ResMut<Assets<Mesh>>,
-        mut materials: ResMut<Assets<ColorMaterial>>,
+        mut materials: ResMut<Assets<TowerRadiusMaterial>>,
         asset_server: Res<AssetServer>,
         pos: Vec2,
     ) -> Entity {
@@ -45,7 +48,7 @@ impl DistributionTower {
         let radius_display = commands
             .spawn(MaterialMesh2dBundle {
                 mesh: meshes.add(shape::Circle::new(50.).into()).into(),
-                material: materials.add(ColorMaterial::from(Color::CYAN)),
+                material: materials.add(TowerRadiusMaterial { color: Color::CYAN }),
                 transform: Transform::from_translation(Vec3::ZERO),
                 ..default()
             })
