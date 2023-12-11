@@ -27,6 +27,10 @@ pub struct PlayerState {}
 fn main() {
     let mut app = App::new();
 
+    if cfg!(target_arch = "wasm32") {
+        app.insert_resource(AssetMetaCheck::Never);
+    }
+
     app.add_plugins((
         DefaultPlugins.set(ImagePlugin {
             default_sampler: ImageSamplerDescriptor::nearest(),
@@ -45,10 +49,6 @@ fn main() {
     .add_state::<AppState>()
     .add_state::<PauseMenuState>()
     .add_systems(Startup, setup);
-
-    if cfg!(target_arch = "wasm32") {
-        app.insert_resource(AssetMetaCheck::Never);
-    }
 
     app.run();
 }
